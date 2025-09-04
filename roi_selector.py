@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import font
 from PIL import Image, ImageTk
 import os
+import subprocess
+import platform
 
 # --- Global Variables for OpenCV ---
 ref_point = []
@@ -11,15 +13,56 @@ image_for_cv = None
 clone = None
 
 def copy_to_clipboard(text):
-    """A helper function to copy text to the clipboard using tkinter."""
-    r = tk.Tk()
-    r.withdraw()
-    r.clipboard_clear()
-    r.clipboard_append(text)
-    r.update() # Required on some platforms
-    r.destroy()
-    print(f"\nSUCCESS: Copied to clipboard!")
-    print(f"'{text}'")
+    """A helper function to copy text to the clipboard - Linux/Wayland compatible."""
+    try:
+        # Try Linux clipboard tools first (avoids Tkinter conflicts)
+        if platform.system() == "Linux":
+            # Check if we're in Wayland environment first
+            if os.environ.get('WAYLAND_DISPLAY') or os.environ.get('XDG_SESSION_TYPE') == 'wayland':
+                # Try wl-copy for Wayland (Sway, GNOME Wayland, etc.)
+                try:
+                    subprocess.run(['wl-copy'], input=text.encode(), check=True)
+                    print(f"\nSUCCESS: Copied to clipboard (Wayland)!")
+                    print(f"'{text}'")
+                    return
+                except (subprocess.CalledProcessError, FileNotFoundError):
+                    pass
+            
+            # Try X11 clipboard tools
+            # Try xclip first
+            try:
+                subprocess.run(['xclip', '-selection', 'clipboard'], 
+                             input=text.encode(), check=True)
+                print(f"\nSUCCESS: Copied to clipboard (X11)!")
+                print(f"'{text}'")
+                return
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                # Fallback to xsel
+                try:
+                    subprocess.run(['xsel', '--clipboard', '--input'], 
+                                 input=text.encode(), check=True)
+                    print(f"\nSUCCESS: Copied to clipboard (X11)!")
+                    print(f"'{text}'")
+                    return
+                except (subprocess.CalledProcessError, FileNotFoundError):
+                    pass
+        
+        # Fallback to Tkinter (Windows/Mac or Linux without clipboard tools)
+        # Use a more careful approach to avoid conflicts
+        temp_root = tk.Tk()
+        temp_root.withdraw()
+        temp_root.clipboard_clear()
+        temp_root.clipboard_append(text)
+        temp_root.update()
+        temp_root.quit()
+        temp_root.destroy()
+        print(f"\nSUCCESS: Copied to clipboard!")
+        print(f"'{text}'")
+        
+    except Exception as e:
+        print(f"\nWARNING: Could not copy to clipboard: {e}")
+        print(f"ROI coordinates: {text}")
+        print("Please copy manually.")
 
 
 def click_and_crop(event, x, y, flags, param):

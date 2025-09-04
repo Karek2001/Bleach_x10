@@ -2,3 +2,4 @@ Pillow
 pyperclip
 numpy
 opencv-python
+pyautogui

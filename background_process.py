@@ -1,159 +1,21 @@
-# background_process.py - Enhanced Version with Game Process Monitoring
+# background_process.py - Enhanced Version with Smart Multi-Detection
 import asyncio
 import time
-from typing import Optional, Dict, List
-from datetime import datetime, timedelta
+from typing import Optional, Dict, List, Set
+from datetime import datetime
+from collections import defaultdict
 
 import settings
-from actions import batch_check_pixels, execute_tap, screenshot_manager, run_adb_command
-
-
-# Main background tasks configuration
-BACKGROUND_TASKS = [
-    {
-        "task_name": "Open Story Map",
-        "type": "template",
-        "template_path": "templates/MapStep.png",
-        "roi": [1, 132, 955, 291],
-        "confidence": 0.70,
-        "use_match_position": True,
-        "isLogical": False,
-        "BackToStore": False,  # Default flag
-    },
-    {
-        "task_name": "Click [Prepare To Battle]",
-        "type": "template",
-        "template_path": "templates/Prepare.png",
-        "roi": [507, 458, 313, 60],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Click [Start Quest]",
-        "type": "template",
-        "template_path": "templates/StartQuest.png",
-        "roi": [578, 470, 288, 49],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Click [Skip]",
-        "type": "template",
-        "template_path": "templates/Skip.png",
-        "roi": [830, 1, 129, 59],
-        "confidence": 0.70,
-        "use_match_position": True,
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Click White Tap Button",
-        "type": "pixel",
-        "click_location_str": "665,507",
-        "search_array": ["917,13","#0e2988","671,500","#4e4e67"],
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Click New Record Word To Open Next Quest Menu",
-        "type": "pixel",
-        "click_location_str": "449,503",
-        "search_array": ["833,35","#ff0000","819,54","#ffffff","834,74","#ff0000"],
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Click [Next Quest]",
-        "type": "template",
-        "template_path": "templates/NextQuest.png",
-        "roi": [684, 488, 154, 41],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "New Record Quest Obtained",
-        "type": "pixel",
-        "click_location_str": "478,281",
-        "search_array": ["170,273","#fefefe","810,187","#ff0000","798,209","#ffffff"],
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Click [Cancel] For Friend Request",
-        "type": "template",
-        "template_path": "templates/Cancel.png",
-        "roi": [263, 389, 153, 42],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": False,
-        "BackToStore": False,
-    },
-]
-
-# Secondary background tasks for when Bleach game is running
-BACKGROUND_TASKS_2 = [
-    {
-        "task_name": "Click [Thank You] For Mod Menu",
-        "type": "pixel",
-        "click_location_str": "434,470",
-        "search_array": ["265,470","#1c262b","338,469","#ffffff"],
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Click [Game Start]",
-        "type": "pixel",
-        "click_location_str": "477,452",
-        "search_array": ["880,490","#515151","937,512","#e60012"],
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Click [No] For Entering Existing Quest",
-        "type": "template",
-        "template_path": "templates/No.png",
-        "roi": [252, 339, 174, 57],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Skip Any New Events/Windows Opened By Clicking [OK]",
-        "type": "template",
-        "template_path": "templates/OK.png",
-        "roi": [27, 229, 918, 272],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": False,
-        "BackToStore": False,
-    },
-        {
-        "task_name": "Open [SOLO] Menu",
-        "type": "template",
-        "template_path": "templates/Solo.png",
-        "roi": [814, 420, 142, 118],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": False,
-        "BackToStore": False,
-    },
-    {
-        "task_name": "Open Story Window",
-        "type": "pixel",
-        "click_location_str": "531,193",
-        "search_array": ["479,146","#ebebea","457,184","#ffffff","524,191","#ffffff"],
-        "isLogical": False,
-        "BackToStore": True,
-    },
-    # Add more Bleach-specific tasks as needed
-]
+from actions import batch_check_pixels_enhanced, execute_tap, screenshot_manager, run_adb_command, task_tracker
+from tasks import (
+    Main_Tasks, 
+    Restarting_Tasks, 
+    Shared_Tasks, 
+    Switcher_Tasks,
+    GUILD_TUTORIAL_TASKS,
+    Guild_Rejoin,
+    Sell_Characters
+)
 
 # Bleach game package name
 BLEACH_PACKAGE_NAME = "com.klab.bleach"
@@ -164,52 +26,23 @@ class ProcessMonitor:
     """Monitors game processes and manages task switching"""
     
     def __init__(self):
-        self.device_process_states = {}  # device_id -> process state
-        self.check_interval = 10  # Check every 10 seconds
-        self.last_check_times = {}  # device_id -> last check timestamp
-        self.active_task_set = {}  # device_id -> "main" or "bleach"
+        self.device_process_states = {}
+        self.check_interval = 10
+        self.last_check_times = {}
+        self.active_task_set = {}
+        self.initial_setup = {}
+        self.last_action_time = {}
+        self.action_count = {}
+        self.last_action_name = {}
         
     async def is_bleach_running(self, device_id: str) -> bool:
-        """Check if Bleach Brave Souls is running AND focused on the device"""
+        """Check if Bleach Brave Souls process is running on the device"""
         try:
-            # Check if the Bleach process is running
             command = f"shell pidof {BLEACH_PACKAGE_NAME}"
             result = await run_adb_command(command, device_id)
-            
-            # If no process, definitely not running
-            if not result.strip():
-                return False
-            
-            # Process exists, now check if it's in foreground
-            return await self.is_bleach_in_foreground(device_id)
-            
+            return bool(result.strip())
         except Exception as e:
             print(f"[{device_id}] Error checking Bleach process: {e}")
-            return False
-    
-    async def is_bleach_in_foreground(self, device_id: str) -> bool:
-        """Check if Bleach game is currently in the foreground/focused"""
-        try:
-            # Get current foreground activity
-            command = "shell dumpsys activity activities | grep mCurrentFocus"
-            result = await run_adb_command(command, device_id)
-            
-            # Check if Bleach package is in the current focus
-            if BLEACH_PACKAGE_NAME in result:
-                return True
-            
-            # Alternative method - check top activity
-            command = "shell dumpsys activity recents | grep 'Recent #0'"
-            result = await run_adb_command(command, device_id)
-            
-            if BLEACH_PACKAGE_NAME in result:
-                return True
-                
-            print(f"[{device_id}] Bleach process running but not focused")
-            return False
-            
-        except Exception as e:
-            print(f"[{device_id}] Error checking foreground activity: {e}")
             return False
     
     async def launch_bleach(self, device_id: str):
@@ -218,11 +51,63 @@ class ProcessMonitor:
             print(f"[{device_id}] Launching Bleach Brave Souls...")
             command = f"shell monkey -p {BLEACH_PACKAGE_NAME} -c android.intent.category.LAUNCHER 1"
             await run_adb_command(command, device_id)
-            await asyncio.sleep(3)  # Give the game time to start
-            print(f"[{device_id}] Bleach Brave Souls launched successfully")
-            
+            await asyncio.sleep(3)
+            print(f"[{device_id}] Game launch command sent")
         except Exception as e:
-            print(f"[{device_id}] Error launching Bleach: {e}")
+            print(f"[{device_id}] Error launching game: {e}")
+    
+    async def kill_and_restart_game(self, device_id: str):
+        """Kill and restart the game"""
+        try:
+            print(f"[{device_id}] Killing game process...")
+            await run_adb_command(f"shell am force-stop {BLEACH_PACKAGE_NAME}", device_id)
+            await asyncio.sleep(2)
+            await self.launch_bleach(device_id)
+            self.set_active_tasks(device_id, "restarting")
+            self.reset_action_tracking(device_id)
+        except Exception as e:
+            print(f"[{device_id}] Error restarting game: {e}")
+    
+    def reset_action_tracking(self, device_id: str):
+        """Reset action tracking for a device"""
+        self.last_action_time[device_id] = time.time()
+        self.action_count[device_id] = {}
+        self.last_action_name[device_id] = None
+    
+    def track_action(self, device_id: str, action_name: str) -> bool:
+        """Track action and check for repetition. Returns True if should restart"""
+        current_time = time.time()
+        
+        if device_id not in self.last_action_time:
+            self.last_action_time[device_id] = current_time
+            self.action_count[device_id] = {}
+            self.last_action_name[device_id] = None
+        
+        # Check for 120 second inactivity
+        if current_time - self.last_action_time[device_id] > 120:
+            print(f"[{device_id}] No actions for 120 seconds - triggering restart")
+            return True
+        
+        self.last_action_time[device_id] = current_time
+        
+        # Track repetition with lower threshold for template tasks
+        if action_name not in self.action_count[device_id]:
+            self.action_count[device_id][action_name] = 0
+        
+        if self.last_action_name[device_id] == action_name:
+            self.action_count[device_id][action_name] += 1
+            
+            # Lower repetition threshold for certain tasks
+            max_repetitions = 5 if "template" in action_name.lower() else 10
+            
+            if self.action_count[device_id][action_name] >= max_repetitions:
+                print(f"[{device_id}] Action '{action_name}' repeated {max_repetitions} times - triggering restart")
+                return True
+        else:
+            self.action_count[device_id][action_name] = 1
+            self.last_action_name[device_id] = action_name
+        
+        return False
     
     async def should_check_process(self, device_id: str) -> bool:
         """Determine if it's time to check the process status"""
@@ -240,138 +125,63 @@ class ProcessMonitor:
         return False
     
     def get_active_tasks(self, device_id: str) -> List[dict]:
-        """Get the currently active task set for a device"""
-        task_set = self.active_task_set.get(device_id, "main")
+        """Get the currently active task set with shared and switcher tasks"""
+        task_set = self.active_task_set.get(device_id, "restarting")
         
-        if task_set == "bleach":
-            return BACKGROUND_TASKS_2
-        else:
-            return BACKGROUND_TASKS
+        task_map = {
+            "main": Main_Tasks,
+            "restarting": Restarting_Tasks,
+            "guild_tutorial": GUILD_TUTORIAL_TASKS,
+            "guild_rejoin": Guild_Rejoin,
+            "sell_characters": Sell_Characters
+        }
+        
+        base_tasks = task_map.get(task_set, Restarting_Tasks)
+        
+        # Combine base tasks with shared tasks and switcher tasks
+        all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
+        
+        # Sort by priority (lower number = higher priority)
+        return sorted(all_tasks, key=lambda x: x.get('priority', 999))
     
     def set_active_tasks(self, device_id: str, task_set: str):
         """Set the active task set for a device"""
-        if task_set in ["main", "bleach"]:
+        valid_sets = ["main", "restarting", "guild_tutorial", "guild_rejoin", "sell_characters"]
+        if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
-            print(f"[{device_id}] Switched to {task_set} task set")
-
-
-# Global process monitor instance
-process_monitor = ProcessMonitor()
-
-
-class FreezeDetector:
-    """Detects and handles game freeze conditions with timing logic"""
-    
-    def __init__(self):
-        self.device_freeze_states = {}
-        self.freeze_duration = 20
-        self.verification_duration = 5
-        
-    def get_freeze_state(self, device_id: str) -> dict:
-        """Get or create freeze state for a device"""
-        if device_id not in self.device_freeze_states:
-            self.device_freeze_states[device_id] = {
-                'freeze_detected': False,
-                'detection_start': None,
-                'verification_start': None,
-                'consecutive_detections': 0,
-                'last_check': None
-            }
-        return self.device_freeze_states[device_id]
-    
-    def reset_freeze_state(self, device_id: str):
-        """Reset freeze detection state for a device"""
-        self.device_freeze_states[device_id] = {
-            'freeze_detected': False,
-            'detection_start': None,
-            'verification_start': None,
-            'consecutive_detections': 0,
-            'last_check': None
-        }
-    
-    async def check_freeze_condition(self, device_id: str, freeze_task: dict) -> bool:
-        """Check if freeze pixels are currently detected"""
-        try:
-            matched_tasks = await batch_check_pixels(device_id, [freeze_task])
-            return len(matched_tasks) > 0
-        except Exception as e:
-            print(f"[{device_id}] Error checking freeze condition: {e}")
-            return False
-    
-    async def handle_freeze_detection(self, device_id: str, freeze_task: dict) -> bool:
-        """Handle freeze detection with timing logic"""
-        state = self.get_freeze_state(device_id)
-        current_time = datetime.now()
-        
-        is_frozen = await self.check_freeze_condition(device_id, freeze_task)
-        
-        if is_frozen:
-            if not state['freeze_detected']:
-                print(f"[{device_id}] Freeze detected, starting 20-second timer...")
-                state['freeze_detected'] = True
-                state['detection_start'] = current_time
-                state['consecutive_detections'] = 1
-                state['last_check'] = current_time
-                return False
-            else:
-                time_elapsed = (current_time - state['detection_start']).total_seconds()
-                state['consecutive_detections'] += 1
-                state['last_check'] = current_time
-                
-                if time_elapsed >= self.freeze_duration:
-                    if state['verification_start'] is None:
-                        print(f"[{device_id}] 20 seconds elapsed, starting verification period...")
-                        state['verification_start'] = current_time
-                        return False
-                    
-                    verification_elapsed = (current_time - state['verification_start']).total_seconds()
-                    
-                    if verification_elapsed >= self.verification_duration:
-                        print(f"[{device_id}] Freeze confirmed after {time_elapsed:.1f} seconds. Restarting game...")
-                        self.reset_freeze_state(device_id)
-                        return True
-                    else:
-                        print(f"[{device_id}] Verifying freeze... ({verification_elapsed:.1f}/{self.verification_duration}s)")
-                        return False
-                else:
-                    print(f"[{device_id}] Freeze persisting... ({time_elapsed:.1f}/{self.freeze_duration}s)")
-                    return False
-        else:
-            if state['freeze_detected']:
-                time_elapsed = (current_time - state['detection_start']).total_seconds()
-                
-                if time_elapsed < self.freeze_duration:
-                    print(f"[{device_id}] Freeze cleared after {time_elapsed:.1f} seconds. Resetting timer.")
-                    self.reset_freeze_state(device_id)
-                    return False
-                elif state['verification_start'] is not None:
-                    verification_elapsed = (current_time - state['verification_start']).total_seconds()
-                    
-                    if verification_elapsed < self.verification_duration:
-                        print(f"[{device_id}] Freeze cleared during verification. Monitoring...")
-                        return False
-                    else:
-                        print(f"[{device_id}] Freeze resolved after verification. Resetting.")
-                        self.reset_freeze_state(device_id)
-                        return False
             
-            return False
-
-
-# Global freeze detector instance
-freeze_detector = FreezeDetector()
+            task_names = {
+                "main": "Main_Tasks",
+                "restarting": "Restarting_Tasks",
+                "guild_tutorial": "GUILD_TUTORIAL_TASKS",
+                "guild_rejoin": "Guild_Rejoin",
+                "sell_characters": "Sell_Characters"
+            }
+            print(f"[{device_id}] Switched to {task_names.get(task_set, task_set)}")
+    
+    def is_initial_setup(self, device_id: str) -> bool:
+        """Check if this is the initial setup for the device"""
+        if device_id not in self.initial_setup:
+            self.initial_setup[device_id] = True
+            return True
+        return False
+    
+    def mark_initial_complete(self, device_id: str):
+        """Mark initial setup as complete"""
+        self.initial_setup[device_id] = False
 
 
 class OptimizedBackgroundMonitor:
     def __init__(self):
         self.stop_event = asyncio.Event()
         self.check_interval = getattr(settings, 'BACKGROUND_CHECK_INTERVAL', 0.2)
-        self.batch_size = getattr(settings, 'TASK_BATCH_SIZE', 8)
+        self.batch_size = getattr(settings, 'TASK_BATCH_SIZE', 20)  # Increased for shared detection
         self.device_states = {}
         self.parallel_screenshots = getattr(settings, 'PARALLEL_SCREENSHOT_CAPTURE', True)
         self.max_concurrent_screenshots = getattr(settings, 'MAX_CONCURRENT_SCREENSHOTS', 16)
-        self.freeze_detector = freeze_detector
-        self.process_monitor = process_monitor  # Add process monitor
+        self.process_monitor = ProcessMonitor()
+        self.no_action_timers = {}
+        self.frame_processed_tasks: Dict[str, Set[str]] = defaultdict(set)  # Track tasks processed per frame
         
     async def batch_screenshot_all_devices(self, device_list: List[str]) -> Dict[str, any]:
         """Capture screenshots from multiple devices in parallel"""
@@ -397,28 +207,29 @@ class OptimizedBackgroundMonitor:
             for device_id, screenshot in zip(device_list, screenshots)
             if screenshot is not None and not isinstance(screenshot, Exception)
         }
+    
+    async def execute_tap_with_offset(self, device_id: str, location_str: str, task: dict):
+        """Execute tap with optional pixel offset adjustments"""
+        coords = location_str.split(',')
+        x, y = int(coords[0]), int(coords[1])
+        
+        # Apply offset adjustments if specified
+        if 'UpPixels' in task:
+            y -= task['UpPixels']
+        if 'DownPixels' in task:
+            y += task['DownPixels']
+        if 'LeftPixels' in task:
+            x -= task['LeftPixels']
+        if 'RightPixels' in task:
+            x += task['RightPixels']
+        
+        # Execute tap at adjusted position
+        adjusted_location = f"{x},{y}"
+        await execute_tap(device_id, adjusted_location)
 
     def get_prioritized_tasks(self, device_id: str) -> List[dict]:
-        """Return tasks sorted by priority for the current active task set"""
-        # Get the active task set for this device
-        active_tasks = self.process_monitor.get_active_tasks(device_id)
-        
-        if not getattr(settings, 'USE_TASK_PRIORITIZATION', True):
-            return active_tasks
-        
-        high_priority_keywords = ['tap', 'touch', 'energy', 'login', 'white', 'close', 'skip']
-        medium_priority_keywords = ['king', 'tutorial', 'upgrade', 'training', 'prepare']
-        
-        def get_priority(task):
-            name_lower = task['task_name'].lower()
-            if any(keyword in name_lower for keyword in high_priority_keywords):
-                return 0
-            elif any(keyword in name_lower for keyword in medium_priority_keywords):
-                return 1
-            else:
-                return 2
-        
-        return sorted(active_tasks, key=get_priority)
+        """Return tasks already sorted by priority from get_active_tasks"""
+        return self.process_monitor.get_active_tasks(device_id)
 
     def get_adaptive_interval(self, device_id: str) -> float:
         """Get adaptive check interval based on device stability"""
@@ -433,86 +244,170 @@ class OptimizedBackgroundMonitor:
             return self.check_interval * 1.5
         else:
             return self.check_interval
+    
+    async def handle_task_flags(self, device_id: str, task: dict):
+        """Handle all task switching flags"""
+        flag_handlers = {
+            "BackToStory": ("main", "BackToStory triggered - switching to Main_Tasks"),
+            "NeedGuildTutorial": ("guild_tutorial", "Guild tutorial detected - switching to GUILD_TUTORIAL_TASKS"),
+            "NeedToRejoin": ("guild_rejoin", "Need to rejoin guild - switching to Guild_Rejoin"),
+            "isRefreshed": ("guild_tutorial", "Guild refresh complete - returning to GUILD_TUTORIAL_TASKS"),
+            "BackToRestartingTasks": ("restarting", "BackToRestartingTasks triggered - returning to Restarting_Tasks"),
+            "BackToMain": ("main", "BackToMain triggered - returning to Main_Tasks"),
+            "Characters_Full": ("sell_characters", "Characters_Full triggered - switching to Sell_Characters")
+        }
+        
+        for flag, (task_set, message) in flag_handlers.items():
+            if task.get(flag, False):
+                shows_in = task.get("ShowsIn")
+                if shows_in:
+                    current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
+                    task_set_mapping = {
+                        "main": "main_tasks",
+                        "restarting": "restarting_tasks", 
+                        "guild_tutorial": "guild_tutorial_tasks",
+                        "guild_rejoin": "guild_rejoin_tasks",
+                        "sell_characters": "sell_characters_tasks"
+                    }
+                    current_task_name = task_set_mapping.get(current_task_set, current_task_set)
+                    
+                    if current_task_name not in shows_in:
+                        print(f"[{device_id}] Flag '{flag}' ignored - not active in current task set '{current_task_name}'")
+                        continue
+                
+                print(f"[{device_id}] {message}")
+                self.process_monitor.set_active_tasks(device_id, task_set)
+                break
+
+    async def process_matched_tasks(self, device_id: str, matched_tasks: List[dict]) -> bool:
+        """Process all matched tasks intelligently"""
+        logical_triggered = False
+        tasks_by_priority = defaultdict(list)
+        
+        # Group tasks by priority
+        for task in matched_tasks:
+            priority = task.get('priority', 999)
+            tasks_by_priority[priority].append(task)
+        
+        # Process tasks by priority level
+        for priority in sorted(tasks_by_priority.keys()):
+            priority_tasks = tasks_by_priority[priority]
+            
+            # Within same priority, execute all shared_detection tasks
+            shared_tasks = [t for t in priority_tasks if t.get('shared_detection', False)]
+            regular_tasks = [t for t in priority_tasks if not t.get('shared_detection', False)]
+            
+            # Execute all shared detection tasks at this priority level
+            for task in shared_tasks:
+                task_name = task['task_name']
+                
+                # Skip if already processed in this frame
+                if task_name in self.frame_processed_tasks[device_id]:
+                    continue
+                
+                print(f"[{device_id}] {task_name} triggered (Priority: {priority}, Shared Detection)")
+                
+                self.no_action_timers[device_id] = time.time()
+                self.frame_processed_tasks[device_id].add(task_name)
+                
+                # Check for restart conditions
+                should_restart = self.process_monitor.track_action(device_id, task_name)
+                if should_restart:
+                    await self.process_monitor.kill_and_restart_game(device_id)
+                    return logical_triggered
+                
+                # Handle task flags
+                await self.handle_task_flags(device_id, task)
+                
+                # Execute the action if not already done
+                if "[Multi:" not in task_name and "[Executed" not in task_name:
+                    await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
+                
+                if task.get("isLogical", False):
+                    logical_triggered = True
+                
+                await asyncio.sleep(0.05)
+            
+            # Execute first regular task at this priority level
+            if regular_tasks and not logical_triggered:
+                task = regular_tasks[0]
+                task_name = task['task_name']
+                
+                if task_name not in self.frame_processed_tasks[device_id]:
+                    print(f"[{device_id}] {task_name} triggered (Priority: {priority})")
+                    
+                    self.no_action_timers[device_id] = time.time()
+                    self.frame_processed_tasks[device_id].add(task_name)
+                    
+                    # Check for restart conditions
+                    should_restart = self.process_monitor.track_action(device_id, task_name)
+                    if should_restart:
+                        await self.process_monitor.kill_and_restart_game(device_id)
+                        return logical_triggered
+                    
+                    # Handle task flags
+                    await self.handle_task_flags(device_id, task)
+                    
+                    # Execute the action
+                    if "[Executed" not in task_name:
+                        await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
+                    
+                    if task.get("isLogical", False):
+                        logical_triggered = True
+                    
+                    # Break after first regular task to prevent spam
+                    break
+        
+        return logical_triggered
 
     async def watch_device_optimized(self, device_id: str) -> Optional[str]:
-        """Optimized device watching with process monitoring and task switching"""
-        print(f"[{device_id}] Starting optimized background monitoring with process checking...")
+        """Optimized device watching with smart multi-detection"""
+        print(f"[{device_id}] Starting optimized background monitoring with smart detection...")
         
         self.device_states[device_id] = {'stable_count': 0, 'last_action': time.time()}
+        self.no_action_timers[device_id] = time.time()
+        
+        # Initial setup check
+        is_initial = self.process_monitor.is_initial_setup(device_id)
         
         while not self.stop_event.is_set():
             try:
-                # Check if we should verify process status
+                # Clear frame processed tasks
+                self.frame_processed_tasks[device_id].clear()
+                
+                # Check if 30 seconds passed without any action
+                if time.time() - self.no_action_timers.get(device_id, time.time()) > 30:
+                    print(f"[{device_id}] 30 seconds without actions - restarting game")
+                    await self.process_monitor.kill_and_restart_game(device_id)
+                    self.no_action_timers[device_id] = time.time()
+                
+                # Check process status
                 if await self.process_monitor.should_check_process(device_id):
                     is_bleach_running = await self.process_monitor.is_bleach_running(device_id)
                     
                     if not is_bleach_running:
-                        # Bleach is not running, launch it and switch to BACKGROUND_TASKS_2
-                        print(f"[{device_id}] Bleach process not detected, launching game...")
+                        print(f"[{device_id}] Game not running, launching...")
                         await self.process_monitor.launch_bleach(device_id)
-                        self.process_monitor.set_active_tasks(device_id, "bleach")
-                    else:
-                        # Check if we're in bleach mode when we shouldn't be
-                        current_mode = self.process_monitor.active_task_set.get(device_id, "main")
-                        if current_mode == "bleach":
-                            print(f"[{device_id}] Bleach is running, maintaining bleach task mode")
+                        self.process_monitor.set_active_tasks(device_id, "restarting")
+                    elif is_initial:
+                        print(f"[{device_id}] Initial execution with game running - using Main_Tasks")
+                        self.process_monitor.set_active_tasks(device_id, "main")
+                        self.process_monitor.mark_initial_complete(device_id)
                 
-                # Get current active tasks for this device
-                prioritized_tasks = self.get_prioritized_tasks(device_id)
+                # Get all active tasks
+                all_tasks = self.get_prioritized_tasks(device_id)
                 
-                # Find freeze task and separate from others
-                freeze_task = None
-                other_tasks = []
-                for task in prioritized_tasks:
-                    if task.get('task_name', '').startswith("Game Freezed"):
-                        freeze_task = task
-                    else:
-                        other_tasks.append(task)
+                # Process all tasks at once with the enhanced batch check
+                matched_tasks = await batch_check_pixels_enhanced(device_id, all_tasks)
                 
-                # Handle freeze detection if applicable
-                if freeze_task:
-                    needs_restart = await self.freeze_detector.handle_freeze_detection(device_id, freeze_task)
-                    if needs_restart:
-                        print(f"[{device_id}] Freeze detected - continuing monitoring...")
-                        self.device_states[device_id] = {
-                            'stable_count': 0,
-                            'last_action': time.time()
-                        }
-                        continue
-                
-                # Process other tasks in batches
-                for i in range(0, len(other_tasks), self.batch_size):
-                    if self.stop_event.is_set():
-                        break
+                if matched_tasks:
+                    logical_triggered = await self.process_matched_tasks(device_id, matched_tasks)
+                    if logical_triggered:
+                        return device_id
                     
-                    batch = other_tasks[i:i + self.batch_size]
-                    matched_tasks = await batch_check_pixels(device_id, batch)
-                    
-                    action_taken = False
-                    for task in matched_tasks:
-                        print(f"[{device_id}] {task['task_name']} triggered")
-                        
-                        # Check for BackToStore flag
-                        if task.get("BackToStore", False):
-                            print(f"[{device_id}] BackToStore flag detected - switching to main tasks")
-                            self.process_monitor.set_active_tasks(device_id, "main")
-                        
-                        # Execute tap action
-                        await execute_tap(device_id, task["click_location_str"])
-                        
-                        self.device_states[device_id] = {
-                            'stable_count': 0, 
-                            'last_action': time.time()
-                        }
-                        action_taken = True
-                        
-                        if task.get("isLogical", False):
-                            return device_id
-                        
-                        await asyncio.sleep(0.1)
-                    
-                    if not action_taken:
-                        self.device_states[device_id]['stable_count'] += 1
+                    self.device_states[device_id]['stable_count'] = 0
+                else:
+                    self.device_states[device_id]['stable_count'] += 1
                 
                 interval = self.get_adaptive_interval(device_id)
                 await asyncio.sleep(interval)
@@ -523,120 +418,8 @@ class OptimizedBackgroundMonitor:
         
         return None
     
-    async def monitor_all_devices_ultra_fast(self) -> Optional[str]:
-        """Ultra-fast monitoring with process checking"""
-        self.stop_event.clear()
-        
-        while not self.stop_event.is_set():
-            try:
-                # Process checking for all devices - NOW CONCURRENT
-                async def check_and_launch_device(device_id: str):
-                    """Check process status and launch game for a single device"""
-                    try:
-                        if await self.process_monitor.should_check_process(device_id):
-                            is_bleach_running = await self.process_monitor.is_bleach_running(device_id)
-                            
-                            if not is_bleach_running:
-                                print(f"[{device_id}] Bleach not running, launching and switching tasks...")
-                                await self.process_monitor.launch_bleach(device_id)
-                                self.process_monitor.set_active_tasks(device_id, "bleach")
-                    except Exception as e:
-                        print(f"[{device_id}] Error in process check: {e}")
-                
-                # Create concurrent tasks for process checking on all devices
-                process_check_tasks = [
-                    asyncio.create_task(check_and_launch_device(device_id))
-                    for device_id in settings.DEVICE_IDS
-                ]
-                
-                # Wait for all process checks to complete
-                await asyncio.gather(*process_check_tasks, return_exceptions=True)
-                
-                # Capture screenshots from all devices
-                if self.parallel_screenshots:
-                    device_screenshots = await self.batch_screenshot_all_devices(settings.DEVICE_IDS)
-                else:
-                    device_screenshots = {}
-                    for device_id in settings.DEVICE_IDS:
-                        device_screenshots[device_id] = await screenshot_manager.get_screenshot(device_id)
-                
-                # Create concurrent tasks to check all devices
-                check_tasks = []
-                for device_id, screenshot in device_screenshots.items():
-                    if screenshot is not None:
-                        task = asyncio.create_task(
-                            self.check_device_tasks_with_screenshot(device_id, screenshot)
-                        )
-                        check_tasks.append((device_id, task))
-                
-                # Wait for any device to trigger logical task
-                if check_tasks:
-                    for device_id, task in check_tasks:
-                        try:
-                            triggered = await asyncio.wait_for(task, timeout=0.1)
-                            if triggered:
-                                self.stop_event.set()
-                                return device_id
-                        except asyncio.TimeoutError:
-                            continue
-                        except Exception as e:
-                            print(f"[{device_id}] Check error: {e}")
-                            continue
-                
-                await asyncio.sleep(self.check_interval)
-                
-            except Exception as e:
-                print(f"Ultra-fast monitor error: {e}")
-                await asyncio.sleep(0.5)
-        
-        return None
-    
-    async def check_device_tasks_with_screenshot(self, device_id: str, screenshot) -> bool:
-        """Check device tasks with BackToStore flag handling"""
-        try:
-            prioritized_tasks = self.get_prioritized_tasks(device_id)
-            
-            freeze_task = None
-            other_tasks = []
-            for task in prioritized_tasks:
-                if task.get('task_name', '').startswith("Game Freezed"):
-                    freeze_task = task
-                else:
-                    other_tasks.append(task)
-            
-            if freeze_task:
-                needs_restart = await self.freeze_detector.handle_freeze_detection(device_id, freeze_task)
-                if needs_restart:
-                    print(f"[{device_id}] Freeze detected - continuing monitoring...")
-                    return False
-            
-            for i in range(0, len(other_tasks), self.batch_size):
-                batch = other_tasks[i:i + self.batch_size]
-                matched_tasks = await batch_check_pixels(device_id, batch, screenshot)
-                
-                for task in matched_tasks:
-                    print(f"[{device_id}] {task['task_name']} triggered")
-                    
-                    # Check BackToStore flag
-                    if task.get("BackToStore", False):
-                        print(f"[{device_id}] BackToStore detected - switching to main tasks")
-                        self.process_monitor.set_active_tasks(device_id, "main")
-                    
-                    await execute_tap(device_id, task["click_location_str"])
-                    
-                    if task.get("isLogical", False):
-                        return True
-                    
-                    await asyncio.sleep(0.05)
-            
-            return False
-            
-        except Exception as e:
-            print(f"[{device_id}] Task check error: {e}")
-            return False
-
     async def monitor_all_devices(self) -> Optional[str]:
-        """Monitor all devices concurrently with process checking"""
+        """Monitor all devices concurrently"""
         self.stop_event.clear()
         
         if self.parallel_screenshots:
@@ -669,17 +452,85 @@ class OptimizedBackgroundMonitor:
                 pass
         
         return triggered_device
+    
+    async def monitor_all_devices_ultra_fast(self) -> Optional[str]:
+        """Ultra-fast monitoring with shared detection support"""
+        self.stop_event.clear()
+        
+        for device_id in settings.DEVICE_IDS:
+            self.no_action_timers[device_id] = time.time()
+        
+        while not self.stop_event.is_set():
+            try:
+                # Clear frame processed tasks for all devices
+                for device_id in settings.DEVICE_IDS:
+                    self.frame_processed_tasks[device_id].clear()
+                
+                # Check for devices that need restart
+                for device_id in settings.DEVICE_IDS:
+                    if time.time() - self.no_action_timers.get(device_id, time.time()) > 120:
+                        print(f"[{device_id}] 120 seconds without actions - restarting game")
+                        await self.process_monitor.kill_and_restart_game(device_id)
+                        self.no_action_timers[device_id] = time.time()
+                
+                # Process checking for all devices
+                async def check_and_manage_device(device_id: str):
+                    try:
+                        if await self.process_monitor.should_check_process(device_id):
+                            is_bleach_running = await self.process_monitor.is_bleach_running(device_id)
+                            is_initial = self.process_monitor.is_initial_setup(device_id)
+                            
+                            if not is_bleach_running:
+                                print(f"[{device_id}] Game not running, launching...")
+                                await self.process_monitor.launch_bleach(device_id)
+                                self.process_monitor.set_active_tasks(device_id, "restarting")
+                            elif is_initial:
+                                print(f"[{device_id}] Initial execution with game running - using Main_Tasks")
+                                self.process_monitor.set_active_tasks(device_id, "main")
+                                self.process_monitor.mark_initial_complete(device_id)
+                    except Exception as e:
+                        print(f"[{device_id}] Error in process check: {e}")
+                
+                # Check all devices concurrently
+                process_check_tasks = [
+                    asyncio.create_task(check_and_manage_device(device_id))
+                    for device_id in settings.DEVICE_IDS
+                ]
+                
+                await asyncio.gather(*process_check_tasks, return_exceptions=True)
+                
+                # Capture screenshots from all devices
+                device_screenshots = await self.batch_screenshot_all_devices(settings.DEVICE_IDS)
+                
+                # Process all devices
+                for device_id, screenshot in device_screenshots.items():
+                    if screenshot is not None:
+                        all_tasks = self.get_prioritized_tasks(device_id)
+                        matched_tasks = await batch_check_pixels_enhanced(device_id, all_tasks, screenshot)
+                        
+                        if matched_tasks:
+                            logical_triggered = await self.process_matched_tasks(device_id, matched_tasks)
+                            if logical_triggered:
+                                self.stop_event.set()
+                                return device_id
+                
+                await asyncio.sleep(self.check_interval)
+                
+            except Exception as e:
+                print(f"Ultra-fast monitor error: {e}")
+                await asyncio.sleep(0.5)
+        
+        return None
 
 
 # Global monitor instance
 monitor = OptimizedBackgroundMonitor()
 
-# Backward compatible function
+# Backward compatible functions
 async def continuous_pixel_watch() -> Optional[str]:
     """Backward compatible wrapper for the optimized monitor"""
     return await monitor.monitor_all_devices()
 
-# Alternative high-performance version
 async def watch_device_for_trigger(device_id: str) -> Optional[str]:
     """Backward compatible single device watcher"""
     return await monitor.watch_device_optimized(device_id)

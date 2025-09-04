@@ -1,0 +1,67 @@
+# tasks/guild_tasks.py - Guild tutorial and rejoin tasks
+
+GUILD_TUTORIAL_TASKS = [
+    {
+        "task_name": "Click [Guild Icon]",
+        "type": "template",
+        "template_path": "templates/Guild/GuildIcon.png",
+        "roi": [442, 430, 109, 108],
+        "confidence": 0.70,
+        "use_match_position": True,
+        "isLogical": False,
+    },
+    {
+        "task_name": "Click [Join]",
+        "type": "pixel",
+        "click_location_str": "814,173",
+        "search_array": ["801,173","#fbfcff","807,87","#485563","860,88","#ffffff"],
+        "isLogical": False,
+    },
+    {
+        "task_name": "Click [OK]",
+        "type": "template",
+        "template_path": "templates/Guild/OKGUILD.png",
+        "roi": [535, 386, 162, 49],
+        "confidence": 0.80,
+        "use_match_position": True,
+        "isLogical": False,
+    },
+    {
+        "task_name": "Click [Guild TOP]",
+        "type": "template",
+        "template_path": "templates/Guild/GuildTOP.png",
+        "roi": [321, 337, 312, 59],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "isLogical": False,
+    },
+]
+
+Guild_Rejoin = [
+    {
+        "task_name": "Click Join Button",
+        "type": "template",
+        "template_path": "templates/Guild/Join.png",
+        "roi": [772, 116, 79, 399],
+        "confidence": 0.80,
+        "use_match_position": True,
+        "isLogical": False,
+    },
+    {
+        "task_name": "Click Refresh",
+        "type": "pixel",
+        "click_location_str": "856,84",
+        "search_array": ["859,88","#ffffff","861,78","#4d555c","876,100","#dedddd"],
+        "isLogical": False,
+    },
+    {
+        "task_name": "Click [Guild TOP]",
+        "type": "template",
+        "template_path": "templates/Guild/GuildTOP.png",
+        "roi": [321, 337, 312, 59],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "isLogical": False,
+        "NeedGuildTutorial":True
+    },
+]

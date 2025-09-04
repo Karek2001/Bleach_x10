@@ -47,7 +47,7 @@ MAX_ADB_CONNECTIONS = 2
 ENABLE_GPU_MEMORY_POOL = True
 
 # Screenshot quality (1-100) - lower = faster but less accurate
-SCREENSHOT_QUALITY = 85
+SCREENSHOT_QUALITY = 100
 
 # -------------------
 # OPTIMIZATION FLAGS
@@ -81,7 +81,7 @@ ECD_FILES = {
 # -------------------
 # AUTOMATION SETTINGS
 # -------------------
-EMULATOR_RESOLUTION = (540, 960)
+EMULATOR_RESOLUTION = (960, 540)
 
 # Number of concurrent threads (only used if USE_ASYNC_PROCESSING is False)
 NUM_THREADS = 4
