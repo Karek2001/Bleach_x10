@@ -1,4 +1,4 @@
-# actions.py - Enhanced Version with Smart Multi-Detection and Anti-Spam
+# actions.py - Enhanced Version with OCR Support
 import asyncio
 import subprocess
 import io
@@ -12,6 +12,26 @@ import numpy as np
 from PIL import Image
 import cv2
 from screenrecord_manager import get_screenrecord_manager, cleanup_all_screenrecord
+
+# OCR imports
+try:
+    import pytesseract
+    TESSERACT_AVAILABLE = True
+    # Configure Tesseract path for Windows (adjust as needed)
+    # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+except ImportError:
+    print("[OCR] Tesseract not available - OCR features disabled")
+    TESSERACT_AVAILABLE = False
+
+try:
+    import easyocr
+    # Initialize EasyOCR reader (supports multiple languages)
+    ocr_reader = easyocr.Reader(['en'], gpu=True)  # Use GPU if available
+    EASYOCR_AVAILABLE = True
+except ImportError:
+    print("[OCR] EasyOCR not available - falling back to Tesseract")
+    EASYOCR_AVAILABLE = False
+    ocr_reader = None
 
 # PyAutoGUI import with headless environment handling
 try:
@@ -119,15 +139,109 @@ class TemplateCache:
 
 template_cache = TemplateCache()
 
+# --- OCR Functions ---
+class OCRManager:
+    """Manages OCR operations with caching and optimization"""
+    
+    def __init__(self):
+        self.ocr_cache: Dict[str, Dict] = {}  # Cache OCR results
+        self.cache_duration = 0.5  # OCR cache duration in seconds
+        
+    async def extract_text_from_region(self, screenshot: np.ndarray, 
+                                      roi: Tuple[int, int, int, int],
+                                      use_easyocr: bool = True) -> List[Tuple[str, Tuple[int, int]]]:
+        """
+        Extract text from a specific region of the screenshot.
+        Returns list of (text, center_position) tuples.
+        """
+        x, y, w, h = roi
+        roi_img = screenshot[y:y+h, x:x+w]
+        
+        if roi_img.size == 0:
+            return []
+        
+        detected_texts = []
+        
+        try:
+            if use_easyocr and EASYOCR_AVAILABLE:
+                # Use EasyOCR for better accuracy
+                results = ocr_reader.readtext(roi_img, detail=1)
+                
+                for (bbox, text, confidence) in results:
+                    if confidence > 0.5:  # Filter low confidence
+                        # Calculate center position
+                        min_x = min(pt[0] for pt in bbox)
+                        max_x = max(pt[0] for pt in bbox)
+                        min_y = min(pt[1] for pt in bbox)
+                        max_y = max(pt[1] for pt in bbox)
+                        
+                        center_x = x + (min_x + max_x) // 2
+                        center_y = y + (min_y + max_y) // 2
+                        
+                        detected_texts.append((text.lower(), (center_x, center_y)))
+                        
+            elif TESSERACT_AVAILABLE:
+                # Use Tesseract as fallback
+                # Preprocess image for better OCR
+                gray = cv2.cvtColor(roi_img, cv2.COLOR_RGB2GRAY)
+                
+                # Apply threshold to get black text on white background
+                _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+                
+                # Get OCR data with positions
+                data = pytesseract.image_to_data(thresh, output_type=pytesseract.Output.DICT)
+                
+                for i in range(len(data['text'])):
+                    text = data['text'][i].strip().lower()
+                    conf = int(data['conf'][i])
+                    
+                    if text and conf > 50:  # Filter empty and low confidence
+                        box_x = data['left'][i]
+                        box_y = data['top'][i]
+                        box_w = data['width'][i]
+                        box_h = data['height'][i]
+                        
+                        center_x = x + box_x + box_w // 2
+                        center_y = y + box_y + box_h // 2
+                        
+                        detected_texts.append((text, (center_x, center_y)))
+            
+        except Exception as e:
+            print(f"OCR error: {e}")
+        
+        return detected_texts
+    
+    async def find_text_in_region(self, screenshot: np.ndarray,
+                                 search_texts: List[str],
+                                 roi: Tuple[int, int, int, int]) -> Optional[Tuple[str, Tuple[int, int]]]:
+        """
+        Find any of the search texts in the specified region.
+        Returns (matched_text, position) or None.
+        """
+        detected_texts = await self.extract_text_from_region(screenshot, roi)
+        
+        for search_text in search_texts:
+            search_lower = search_text.lower().strip()
+            
+            for detected_text, position in detected_texts:
+                # Check for exact match or substring match
+                if search_lower in detected_text or detected_text in search_lower:
+                    return (search_text, position)
+        
+        return None
+
+# Global OCR manager
+ocr_manager = OCRManager()
+
 # --- Enhanced Task Execution Tracker ---
 class TaskExecutionTracker:
     """Advanced tracker to prevent task spam and manage execution timing"""
     def __init__(self):
-        self.last_execution: Dict[str, Dict[str, float]] = {}  # device_id -> {task_name: timestamp}
-        self.execution_count: Dict[str, Dict[str, int]] = {}  # device_id -> {task_name: count}
-        self.cooldowns: Dict[str, float] = {}  # task_name -> cooldown_seconds
-        self.frame_tasks: Dict[str, Set[str]] = {}  # device_id -> set of tasks executed this frame
-        self.last_frame_time: Dict[str, float] = {}  # device_id -> timestamp
+        self.last_execution: Dict[str, Dict[str, float]] = {}
+        self.execution_count: Dict[str, Dict[str, int]] = {}
+        self.cooldowns: Dict[str, float] = {}
+        self.frame_tasks: Dict[str, Set[str]] = {}
+        self.last_frame_time: Dict[str, float] = {}
         
     def set_task_cooldown(self, task_name: str, cooldown: float):
         """Set cooldown for a specific task"""
@@ -138,23 +252,19 @@ class TaskExecutionTracker:
         """Check if task can be executed based on cooldowns and frame limits"""
         current_time = time.time()
         
-        # Initialize device tracking if needed
         if device_id not in self.last_execution:
             self.last_execution[device_id] = {}
             self.execution_count[device_id] = {}
             self.frame_tasks[device_id] = set()
             self.last_frame_time[device_id] = 0
         
-        # Reset frame tracking if this is a new frame (>100ms since last frame)
         if current_time - self.last_frame_time[device_id] > 0.1:
             self.frame_tasks[device_id] = set()
             self.last_frame_time[device_id] = current_time
         
-        # Check if task was already executed in this frame
         if task_name in self.frame_tasks[device_id]:
             return False
         
-        # Check cooldown
         last_time = self.last_execution[device_id].get(task_name, 0)
         cooldown = self.cooldowns.get(task_name, default_cooldown)
         
@@ -202,19 +312,16 @@ async def find_all_templates_smart(screenshot: np.ndarray,
             if template is None:
                 continue
             
-            # Extract ROI
             x, y, w, h = roi
             roi_img = screenshot[y:y+h, x:x+w]
             
             if roi_img.size == 0:
                 continue
             
-            # Perform template matching
             result = cv2.matchTemplate(roi_img.astype(np.uint8), 
                                      template.astype(np.uint8), 
                                      cv2.TM_CCOEFF_NORMED)
             
-            # Find all matches above confidence
             locations = np.where(result >= confidence)
             
             if len(locations[0]) == 0:
@@ -223,12 +330,10 @@ async def find_all_templates_smart(screenshot: np.ndarray,
             matches = []
             template_h, template_w = template.shape[:2]
             
-            # Convert to center points and filter duplicates
             for pt_y, pt_x in zip(locations[0], locations[1]):
                 center_x = x + pt_x + template_w // 2
                 center_y = y + pt_y + template_h // 2
                 
-                # Check for duplicates
                 is_duplicate = False
                 for existing_x, existing_y in matches:
                     dist_sq = (center_x - existing_x)**2 + (center_y - existing_y)**2
@@ -250,7 +355,7 @@ async def find_all_templates_smart(screenshot: np.ndarray,
 
 async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict], 
                                      screenshot: Optional[np.ndarray] = None) -> List[dict]:
-    """Enhanced batch checking with smart multi-detection and anti-spam"""
+    """Enhanced batch checking with OCR support"""
     if screenshot is not None:
         img_gpu = screenshot
     else:
@@ -262,6 +367,7 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
     # Separate tasks by detection type
     pixel_tasks = []
     template_tasks = []
+    ocr_tasks = []
     shared_detection_tasks = []
     
     for task in tasks:
@@ -269,6 +375,8 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
         
         if task_type == "pixel":
             pixel_tasks.append(task)
+        elif task_type == "ocr":
+            ocr_tasks.append(task)
         elif task_type == "template":
             if task.get("shared_detection", False):
                 shared_detection_tasks.append(task)
@@ -277,7 +385,7 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
     
     matched_tasks = []
     
-    # Process pixel tasks (original logic)
+    # Process pixel tasks
     for task in pixel_tasks:
         search_array = task["search_array"]
         all_match = True
@@ -299,11 +407,46 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 break
         
         if all_match:
-            # Check if we can execute this task (cooldown/spam prevention)
             if task_tracker.can_execute_task(device_id, task["task_name"]):
                 matched_tasks.append(task)
     
-    # Process shared detection templates (all at once)
+    # Process OCR tasks
+    for task in ocr_tasks:
+        ocr_text = task.get("ocr_text", "")
+        if not ocr_text:
+            continue
+        
+        # Parse search texts (comma-separated)
+        search_texts = [text.strip().lower() for text in ocr_text.split(",")]
+        
+        roi = task.get("roi", [0, 0, img_gpu.shape[1], img_gpu.shape[0]])
+        
+        # Check if we can execute this task
+        if not task_tracker.can_execute_task(device_id, task["task_name"]):
+            continue
+        
+        # Find text in region
+        result = await ocr_manager.find_text_in_region(img_gpu, search_texts, roi)
+        
+        if result:
+            matched_text, position = result
+            task_copy = task.copy()
+            
+            # Handle position setting
+            if task.get("use_match_position", False):
+                # Only for single word/number searches (no comma)
+                if "," not in ocr_text:
+                    task_copy["click_location_str"] = f"{position[0]},{position[1]}"
+                    task_copy["task_name"] = f"{task['task_name']} [OCR: '{matched_text}' at {position}]"
+                else:
+                    task_copy["task_name"] = f"{task['task_name']} [OCR: '{matched_text}' found]"
+            else:
+                task_copy["task_name"] = f"{task['task_name']} [OCR: '{matched_text}']"
+            
+            matched_tasks.append(task_copy)
+            task_tracker.record_execution(device_id, task["task_name"])
+    
+    # Process shared detection templates
     if shared_detection_tasks:
         templates_to_check = []
         task_map = {}
@@ -320,31 +463,26 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 templates_to_check.append((template_path, roi, confidence))
                 task_map[template_path] = task
         
-        # Find all matches in single pass
         all_matches = await find_all_templates_smart(img_gpu, templates_to_check)
         
-        # Process matches by priority
         for template_path, positions in all_matches.items():
             task = task_map[template_path]
             task_name = task["task_name"]
             
-            # Check if we can execute this task
             if not task_tracker.can_execute_task(device_id, task_name):
                 continue
             
-            # Handle multi-click tasks
             if task.get("multi_click", False) or "UnClear" in task_name:
                 print(f"[MULTI-DETECT] {task_name}: Found {len(positions)} matches")
                 for i, (x, y) in enumerate(positions):
                     await execute_tap(device_id, f"{x},{y}")
-                    await asyncio.sleep(0.10)
+                    await asyncio.sleep(0.05)
                 
                 task_tracker.record_execution(device_id, task_name)
                 task_copy = task.copy()
                 task_copy["task_name"] = f"{task_name} [Multi: {len(positions)} clicks]"
                 matched_tasks.append(task_copy)
             else:
-                # Single click task - use first match
                 if positions:
                     x, y = positions[0]
                     task_copy = task.copy()
@@ -353,11 +491,10 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                     matched_tasks.append(task_copy)
                     task_tracker.record_execution(device_id, task_name)
     
-    # Process regular template tasks (one by one, with anti-spam)
+    # Process regular template tasks
     for task in template_tasks:
         task_name = task["task_name"]
         
-        # Skip if task was recently executed
         if not task_tracker.can_execute_task(device_id, task_name):
             continue
         
@@ -381,7 +518,7 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 break
         
         if match_found:
-            break  # Stop after first regular template match
+            break
     
     return matched_tasks
 
@@ -408,6 +545,10 @@ async def execute_tap(device_id: str, location_str: str):
     """Execute tap command asynchronously"""
     coords = location_str.replace(',', ' ')
     await run_adb_command(f"shell input tap {coords}", device_id)
+
+async def execute_swipe(device_id: str, x1: int, y1: int, x2: int, y2: int, duration: int):
+    """Execute swipe command asynchronously"""
+    await run_adb_command(f"shell input swipe {x1} {y1} {x2} {y2} {duration}", device_id)
 
 async def find_template_in_region(screenshot: np.ndarray, template_path: str, 
                                  roi: Tuple[int, int, int, int], 
@@ -442,10 +583,10 @@ async def find_template_in_region(screenshot: np.ndarray, template_path: str,
         print(f"Template matching error: {e}")
         return None
 
-# Configure default cooldowns for common task types
+# Configure default cooldowns
 task_tracker.set_task_cooldown("Click [Skip]", 3.0)
 task_tracker.set_task_cooldown("Connection Error - Retry", 5.0)
 task_tracker.set_task_cooldown("Click [OK]", 2.0)
 
-# Export the enhanced batch check function with the original name for compatibility
+# Export the enhanced batch check function
 batch_check_pixels = batch_check_pixels_enhanced

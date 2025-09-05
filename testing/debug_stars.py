@@ -33,7 +33,7 @@ async def debug_stars_template():
     print(f"Screenshot loaded: {screenshot.shape}")
     
     # Test parameters from your task
-    template_path = "templates/Stars.png"
+    template_path = "templates/Story_Mode/Stars.png"
     roi = [3, 86, 953, 415]  # Your current ROI
     confidence = 0.60  # Your current confidence
     

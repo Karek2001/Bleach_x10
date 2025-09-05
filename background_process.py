@@ -14,7 +14,8 @@ from tasks import (
     Switcher_Tasks,
     GUILD_TUTORIAL_TASKS,
     Guild_Rejoin,
-    Sell_Characters
+    Sell_Characters,
+    HardStory_Tasks
 )
 
 # Bleach game package name
@@ -30,7 +31,7 @@ class ProcessMonitor:
         self.check_interval = 10
         self.last_check_times = {}
         self.active_task_set = {}
-        self.initial_setup = {}
+        self.initial_setup_complete = {}  # Tracks if initial setup is done for a device
         self.last_action_time = {}
         self.action_count = {}
         self.last_action_name = {}
@@ -83,9 +84,9 @@ class ProcessMonitor:
             self.action_count[device_id] = {}
             self.last_action_name[device_id] = None
         
-        # Check for 120 second inactivity
-        if current_time - self.last_action_time[device_id] > 120:
-            print(f"[{device_id}] No actions for 120 seconds - triggering restart")
+        # Check for 240 second inactivity
+        if current_time - self.last_action_time[device_id] > 240:
+            print(f"[{device_id}] No actions for 240 seconds - triggering restart")
             return True
         
         self.last_action_time[device_id] = current_time
@@ -133,7 +134,8 @@ class ProcessMonitor:
             "restarting": Restarting_Tasks,
             "guild_tutorial": GUILD_TUTORIAL_TASKS,
             "guild_rejoin": Guild_Rejoin,
-            "sell_characters": Sell_Characters
+            "sell_characters": Sell_Characters,
+            "hardstory": HardStory_Tasks
         }
         
         base_tasks = task_map.get(task_set, Restarting_Tasks)
@@ -146,7 +148,7 @@ class ProcessMonitor:
     
     def set_active_tasks(self, device_id: str, task_set: str):
         """Set the active task set for a device"""
-        valid_sets = ["main", "restarting", "guild_tutorial", "guild_rejoin", "sell_characters"]
+        valid_sets = ["main", "restarting", "guild_tutorial", "guild_rejoin", "sell_characters", "hardstory"]
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
             
@@ -155,20 +157,18 @@ class ProcessMonitor:
                 "restarting": "Restarting_Tasks",
                 "guild_tutorial": "GUILD_TUTORIAL_TASKS",
                 "guild_rejoin": "Guild_Rejoin",
-                "sell_characters": "Sell_Characters"
+                "sell_characters": "Sell_Characters",
+                "hardstory": "HardStory_Tasks"
             }
             print(f"[{device_id}] Switched to {task_names.get(task_set, task_set)}")
     
-    def is_initial_setup(self, device_id: str) -> bool:
-        """Check if this is the initial setup for the device"""
-        if device_id not in self.initial_setup:
-            self.initial_setup[device_id] = True
-            return True
-        return False
+    def is_initial_setup_needed(self, device_id: str) -> bool:
+        """Checks if the initial setup logic needs to run for a device."""
+        return not self.initial_setup_complete.get(device_id, False)
     
     def mark_initial_complete(self, device_id: str):
-        """Mark initial setup as complete"""
-        self.initial_setup[device_id] = False
+        """Marks that the initial setup for a device is complete."""
+        self.initial_setup_complete[device_id] = True
 
 
 class OptimizedBackgroundMonitor:
@@ -254,7 +254,8 @@ class OptimizedBackgroundMonitor:
             "isRefreshed": ("guild_tutorial", "Guild refresh complete - returning to GUILD_TUTORIAL_TASKS"),
             "BackToRestartingTasks": ("restarting", "BackToRestartingTasks triggered - returning to Restarting_Tasks"),
             "BackToMain": ("main", "BackToMain triggered - returning to Main_Tasks"),
-            "Characters_Full": ("sell_characters", "Characters_Full triggered - switching to Sell_Characters")
+            "Characters_Full": ("sell_characters", "Characters_Full triggered - switching to Sell_Characters"),
+            "HardStory": ("hardstory", "HardStory triggered - switching to HardStory_Tasks")
         }
         
         for flag, (task_set, message) in flag_handlers.items():
@@ -267,7 +268,8 @@ class OptimizedBackgroundMonitor:
                         "restarting": "restarting_tasks", 
                         "guild_tutorial": "guild_tutorial_tasks",
                         "guild_rejoin": "guild_rejoin_tasks",
-                        "sell_characters": "sell_characters_tasks"
+                        "sell_characters": "sell_characters_tasks",
+                        "hardstory": "hardstory_tasks"
                     }
                     current_task_name = task_set_mapping.get(current_task_set, current_task_set)
                     
@@ -325,6 +327,14 @@ class OptimizedBackgroundMonitor:
                 
                 if task.get("isLogical", False):
                     logical_triggered = True
+                    print(f"[{device_id}] DEBUG: Logical task detected - {task['task_name']}")
+                    # Store task info for logical processing
+                    if not hasattr(self, 'logical_task_info'):
+                        self.logical_task_info = {}
+                    self.logical_task_info[device_id] = task
+                    print(f"[{device_id}] DEBUG: Stored logical task info with HardModeSwipe={task.get('HardModeSwipe', False)}")
+                    print(f"[{device_id}] DEBUG: Returning immediately after logical task detection")
+                    return logical_triggered
                 
                 await asyncio.sleep(0.05)
             
@@ -354,6 +364,12 @@ class OptimizedBackgroundMonitor:
                     
                     if task.get("isLogical", False):
                         logical_triggered = True
+                        print(f"[{device_id}] DEBUG: Logical task detected (regular) - {task['task_name']}")
+                        # Store task info for logical processing
+                        if not hasattr(self, 'logical_task_info'):
+                            self.logical_task_info = {}
+                        self.logical_task_info[device_id] = task
+                        print(f"[{device_id}] DEBUG: Stored logical task info (regular) with HardModeSwipe={task.get('HardModeSwipe', False)}")
                     
                     # Break after first regular task to prevent spam
                     break
@@ -367,17 +383,14 @@ class OptimizedBackgroundMonitor:
         self.device_states[device_id] = {'stable_count': 0, 'last_action': time.time()}
         self.no_action_timers[device_id] = time.time()
         
-        # Initial setup check
-        is_initial = self.process_monitor.is_initial_setup(device_id)
-        
         while not self.stop_event.is_set():
             try:
                 # Clear frame processed tasks
                 self.frame_processed_tasks[device_id].clear()
                 
-                # Check if 30 seconds passed without any action
-                if time.time() - self.no_action_timers.get(device_id, time.time()) > 30:
-                    print(f"[{device_id}] 30 seconds without actions - restarting game")
+                # Check if 240 seconds passed without any action
+                if time.time() - self.no_action_timers.get(device_id, time.time()) > 240:
+                    print(f"[{device_id}] 240 seconds without actions - restarting game")
                     await self.process_monitor.kill_and_restart_game(device_id)
                     self.no_action_timers[device_id] = time.time()
                 
@@ -385,14 +398,22 @@ class OptimizedBackgroundMonitor:
                 if await self.process_monitor.should_check_process(device_id):
                     is_bleach_running = await self.process_monitor.is_bleach_running(device_id)
                     
-                    if not is_bleach_running:
-                        print(f"[{device_id}] Game not running, launching...")
+                    if self.process_monitor.is_initial_setup_needed(device_id):
+                        if not is_bleach_running:
+                            print(f"[{device_id}] Initial setup: Game not running, launching...")
+                            await self.process_monitor.launch_bleach(device_id)
+                            self.process_monitor.set_active_tasks(device_id, "restarting")
+                        else:
+                            print(f"[{device_id}] Initial setup: Game already running, using Main_Tasks.")
+                            self.process_monitor.set_active_tasks(device_id, "main")
+                        
+                        self.process_monitor.mark_initial_complete(device_id)
+                    
+                    elif not is_bleach_running:
+                        # This runs only after initial setup is complete (e.g., game crash)
+                        print(f"[{device_id}] Game not running, re-launching...")
                         await self.process_monitor.launch_bleach(device_id)
                         self.process_monitor.set_active_tasks(device_id, "restarting")
-                    elif is_initial:
-                        print(f"[{device_id}] Initial execution with game running - using Main_Tasks")
-                        self.process_monitor.set_active_tasks(device_id, "main")
-                        self.process_monitor.mark_initial_complete(device_id)
                 
                 # Get all active tasks
                 all_tasks = self.get_prioritized_tasks(device_id)
@@ -402,7 +423,9 @@ class OptimizedBackgroundMonitor:
                 
                 if matched_tasks:
                     logical_triggered = await self.process_matched_tasks(device_id, matched_tasks)
+                    print(f"[{device_id}] DEBUG: logical_triggered = {logical_triggered}")
                     if logical_triggered:
+                        print(f"[{device_id}] DEBUG: Returning device_id for logical processing")
                         return device_id
                     
                     self.device_states[device_id]['stable_count'] = 0
@@ -468,8 +491,8 @@ class OptimizedBackgroundMonitor:
                 
                 # Check for devices that need restart
                 for device_id in settings.DEVICE_IDS:
-                    if time.time() - self.no_action_timers.get(device_id, time.time()) > 120:
-                        print(f"[{device_id}] 120 seconds without actions - restarting game")
+                    if time.time() - self.no_action_timers.get(device_id, time.time()) > 240:
+                        print(f"[{device_id}] 240 seconds without actions - restarting game")
                         await self.process_monitor.kill_and_restart_game(device_id)
                         self.no_action_timers[device_id] = time.time()
                 
@@ -478,16 +501,23 @@ class OptimizedBackgroundMonitor:
                     try:
                         if await self.process_monitor.should_check_process(device_id):
                             is_bleach_running = await self.process_monitor.is_bleach_running(device_id)
-                            is_initial = self.process_monitor.is_initial_setup(device_id)
                             
-                            if not is_bleach_running:
-                                print(f"[{device_id}] Game not running, launching...")
+                            if self.process_monitor.is_initial_setup_needed(device_id):
+                                if not is_bleach_running:
+                                    print(f"[{device_id}] Initial setup: Game not running, launching...")
+                                    await self.process_monitor.launch_bleach(device_id)
+                                    self.process_monitor.set_active_tasks(device_id, "restarting")
+                                else:
+                                    print(f"[{device_id}] Initial setup: Game already running, using Main_Tasks.")
+                                    self.process_monitor.set_active_tasks(device_id, "main")
+                                
+                                self.process_monitor.mark_initial_complete(device_id)
+                            
+                            elif not is_bleach_running:
+                                # This runs only after initial setup is complete (e.g., game crash)
+                                print(f"[{device_id}] Game not running, re-launching...")
                                 await self.process_monitor.launch_bleach(device_id)
                                 self.process_monitor.set_active_tasks(device_id, "restarting")
-                            elif is_initial:
-                                print(f"[{device_id}] Initial execution with game running - using Main_Tasks")
-                                self.process_monitor.set_active_tasks(device_id, "main")
-                                self.process_monitor.mark_initial_complete(device_id)
                     except Exception as e:
                         print(f"[{device_id}] Error in process check: {e}")
                 
@@ -534,3 +564,4 @@ async def continuous_pixel_watch() -> Optional[str]:
 async def watch_device_for_trigger(device_id: str) -> Optional[str]:
     """Backward compatible single device watcher"""
     return await monitor.watch_device_optimized(device_id)
+

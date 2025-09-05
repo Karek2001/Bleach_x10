@@ -6,7 +6,7 @@ import settings
 
 # Import from our actions file and other modules
 from actions import run_adb_command
-from logical_process import run_logical_tasks
+from logical_process import run_logical_tasks, run_hard_mode_swipes
 # Import the monitor instance directly to run it per-device
 from background_process import monitor
 
@@ -80,7 +80,20 @@ async def run_full_cycle_for_device(device_id: str):
     # 3. If a logical trigger was found, run the sequence and clean up.
     if triggered_device:
         print(f"\n❗ [{device_id}] Trigger detected! Switching to logical process...")
-        await run_logical_tasks(triggered_device)
+        
+        # Check if this is a hard mode swipe task
+        logical_task_info = getattr(monitor, 'logical_task_info', {})
+        task_info = logical_task_info.get(triggered_device, {})
+        
+        print(f"[{triggered_device}] DEBUG: Logical task info: {task_info}")
+        
+        if task_info.get("HardModeSwipe", False):
+            print(f"[{triggered_device}] Hard Mode detected - executing swipe sequence...")
+            await run_hard_mode_swipes(triggered_device)
+        else:
+            # Default logical task (clear story logic)
+            print(f"[{triggered_device}] Running default logical tasks...")
+            await run_logical_tasks(triggered_device)
         
         print(f"👍 [{device_id}] Logical process finished. Killing game.")
         await kill_game(triggered_device)

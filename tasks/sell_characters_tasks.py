@@ -1,21 +1,28 @@
-# tasks/sell_characters_tasks.py - Tasks for selling excess characters
+# tasks/sell_characters_tasks.py - Complete tasks for selling excess characters
 
 Sell_Characters = [
+    # Navigation to character management
     {
         "task_name": "Go To Character List",
         "type": "template",
-        "template_path": "templates/CharacterList.png",
+        "template_path": "templates/Sell_Characters/CharacterList.png",
         "roi": [174, 330, 607, 87],
         "confidence": 0.90,
         "use_match_position": True,
         "isLogical": False,
+        "priority": 10,
+        "cooldown": 2.0,
     },
+    
+    # Selling process - Sequential steps
     {
         "task_name": "Click [Sell]",
         "type": "pixel",
         "click_location_str": "153,515",
         "search_array": ["141,516","#eaeaea","168,515","#ffffff","132,513","#2b3a48"],
         "isLogical": False,
+        "priority": 15,
+        "cooldown": 2.0,
     },
     {
         "task_name": "Click [Multi Select]",
@@ -23,24 +30,31 @@ Sell_Characters = [
         "click_location_str": "319,511",
         "search_array": ["218,521","#ffbc2e","276,513","#d9dada","291,511","#f9f9fa","857,516","#16337d"],
         "isLogical": False,
+        "priority": 20,
+        "cooldown": 2.0,
     },
     {
         "task_name": "Click [All]",
         "type": "template",
-        "template_path": "templates/Character_Sell/All.png",
+        "template_path": "templates/Sell_Characters/All.png",
         "roi": [290, 276, 185, 171],
         "confidence": 0.90,
         "use_match_position": True,
         "isLogical": False,
+        "priority": 25,
+        "cooldown": 2.0,
     },
     {
         "task_name": "Click [3 Stars]",
         "type": "template",
-        "template_path": "templates/Character_Sell/3StarsSell.png",
+        "template_path": "templates/Sell_Characters/3StarsSell.png",
         "roi": [370, 169, 115, 58],
         "confidence": 0.90,
         "use_match_position": True,
         "isLogical": False,
+        "shared_detection": True,  # Check with other selection options
+        "priority": 30,
+        "cooldown": 2.0,
     },
     {
         "task_name": "Click [Select 50 Characters]",
@@ -48,6 +62,8 @@ Sell_Characters = [
         "click_location_str": "656,488",
         "search_array": ["473,207","#ec4d01","456,423","#ec4d01","458,314","#e94b01","472,208","#ee5001","769,492","#215af9","586,485","#0c3be2"],
         "isLogical": False,
+        "priority": 35,
+        "cooldown": 2.0,
     },
     {
         "task_name": "Click [Sell]",
@@ -55,21 +71,30 @@ Sell_Characters = [
         "click_location_str": "817,510",
         "search_array": ["806,509","#ffffff","832,510","#ffffff","859,506","#0a3ae1"],
         "isLogical": False,
+        "priority": 40,
+        "cooldown": 2.0,
     },
+    
+    # Confirmation steps
     {
         "task_name": "Click [OK To Sell]",
         "type": "pixel",
         "click_location_str": "621,486",
         "search_array": ["603,486","#ffffff","622,489","#ffffff","225,433","#191925","686,485","#0939e0"],
         "isLogical": False,
+        "priority": 45,
+        "cooldown": 3.0,  # Longer cooldown to ensure sale processes
     },
     {
         "task_name": "Click [Close]",
         "type": "template",
-        "template_path": "templates/Character_Sell/Close.png",
+        "template_path": "templates/Sell_Characters/Close.png",
         "roi": [370, 169, 115, 58],
         "confidence": 0.90,
         "use_match_position": True,
         "isLogical": False,
+        "shared_detection": True,
+        "priority": 50,
+        "cooldown": 2.0,
     },
 ]

@@ -28,7 +28,7 @@ async def test_template_matching():
         {
             "task_name": "Test Template Search",
             "type": "template",
-            "template_path": "templates/test_button.png",  # You'll need to create this
+            "template_path": "templates/Test/test_button.png",  # You'll need to create this
             "roi": [200, 400, 400, 300],  # Search in region x=200, y=400, width=400, height=300
             "confidence": 0.8,  # 80% match confidence
             "click_location_str": "400,550",  # Fixed click position
@@ -41,7 +41,7 @@ async def test_template_matching():
         {
             "task_name": "Test Dynamic Template Click",
             "type": "template",
-            "template_path": "templates/dynamic_target.png",
+            "template_path": "templates/Test/dynamic_target.png",
             "roi": [0, 0, 1080, 1920],  # Full screen search
             "confidence": 0.6,  # Lower confidence for animated/changing elements
             "use_match_position": True,  # Click at center of matched template
@@ -94,8 +94,8 @@ async def create_sample_template():
     cv2.putText(button, "TEST", (8, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
     
     # Save as template
-    cv2.imwrite("templates/test_button.png", cv2.cvtColor(button, cv2.COLOR_RGB2BGR))
-    print("Created sample template: templates/test_button.png")
+    cv2.imwrite("templates/Test/test_button.png", cv2.cvtColor(button, cv2.COLOR_RGB2BGR))
+    print("Created sample template: templates/Test/test_button.png")
     
     # Create a dynamic target template (circle)
     target = np.zeros((40, 40, 3), dtype=np.uint8)
@@ -103,8 +103,8 @@ async def create_sample_template():
     cv2.circle(target, (20, 20), 12, (255, 255, 255), -1)  # White center
     cv2.circle(target, (20, 20), 6, (255, 0, 0), -1)  # Red bullseye
     
-    cv2.imwrite("templates/dynamic_target.png", cv2.cvtColor(target, cv2.COLOR_RGB2BGR))
-    print("Created sample template: templates/dynamic_target.png")
+    cv2.imwrite("templates/Test/dynamic_target.png", cv2.cvtColor(target, cv2.COLOR_RGB2BGR))
+    print("Created sample template: templates/Test/dynamic_target.png")
 
 async def main():
     """Main test function"""

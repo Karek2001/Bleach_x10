@@ -21,7 +21,7 @@ async def test_matching_type():
         {
             "task_name": "Test Existing Template Type",
             "type": "template",
-            "template_path": "templates/MapStep.png",
+            "template_path": "templates/Story_Mode/MapStep.png",
             "roi": [1, 132, 955, 291],
             "confidence": 0.79,
             "use_match_position": True,

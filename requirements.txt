@@ -3,3 +3,4 @@ pyperclip
 numpy
 opencv-python
 pyautogui
+easyocr

@@ -1,4 +1,4 @@
-# tasks/guild_tasks.py - Guild tutorial and rejoin tasks
+# tasks/guild_tasks.py - Complete guild tutorial and rejoin tasks
 
 GUILD_TUTORIAL_TASKS = [
     {
@@ -9,6 +9,8 @@ GUILD_TUTORIAL_TASKS = [
         "confidence": 0.70,
         "use_match_position": True,
         "isLogical": False,
+        "priority": 15,
+        "cooldown": 2.0,
     },
     {
         "task_name": "Click [Join]",
@@ -16,6 +18,8 @@ GUILD_TUTORIAL_TASKS = [
         "click_location_str": "814,173",
         "search_array": ["801,173","#fbfcff","807,87","#485563","860,88","#ffffff"],
         "isLogical": False,
+        "priority": 20,
+        "cooldown": 2.0,
     },
     {
         "task_name": "Click [OK]",
@@ -25,6 +29,9 @@ GUILD_TUTORIAL_TASKS = [
         "confidence": 0.80,
         "use_match_position": True,
         "isLogical": False,
+        "shared_detection": True,
+        "priority": 25,
+        "cooldown": 2.0,
     },
     {
         "task_name": "Click [Guild TOP]",
@@ -34,6 +41,8 @@ GUILD_TUTORIAL_TASKS = [
         "confidence": 0.90,
         "use_match_position": True,
         "isLogical": False,
+        "priority": 30,
+        "cooldown": 2.0,
     },
 ]
 
@@ -46,6 +55,9 @@ Guild_Rejoin = [
         "confidence": 0.80,
         "use_match_position": True,
         "isLogical": False,
+        "shared_detection": True,
+        "priority": 15,
+        "cooldown": 2.0,
     },
     {
         "task_name": "Click Refresh",
@@ -53,6 +65,8 @@ Guild_Rejoin = [
         "click_location_str": "856,84",
         "search_array": ["859,88","#ffffff","861,78","#4d555c","876,100","#dedddd"],
         "isLogical": False,
+        "priority": 10,  # Higher priority to refresh guild list
+        "cooldown": 3.0,
     },
     {
         "task_name": "Click [Guild TOP]",
@@ -62,6 +76,8 @@ Guild_Rejoin = [
         "confidence": 0.90,
         "use_match_position": True,
         "isLogical": False,
-        "NeedGuildTutorial":True
+        "NeedGuildTutorial": True,
+        "priority": 25,
+        "cooldown": 2.0,
     },
 ]

@@ -2,7 +2,7 @@
 """
 Template Matching Test Tool
 Visualizes template matching results for debugging and testing.
-Mirrors the multi-click and sorting logic of the main project.
+Fixed version without missing imports.
 """
 
 import cv2
@@ -10,13 +10,24 @@ import numpy as np
 import os
 import sys
 from typing import List, Tuple, Optional
-from tasks.main_tasks import Main_Tasks
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
-# Import PixelAdvanced functions from actions.py
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from actions import hex_to_rgb, find_pixel_advanced_pattern
+# Add parent directory to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Import from tasks
+try:
+    from tasks.main_tasks import Main_Tasks
+except ImportError as e:
+    print(f"Warning: Could not import Main_Tasks: {e}")
+    print("Using empty list")
+    Main_Tasks = []
+
+def hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
+    """Converts a hex color string to an (R, G, B) tuple."""
+    hex_color = hex_color.lstrip('#')
+    return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
 
 def load_template(template_path: str) -> Optional[np.ndarray]:
     """Load and convert template image"""
@@ -35,7 +46,6 @@ def load_template(template_path: str) -> Optional[np.ndarray]:
         print(f"Error loading template {template_path}: {e}")
         return None
 
-# MODIFIED: Added 'sort_by_x' parameter to mirror main project's functionality
 def find_template_matches(screenshot: np.ndarray, template_path: str, 
                          roi: Tuple[int, int, int, int], 
                          confidence: float = 0.9,
@@ -90,7 +100,7 @@ def find_template_matches(screenshot: np.ndarray, template_path: str,
             if not is_duplicate:
                 matches.append((center_x, center_y, match_confidence))
         
-        # MODIFIED: Sort matches by x-coordinate if requested (for force_multi_click)
+        # Sort matches by x-coordinate if requested
         if sort_by_x:
             matches.sort(key=lambda m: m[0])
 
@@ -132,55 +142,6 @@ def draw_roi(image: np.ndarray, roi: Tuple[int, int, int, int],
     cv2.rectangle(result_img, (x, y), (x + w, y + h), color, 2)
     cv2.putText(result_img, "ROI", (x, y - 10), 
                cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
-    return result_img
-
-def draw_pixel_advanced_matches(image: np.ndarray, matches: List[Tuple[int, int]], 
-                               pixels: List[str], task_name: str, 
-                               color: Tuple[int, int, int]) -> np.ndarray:
-    """Draw pixel pattern matches and click positions"""
-    result_img = image.copy()
-    
-    for i, (ref_x, ref_y) in enumerate(matches):
-        # Parse pixel pattern to show all pixel positions
-        pattern_positions = []
-        for pixel_str in pixels:
-            if ',' in pixel_str:
-                parts = pixel_str.split(',')
-                if len(parts) == 2:
-                    offset = int(parts[0])
-                    pixel_x = ref_x + offset
-                    pixel_y = ref_y
-                    pattern_positions.append((pixel_x, pixel_y, parts[1]))  # Include color
-        
-        # Draw pattern pixels
-        for j, (px, py, hex_color) in enumerate(pattern_positions):
-            # Draw small circle for each pixel in pattern
-            cv2.circle(result_img, (px, py), 3, color, -1)
-            # Draw pixel number
-            cv2.putText(result_img, str(j+1), (px-5, py-8), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1)
-        
-        # Draw line connecting pattern pixels
-        if len(pattern_positions) >= 2:
-            for j in range(len(pattern_positions)-1):
-                cv2.line(result_img, 
-                        (pattern_positions[j][0], pattern_positions[j][1]),
-                        (pattern_positions[j+1][0], pattern_positions[j+1][1]),
-                        color, 1)
-        
-        # Calculate and draw click position (second pixel)
-        if len(pattern_positions) >= 2:
-            click_x, click_y = pattern_positions[1][0], pattern_positions[1][1]
-            # Draw larger circle for click position
-            cv2.circle(result_img, (click_x, click_y), 8, (0, 255, 0), 3)  # Green circle
-            cv2.putText(result_img, "CLICK", (click_x-20, click_y-15), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        
-        # Draw match label
-        label = f"{task_name} [{i+1}]: Pattern Match"
-        cv2.putText(result_img, label, (ref_x, ref_y - 20), 
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
-    
     return result_img
 
 def select_image_file():
@@ -239,13 +200,12 @@ def test_template_matching():
         task_type = task.get("type")
         if task_type == "template":
             task_name = task.get("task_name", "Unknown")
-            roi = task.get("roi") # A task might not have an ROI if it searches the whole screen
+            roi = task.get("roi")
             confidence = task.get("confidence", 0.9)
             
-            # MODIFIED: Check for the force_multi_click flag
-            is_multi_click = task.get("force_multi_click", False)
+            is_multi_click = task.get("multi_click", False) or task.get("FullyAnylaze", False)
             
-            # MODIFIED: Handle both 'template_path' and 'template_paths'
+            # Handle both 'template_path' and 'template_paths'
             templates_to_check = []
             if task.get("template_path"):
                 templates_to_check.append(task["template_path"])
@@ -255,24 +215,35 @@ def test_template_matching():
             if not templates_to_check:
                 continue
 
-            multi_click_tag = "[Sorted L-R]" if is_multi_click else ""
+            multi_click_tag = "[Multi-Click]" if is_multi_click else ""
             print(f"Testing: {task_name} {multi_click_tag}")
+            print(f"  Confidence threshold: {confidence}")
             
             all_matches_for_task = []
             for template_path in templates_to_check:
                 print(f"  - Template: {template_path}")
                 
-                # Call the updated find function, passing the sorting flag
+                # Test with different confidence levels to see what matches
                 matches = find_template_matches(screenshot, template_path, roi, confidence, sort_by_x=is_multi_click)
+                
+                # Also test with lower confidence to see what's being detected
+                test_confidences = [0.5, 0.6, 0.7, 0.8, 0.9, 0.95]
+                print(f"    Confidence analysis:")
+                for test_conf in test_confidences:
+                    test_matches = find_template_matches(screenshot, template_path, roi, test_conf, sort_by_x=False)
+                    if test_matches:
+                        max_conf = max([m[2] for m in test_matches])
+                        print(f"      {test_conf:.2f}: {len(test_matches)} matches (max: {max_conf:.3f})")
+                
                 if matches:
                     all_matches_for_task.extend(matches)
 
             if all_matches_for_task:
-                # Re-sort if multiple templates contributed matches for a multi-click task
+                # Re-sort if multiple templates contributed matches
                 if is_multi_click:
                     all_matches_for_task.sort(key=lambda m: m[0])
 
-                print(f"  ✓ Found {len(all_matches_for_task)} total matches for this task.")
+                print(f"  ✓ Found {len(all_matches_for_task)} total matches at confidence {confidence}")
                 for i, (x, y, conf) in enumerate(all_matches_for_task):
                     print(f"    Match {i+1}: ({x}, {y}) confidence={conf:.3f}")
                 
@@ -284,14 +255,13 @@ def test_template_matching():
                 total_matches_found += len(all_matches_for_task)
                 color_idx += 1
             else:
-                print(f"  ✗ No matches found for this task.")
+                print(f"  ✗ No matches found at confidence {confidence}")
             
             print()
-        
     
     print(f"Total matches found across all tasks: {total_matches_found}")
     
-    if total_matches_found > 0:
+    if True:  # Always show the image even if no matches
         print("\nDisplaying results... (Press any key in the image window to close)")
         
         display_img = cv2.cvtColor(result_img, cv2.COLOR_RGB2BGR)
@@ -320,8 +290,6 @@ def test_template_matching():
                 cv2.imwrite(output_path, cv2.cvtColor(result_img, cv2.COLOR_RGB2BGR))
                 print(f"Result saved to: {output_path}")
         root.destroy()
-    else:
-        messagebox.showinfo("No Matches", "No template matches were found in the selected image.")
 
 def main():
     """Main function with continuous testing loop"""

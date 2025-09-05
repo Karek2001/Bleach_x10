@@ -1,21 +1,23 @@
 # tasks/switcher_tasks.py - Tasks responsible for switching between task sets
 
 Switcher_Tasks = [
-    # From Restarting_Tasks to Main_Tasks
+        # STORY COMPLETED LET'S Back To Restarting SO WE CAN RESTART THE GAME
     {
-        "task_name": "Open Story Window",
+        "task_name": "Story Completed",
         "type": "pixel",
-        "click_location_str": "531,193",
-        "search_array": ["479,146","#ebebea","457,184","#ffffff","524,191","#ffffff"],
+        "click_location_str": "482,373",
+        "search_array": ["395,155","#191925","460,152","#191925","567,155","#191925","263,154","536,153","#191925","#0d12b5","265,166","#e60012"],
         "isLogical": False,
-        "BackToStory": True,  # Switches to Main_Tasks
+        "shared_detection": True,
+        "priority": 1,
+        "cooldown": 3.0,
+        "BackToRestarting": True,
     },
-    
     # From Restarting_Tasks to GUILD_TUTORIAL_TASKS
     {
         "task_name": "Guild Tutorial Detected",
         "type": "template",
-        "template_path": "templates/ArrowShowedUP.png",
+        "template_path": "templates/Switcher/ArrowShowedUP.png",
         "roi": [470, 365, 76, 104],
         "confidence": 0.60,
         "use_match_position": False,
@@ -75,4 +77,5 @@ Switcher_Tasks = [
         "isLogical": False,
         "BackToRestartingTasks": True,  # Switches to Restarting_Tasks
     },
+
 ]

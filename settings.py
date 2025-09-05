@@ -47,7 +47,7 @@ MAX_ADB_CONNECTIONS = 2
 ENABLE_GPU_MEMORY_POOL = True
 
 # Screenshot quality (1-100) - lower = faster but less accurate
-SCREENSHOT_QUALITY = 100
+SCREENSHOT_QUALITY = 85
 
 # -------------------
 # OPTIMIZATION FLAGS
