@@ -173,16 +173,5 @@ Main_Tasks = [
         "priority": 5,  # <-- ADD THIS LINE,
     },
 
-        # Switch To HardStory_tasks
-    {
-        "task_name": "Chapter 502 Detected",
-        "type": "template",
-        "template_path": "templates/Story_Mode/Chapter502.png",
-        "roi": [678, 139, 252, 249],
-        "click_location_str": "79,486",
-        "confidence": 0.90,
-        "isLogical": False,
-        "HardStory": True,  # Switches to HardStory_tasks
-        "priority": 5,  # <-- ADD THIS LINE
-    },
+
 ] +  DETECT_CHAPTER_END

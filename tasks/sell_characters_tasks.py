@@ -13,6 +13,17 @@ Sell_Characters = [
         "priority": 10,
         "cooldown": 2.0,
     },
+        {
+        "task_name": "Go To Character List #2",
+        "type": "template",
+        "template_path": "templates/Sell_Characters/CharacterList2.png",
+        "roi": [497, 331, 252, 86],
+        "confidence": 0.80,
+        "use_match_position": True,
+        "isLogical": False,
+        "priority": 10,
+        "cooldown": 2.0,
+    },
     
     # Selling process - Sequential steps
     {

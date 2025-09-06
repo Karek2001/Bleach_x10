@@ -11,7 +11,7 @@ class ImageCropper:
         self.root.configure(bg="#2E2E2E")
         
         # Directory for images
-        self.image_dir = "/home/karek/Downloads/shared/Parts-Screenshot"
+        self.image_dir = "/home/karek/Downloads/shared"
         
         # Variables
         self.current_image_path = None

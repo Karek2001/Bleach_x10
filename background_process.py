@@ -15,7 +15,8 @@ from tasks import (
     GUILD_TUTORIAL_TASKS,
     Guild_Rejoin,
     Sell_Characters,
-    HardStory_Tasks
+    HardStory_Tasks,
+    SideStory
 )
 
 # Bleach game package name
@@ -135,7 +136,8 @@ class ProcessMonitor:
             "guild_tutorial": GUILD_TUTORIAL_TASKS,
             "guild_rejoin": Guild_Rejoin,
             "sell_characters": Sell_Characters,
-            "hardstory": HardStory_Tasks
+            "hardstory": HardStory_Tasks,
+            "sidestory": SideStory
         }
         
         base_tasks = task_map.get(task_set, Restarting_Tasks)
@@ -148,7 +150,7 @@ class ProcessMonitor:
     
     def set_active_tasks(self, device_id: str, task_set: str):
         """Set the active task set for a device"""
-        valid_sets = ["main", "restarting", "guild_tutorial", "guild_rejoin", "sell_characters", "hardstory"]
+        valid_sets = ["main", "restarting", "guild_tutorial", "guild_rejoin", "sell_characters", "hardstory", "sidestory"]
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
             
@@ -158,7 +160,8 @@ class ProcessMonitor:
                 "guild_tutorial": "GUILD_TUTORIAL_TASKS",
                 "guild_rejoin": "Guild_Rejoin",
                 "sell_characters": "Sell_Characters",
-                "hardstory": "HardStory_Tasks"
+                "hardstory": "HardStory_Tasks",
+                "sidestory": "SideStory"
             }
             print(f"[{device_id}] Switched to {task_names.get(task_set, task_set)}")
     
@@ -210,6 +213,11 @@ class OptimizedBackgroundMonitor:
     
     async def execute_tap_with_offset(self, device_id: str, location_str: str, task: dict):
         """Execute tap with optional pixel offset adjustments"""
+        # Skip execution if coordinates are "0,0" (detection-only tasks)
+        if location_str == "0,0":
+            print(f"[{device_id}] Skipping click execution for coordinates '0,0' - detection-only task")
+            return
+            
         coords = location_str.split(',')
         x, y = int(coords[0]), int(coords[1])
         
@@ -255,7 +263,8 @@ class OptimizedBackgroundMonitor:
             "BackToRestartingTasks": ("restarting", "BackToRestartingTasks triggered - returning to Restarting_Tasks"),
             "BackToMain": ("main", "BackToMain triggered - returning to Main_Tasks"),
             "Characters_Full": ("sell_characters", "Characters_Full triggered - switching to Sell_Characters"),
-            "HardStory": ("hardstory", "HardStory triggered - switching to HardStory_Tasks")
+            "HardStory": ("hardstory", "HardStory triggered - switching to HardStory_Tasks"),
+            "SideStory": ("sidestory", "SideStory triggered - switching to SideStory")
         }
         
         for flag, (task_set, message) in flag_handlers.items():
@@ -269,7 +278,8 @@ class OptimizedBackgroundMonitor:
                         "guild_tutorial": "guild_tutorial_tasks",
                         "guild_rejoin": "guild_rejoin_tasks",
                         "sell_characters": "sell_characters_tasks",
-                        "hardstory": "hardstory_tasks"
+                        "hardstory": "hardstory_tasks",
+                        "sidestory": "sidestory_tasks"
                     }
                     current_task_name = task_set_mapping.get(current_task_set, current_task_set)
                     

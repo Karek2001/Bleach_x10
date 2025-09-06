@@ -7,6 +7,7 @@ from .switcher_tasks import Switcher_Tasks
 from .guild_tasks import GUILD_TUTORIAL_TASKS, Guild_Rejoin
 from .sell_characters_tasks import Sell_Characters
 from .hard_story import HardStory_Tasks
+from .side_story import SideStory
 
 __all__ = [
     'Main_Tasks',
@@ -16,5 +17,6 @@ __all__ = [
     'GUILD_TUTORIAL_TASKS',
     'Guild_Rejoin',
     'Sell_Characters',
-    'HardStory_Tasks'
+    'HardStory_Tasks',
+    'SideStory'
 ]

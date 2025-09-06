@@ -35,6 +35,15 @@ Switcher_Tasks = [
         "Characters_Full": True,  # Switches to Sell_Characters
         "ShowsIn": ["main_tasks", "restarting_tasks"],  # Only active in these task sets
     },
+        {
+        "task_name": "Character FULL #2",
+        "type": "pixel",
+        "click_location_str": "0,0",  # No click needed, just detection
+        "search_array": ["257,154","#0d12b5","262,164","#e60012","491,236","#ffffff","591,237","#ffffff"],
+        "isLogical": False,
+        "Characters_Full": True,  # Switches to Sell_Characters
+        "ShowsIn": ["main_tasks", "restarting_tasks"],  # Only active in these task sets
+    },
     
     # From GUILD_TUTORIAL_TASKS to Guild_Rejoin
     {
