@@ -1,3 +1,4 @@
+from .detect_chapter_end import DETECT_CHAPTER_END
 
 Main_Tasks = [
     {
@@ -126,20 +127,6 @@ Main_Tasks = [
         "priority": 1,
         "cooldown": 3.0,
     },
-    
-    # Clear Detection - Special Case
-    {
-        "task_name": "Capture [Clear] Word",
-        "type": "template",
-        "template_path": "templates/Story_Mode/ClearStory.png",
-        "click_location_str": "74,483",
-        "roi": [651, 103, 304, 391],
-        "confidence": 0.90,
-        "isLogical": True,  # <-- ADD THIS LINE
-        "priority": 60,
-        "cooldown": 5.0,
-    },
-    
     # Uncleared Content Selection
     # Uncleared Content Selection
     {
@@ -198,4 +185,4 @@ Main_Tasks = [
         "HardStory": True,  # Switches to HardStory_tasks
         "priority": 5,  # <-- ADD THIS LINE
     },
-]
+] +  DETECT_CHAPTER_END
