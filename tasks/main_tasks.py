@@ -123,10 +123,11 @@ Main_Tasks = [
         "confidence": 0.55,
         "use_match_position": True,
         "isLogical": False,
-        "shared_detection": True,
         "priority": 1,
-        "cooldown": 3.0,
+        "cooldown": 2.0,
+        "sleep": 8.5,
     },
+    
     # Uncleared Content Selection
     # Uncleared Content Selection
     {

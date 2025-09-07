@@ -185,7 +185,8 @@ class OptimizedBackgroundMonitor:
         self.process_monitor = ProcessMonitor()
         self.no_action_timers = {}
         self.frame_processed_tasks: Dict[str, Set[str]] = defaultdict(set)  # Track tasks processed per frame
-        
+        self.device_sleep_until: Dict[str, float] = {}  # Track when each device's sleep ends
+    
     async def batch_screenshot_all_devices(self, device_list: List[str]) -> Dict[str, any]:
         """Capture screenshots from multiple devices in parallel"""
         semaphore = asyncio.Semaphore(self.max_concurrent_screenshots)
@@ -335,6 +336,12 @@ class OptimizedBackgroundMonitor:
                 if "[Multi:" not in task_name and "[Executed" not in task_name:
                     await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
                 
+                # Handle sleep if specified
+                if "sleep" in task:
+                    sleep_duration = float(task["sleep"])
+                    self.device_sleep_until[device_id] = time.time() + sleep_duration
+                    print(f"[{device_id}] Sleeping for {sleep_duration} seconds after {task_name}")
+                
                 if task.get("isLogical", False):
                     logical_triggered = True
                     print(f"[{device_id}] DEBUG: Logical task detected - {task['task_name']}")
@@ -382,10 +389,37 @@ class OptimizedBackgroundMonitor:
                         print(f"[{device_id}] DEBUG: Stored logical task info (regular) with HardModeSwipe={task.get('HardModeSwipe', False)}")
                     
                     # Break after first regular task to prevent spam
-                    break
+                        # Handle sleep if specified
+                if "sleep" in task:
+                    sleep_duration = float(task["sleep"])
+                    self.device_sleep_until[device_id] = time.time() + sleep_duration
+                    print(f"[{device_id}] Sleeping for {sleep_duration} seconds after {task_name}")
+                
+                if task.get("isLogical", False):
+                    logical_triggered = True
+                    print(f"[{device_id}] DEBUG: Logical task detected (regular) - {task['task_name']}")
+                    if not hasattr(self, 'logical_task_info'):
+                        self.logical_task_info = {}
+                    self.logical_task_info[device_id] = task
+                    print(f"[{device_id}] DEBUG: Stored logical task info (regular) with HardModeSwipe={task.get('HardModeSwipe', False)}")
+                
+                # Break after first regular task to prevent spam
+                break
         
         return logical_triggered
 
+    def is_device_sleeping(self, device_id: str) -> bool:
+        """Check if device is currently in sleep mode"""
+        if device_id not in self.device_sleep_until:
+            return False
+        
+        current_time = time.time()
+        if current_time < self.device_sleep_until[device_id]:
+            return True
+        else:
+            # Sleep time has passed, clear it
+            del self.device_sleep_until[device_id]
+            return False
     async def watch_device_optimized(self, device_id: str) -> Optional[str]:
         """Optimized device watching with smart multi-detection"""
         print(f"[{device_id}] Starting optimized background monitoring with smart detection...")
@@ -395,6 +429,11 @@ class OptimizedBackgroundMonitor:
         
         while not self.stop_event.is_set():
             try:
+                # Check if device is sleeping
+                if self.is_device_sleeping(device_id):
+                    await asyncio.sleep(0.1)  # Short sleep to check again
+                    continue
+                
                 # Clear frame processed tasks
                 self.frame_processed_tasks[device_id].clear()
                 
@@ -539,10 +578,16 @@ class OptimizedBackgroundMonitor:
                 
                 await asyncio.gather(*process_check_tasks, return_exceptions=True)
                 
-                # Capture screenshots from all devices
-                device_screenshots = await self.batch_screenshot_all_devices(settings.DEVICE_IDS)
+                # Filter out sleeping devices for screenshot capture
+                active_devices = [
+                    device_id for device_id in settings.DEVICE_IDS 
+                    if not self.is_device_sleeping(device_id)
+                ]
                 
-                # Process all devices
+                # Capture screenshots only from active (non-sleeping) devices
+                device_screenshots = await self.batch_screenshot_all_devices(active_devices)
+                
+                # Process all active devices
                 for device_id, screenshot in device_screenshots.items():
                     if screenshot is not None:
                         all_tasks = self.get_prioritized_tasks(device_id)
