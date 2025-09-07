@@ -33,5 +33,18 @@ HardStory_Tasks = [
         "cooldown": 2.0,
         "BackToStory": True,
     },
+        {
+        "task_name": "Let's Start With Part-1 HARD! [Side Story]",
+        "type": "template",
+        "template_path": "templates/Story_Mode_Hard/S_Part1_hard.png",
+        "roi": [10, 79, 949, 351],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "isLogical": True,
+        "shared_detection": True,
+        "priority": 5,
+        "cooldown": 2.0,
+        "BackToStory": True,
+    },
     
 ]

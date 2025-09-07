@@ -7,7 +7,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
         {
         "task_name": "Part 1 Chapter END [29 HARD]",
@@ -17,7 +17,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 2 Chapter END [66]",
@@ -27,7 +27,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 3 Chapter END [110]",
@@ -37,7 +37,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 4 Chapter END [154]",
@@ -47,7 +47,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 5 Chapter END [180]",
@@ -57,7 +57,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 6 Chapter END [204]",
@@ -67,7 +67,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 7 Chapter END [229]",
@@ -77,7 +77,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 8 Chapter END [247]",
@@ -87,7 +87,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 9 Chapter END [273]",
@@ -97,7 +97,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
         {
         "task_name": "Part 9 Chapter END [273 HARD]",
@@ -107,7 +107,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 10 Chapter END [299]",
@@ -117,7 +117,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 11 Chapter END [320]",
@@ -127,7 +127,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 12 Chapter END [352]",
@@ -137,7 +137,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 13 Chapter END [387]",
@@ -147,7 +147,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 14 Chapter END [398]",
@@ -157,7 +157,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 15 Chapter END [410]",
@@ -167,7 +167,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 16 Chapter END [421]",
@@ -177,7 +177,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
         {
         "task_name": "Part 17 Chapter END [436]",
@@ -187,7 +187,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 18 Chapter END [449]",
@@ -197,7 +197,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 19 Chapter END [464]",
@@ -207,7 +207,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 20 Chapter END [483]",
@@ -217,7 +217,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
 "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Part 21 Chapter END [502] SWITCH TO HARD",
@@ -243,12 +243,12 @@ DETECT_CHAPTER_END = [
         {
         "task_name": "Side-Story Part 1 Chapter END [40]",
         "type": "template",
-        "template_path": "templates/Side-Story/S_Part1_Chapter40_Easy.png",
+        "template_path": "templates/Side-Story/S_Part1-Chapter40_Easy.png",
         "roi": [779, 280, 117, 68],
         "click_location_str": "76,480",
         "use_match_position": False,
         "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Side-Story Part 2 Chapter END [77]",
@@ -258,7 +258,7 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
         "confidence": 0.80,
-        "priority": 10
+        "priority": 5
     },
     {
         "task_name": "Side-Story Part 3 Chapter END [114]",
@@ -268,7 +268,219 @@ DETECT_CHAPTER_END = [
         "click_location_str": "76,480",
         "use_match_position": False,
         "confidence": 0.80,
-        "priority": 10
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 4 Chapter END [39]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part4-Chapter39_Easy.png",
+        "roi": [770, 327, 120, 88],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 5 Chapter END [74]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part5-Chapter74_Easy.png",
+        "roi": [796, 318, 127, 112],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 6 Chapter END [36]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part6-Chapter36_Easy.png",
+        "roi": [791, 266, 125, 96],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 7 Chapter END [71]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part7-Chapter71_Easy.png",
+        "roi": [745, 263, 120, 97],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 8 Chapter END [33]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part8-Chapter33_Easy.png",
+        "roi": [788, 337, 123, 76],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 9 Chapter END [33]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part9-Chapter33_Easy.png",
+        "roi": [744, 274, 120, 70],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 10 Chapter END [33]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part10-Chapter33_Easy.png",
+        "roi": [751, 249, 114, 90],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 11 Chapter END [36]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part11-Chapter36_Easy.png",
+        "roi": [764, 325, 124, 91],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 12 Chapter END [15]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part12-Chapter15_Easy.png",
+        "roi": [766, 328, 118, 78],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 13 Chapter END [35]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part13-Chapter35_Easy.png",
+        "roi": [699, 334, 125, 95],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 14 Chapter END [65]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part14-Chapter65_Easy.png",
+        "roi": [767, 326, 125, 79],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 15 Chapter END [95]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part15-Chapter95_Easy.png",
+        "roi": [783, 262, 120, 76],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 16 Chapter END [133]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part16-Chapter133_Easy.png",
+        "roi": [704, 336, 134, 88],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 17 Chapter END [166]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part17-Chapter166_Easy.png",
+        "roi": [710, 318, 139, 93],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 18 Chapter END [192]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part18-Chapter192_Easy.png",
+        "roi": [769, 258, 139, 120],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 19 Chapter END [226]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part19-Chapter226_Easy.png",
+        "roi": [796, 327, 102, 74],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 20 Chapter END [29]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part20-Chapter29_Easy.png",
+        "roi": [752, 339, 128, 84],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 21 Chapter END [58]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part21-Chapter58_Easy.png",
+        "roi": [753, 275, 99, 82],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 22 Chapter END [87]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part22-Chapter87_Easy.png",
+        "roi": [775, 331, 109, 76],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
+    {
+        "task_name": "Side-Story Part 23 Chapter END [117] Final Part [Switch To Hard]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part23-Chapter117_Easy.png",
+        "roi": [699, 324, 139, 115],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5,
+    },
+
+       {
+        "task_name": "Side-Story Part 24 Chapter END [153] Final Part [Switch To Hard]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part24-Chapter153_Easy.png",
+        "roi": [762, 328, 136, 92],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5,
+        "HardStory": True,
     },
 
 ]

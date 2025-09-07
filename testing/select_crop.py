@@ -12,6 +12,10 @@ class ImageCropper:
         
         # Directory for images
         self.image_dir = "/home/karek/Downloads/shared"
+        self.output_dir = os.path.join(self.image_dir, "output")
+        
+        # Create output directory if it doesn't exist
+        os.makedirs(self.output_dir, exist_ok=True)
         
         # Variables
         self.current_image_path = None
@@ -103,7 +107,7 @@ class ImageCropper:
         
         # Create grid layout - 4 columns
         columns = 4
-        for i, filename in enumerate(sorted(image_files, reverse=True)):
+        for i, filename in enumerate(sorted(image_files)):
             path = os.path.join(self.image_dir, filename)
             row = i // columns
             col = i % columns
@@ -241,8 +245,7 @@ class ImageCropper:
             # Ask user for filename
             filename = simpledialog.askstring(
                 "Save Cropped Image", 
-                "Enter filename (without extension):",
-                initialvalue="cropped_image"
+                "Enter filename (without extension):"
             )
             
             if not filename:
@@ -252,8 +255,8 @@ class ImageCropper:
             if not filename.endswith('.png'):
                 filename += '.png'
             
-            # Save path
-            save_path = os.path.join(self.image_dir, filename)
+            # Save path to output directory
+            save_path = os.path.join(self.output_dir, filename)
             
             # Check if file exists
             if os.path.exists(save_path):
