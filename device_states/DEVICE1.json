@@ -1,0 +1,24 @@
+{
+  "EasyMode": 0,
+  "HardMode": 0,
+  "SideMode": 0,
+  "SubStory": 0,
+  "SubStory-TheHumanWorld": 0,
+  "SubStory-TheSoulSociety": 0,
+  "SubStory-HuecoMundo": 0,
+  "SubStory-TheFutureSociety": 0,
+  "SubStory-Others": 0,
+  "RestartingCount": 0,
+  "2-Stars-Upgraded": 0,
+  "3-Stars-Upgraded": 0,
+  "4-Stars-Upgraded": 0,
+  "5-Stars-Upgraded": 0,
+  "isLinked": false,
+  "LastUpdated": "2025-09-08T13:53:31.934647",
+  "CurrentTaskSet": "main",
+  "SessionStats": {
+    "SessionStartTime": "2025-09-08T22:19:03.390421",
+    "TasksExecuted": 9,
+    "LastTaskExecuted": "Click [Start Quest]"
+  }
+}

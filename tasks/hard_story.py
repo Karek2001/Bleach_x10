@@ -2,12 +2,22 @@
 
 HardStory_Tasks = [
     {
+        "task_name": "Part 24 [Side Story] Hard Finished [Switch To Sub Stories]",
+        "type": "pixel",
+        "click_location_str": "34,29",
+        "search_array": ["537,344","#ff0000","918,42","#eb1a1a","506,364","#e9e902","486,148","#f5cd3d"],
+        "isLogical": False,
+        "priority": 1,
+        "Sub-Stores": True,
+        "KeepChecking": 5.0,
+    },
+    {
         "task_name": "Active Hard Mode If It Doesn't Activited",
         "type": "pixel",
         "click_location_str": "845,41",
         "search_array": ["921,42","#0a36e5","47,15","#010101","24,49","#e50012","81,32","#fefefe"],
         "isLogical": False,
-        "priority": 15,
+        "priority": 20,
     },
     {
         "task_name": "Hard Mode Activited Let Swipe!",
@@ -17,7 +27,7 @@ HardStory_Tasks = [
         "isLogical": True,
         "HardModeSwipe": True,  # Flag to identify this as hard mode swipe task
         "shared_detection": True,
-        "priority": 15,
+        "priority": 20,
         "cooldown": 2.0,
     },
     {
@@ -29,7 +39,7 @@ HardStory_Tasks = [
         "use_match_position": True,
         "isLogical": True,
         "shared_detection": True,
-        "priority": 5,
+        "priority": 20,
         "cooldown": 2.0,
         "BackToStory": True,
     },
@@ -42,9 +52,10 @@ HardStory_Tasks = [
         "use_match_position": True,
         "isLogical": True,
         "shared_detection": True,
-        "priority": 5,
+        "priority": 20,
         "cooldown": 2.0,
         "BackToStory": True,
     },
+
     
 ]

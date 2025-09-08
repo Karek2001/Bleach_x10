@@ -410,6 +410,56 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
             if task_tracker.can_execute_task(device_id, task["task_name"]):
                 matched_tasks.append(task)
     
+    # Process Pixel-OneOrMoreMatched tasks
+    pixel_one_or_more_tasks = [task for task in tasks if task.get("type") == "Pixel-OneOrMoreMatched"]
+    
+    for task in pixel_one_or_more_tasks:
+        pixel_values = task.get("pixel-values", [])
+        if len(pixel_values) < 4:  # Need at least 2 pairs (coord, color, coord, color)
+            continue
+            
+        match_found = False
+        
+        # Check consecutive pairs: (coord1, color1, coord2, color2), (color1, coord2, color2, coord3), etc.
+        for i in range(0, len(pixel_values) - 3, 2):
+            try:
+                # Get first pair
+                coords1_str = pixel_values[i]
+                color1 = pixel_values[i + 1]
+                
+                # Get second pair  
+                coords2_str = pixel_values[i + 2]
+                color2 = pixel_values[i + 3]
+                
+                # Parse coordinates
+                x1, y1 = map(int, coords1_str.split(','))
+                x2, y2 = map(int, coords2_str.split(','))
+                
+                # Convert colors to RGB
+                expected_rgb1 = hex_to_rgb(color1)
+                expected_rgb2 = hex_to_rgb(color2)
+                expected_rgb1_gpu = np.array(expected_rgb1)
+                expected_rgb2_gpu = np.array(expected_rgb2)
+                
+                # Check if both pixels are within bounds and match
+                if (0 <= y1 < img_gpu.shape[0] and 0 <= x1 < img_gpu.shape[1] and
+                    0 <= y2 < img_gpu.shape[0] and 0 <= x2 < img_gpu.shape[1]):
+                    
+                    pixel_color1 = img_gpu[y1, x1]
+                    pixel_color2 = img_gpu[y2, x2]
+                    
+                    if (np.array_equal(pixel_color1, expected_rgb1_gpu) and 
+                        np.array_equal(pixel_color2, expected_rgb2_gpu)):
+                        match_found = True
+                        break
+                        
+            except (ValueError, IndexError):
+                continue
+        
+        if match_found:
+            if task_tracker.can_execute_task(device_id, task["task_name"]):
+                matched_tasks.append(task)
+    
     # Process OCR tasks
     for task in ocr_tasks:
         ocr_text = task.get("ocr_text", "")

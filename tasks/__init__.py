@@ -8,6 +8,8 @@ from .guild_tasks import GUILD_TUTORIAL_TASKS, Guild_Rejoin
 from .sell_characters_tasks import Sell_Characters
 from .hard_story import HardStory_Tasks
 from .side_story import SideStory
+from .sub_stories import SubStories
+from .sub_stories_check import SubStories_check
 
 __all__ = [
     'Main_Tasks',
@@ -18,5 +20,7 @@ __all__ = [
     'Guild_Rejoin',
     'Sell_Characters',
     'HardStory_Tasks',
-    'SideStory'
+    'SideStory',
+    'SubStories',
+    'SubStories_check'
 ]

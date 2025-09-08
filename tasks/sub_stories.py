@@ -1,0 +1,130 @@
+
+SubStories = [
+        {
+        "task_name": "Unclear Sub-Stories Map",
+        "type": "template",
+        "roi": [68, 4, 409, 533],
+        "confidence": 0.80,
+        "use_match_position": True,
+        "template_path": "templates/Sub-Stories/Sub-Storie-Map-UnClear.png",
+        "priority": 1,
+        "cooldown": 2.0,
+    },
+    {
+        "task_name": "Leave [Story Mode Menu] For [Going To Sub-Stories]",
+        "type": "pixel",
+        "click_location_str": "25,20",
+        "search_array": ["113,70","#ffff00","136,82","#750000","113,78","#ffffff","25,20","#ffffff"],
+        "priority": 1,
+        "cooldown": 2.0,
+    },
+    {
+        "task_name": "Click [Sub-Stories]",
+        "type": "pixel",
+        "click_location_str": "694,189",
+        "search_array": ["679,180","#ffffff","736,202","#ffffff","794,201","#9c1212","791,204","#9c1212"],
+        "priority": 1,
+        "cooldown": 2.0,
+    },
+
+    {
+
+        "task_name": "Click [Sub-Stories MAP 1]",
+        "type": "template",
+        "template_path": "templates/Sub-Stories/Sub-Storie-1-New.png",
+        "roi": [86, 103, 249, 176],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "multi_click": True,
+        "priority": 20,
+        "cooldown": 2.0,
+    },
+    {
+
+        "task_name": "Click [Sub-Stories MAP 2]",
+        "type": "template",
+        "template_path": "templates/Sub-Stories/Sub-Storie-2-New.png",
+        "roi": [352, 103, 255, 195],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "multi_click": True,
+        "priority": 21,
+        "cooldown": 2.0,
+    },
+    {
+
+        "task_name": "Click [Sub-Stories MAP 3]",
+        "type": "template",
+        "template_path": "templates/Sub-Stories/Sub-Storie-3-New.png",
+        "roi": [616, 100, 258, 200],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "multi_click": True,
+        "priority": 22,
+        "cooldown": 2.0,
+    },
+    {
+
+        "task_name": "Click [Sub-Stories MAP 4]",
+        "type": "template",
+        "template_path": "templates/Sub-Stories/Sub-Storie-4-New.png",
+        "roi": [215, 314, 261, 208],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "multi_click": True,
+        "priority": 23,
+        "cooldown": 2.0,
+    },
+    {
+
+        "task_name": "Click [Sub-Stories MAP 5]",
+        "type": "template",
+        "template_path": "templates/Sub-Stories/Sub-Storie-5-New.png",
+        "roi": [484, 316, 259, 198],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "multi_click": True,
+        "priority": 24,
+        "cooldown": 2.0,
+    },
+        {
+
+        "task_name": "Choose Sub Storie Part To Complete",
+        "type": "template",
+        "template_path": "templates/Sub-Stories/NewPart.png",
+        "roi": [130, 93, 709, 360],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "multi_click": True,
+        "priority": 30,
+        "cooldown": 2.0,
+    },
+
+        {
+        "task_name": "Back To Missions of currently Sub Story",
+        "type": "pixel",
+        "search_array": ["146,504","#0b3be2","172,510","#ffffff","220,508","#ffffff"],
+        "click_location_str": "751,507",
+        "priority": 1,
+        "cooldown": 2.0,
+    },
+    {
+        "task_name": "Currently Story Detect All Maps Are Cleared! [Sub Stories]",
+        "type": "pixel",
+        "search_array": ["96,68","#3fc5ff","150,71","#159fff","158,71","#17a0ff"],
+        "click_location_str": "483,500",
+        "priority": 1,
+        "CheckSubStoriesAllCleared": True,
+        "cooldown": 2.0,
+    },
+   {
+        "task_name": "Click [Close] For Prize",
+        "type": "pixel",
+        "search_array": ["723,34","#0d12b5","714,48","#e60012","612,491","#235df9"],
+        "click_location_str": "488,487",
+        "priority": 30,
+        "cooldown": 2.0,
+    },
+
+
+]
