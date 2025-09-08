@@ -410,6 +410,16 @@ DETECT_CHAPTER_END = [
         "confidence": 0.80,
         "priority": 5
     },
+        {
+        "task_name": "Side-Story Part 17 HARD Chapter END [166]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part17-Chapter166_Hard.png",
+        "roi": [710, 318, 139, 93],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.80,
+        "priority": 5
+    },
     {
         "task_name": "Side-Story Part 18 Chapter END [192]",
         "type": "template",
