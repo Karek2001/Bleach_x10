@@ -2,15 +2,25 @@
 
 Restarting_Tasks = [
         # From Restarting_Tasks to Main_Tasks
-    {
+        {
         "task_name": "Open Story Window",
         "type": "pixel",
         "click_location_str": "531,193",
         "search_array": ["479,146","#ebebea","457,184","#ffffff","524,191","#ffffff"],
         "isLogical": False,
-        "BackToStory": True,  # Switches to Main_Tasks
+        "BackToStory": True,  # Switches to Main_Tasks,
+        "StopSupport": "json_SideMode"
     },
-    
+        {
+        "task_name": "Click [Sub-Stories] Window.",
+        "type": "pixel",
+        "click_location_str": "694,189",
+        "search_array": ["679,180","#ffffff","736,202","#ffffff","794,201","#9c1212","791,204","#9c1212"],
+        "priority": 1,
+        "cooldown": 5.0,
+        "ConditionalRun": ["EasyMode", "HardMode", "SideMode"],  # Dynamic conditional checking
+        "Sub-Stores": True,  # Switch to sub-stories if conditions are met
+    },
     # HIGHEST PRIORITY - Error Recovery/Back Navigation (Priority 5-10)
     {
         "task_name": "Click[Back] In Selling Character Window",

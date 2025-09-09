@@ -320,6 +320,30 @@ class OptimizedBackgroundMonitor:
     async def handle_task_flags(self, device_id: str, task: dict):
         """Handle all task switching flags and update device state"""
         
+        # Handle dynamic conditional checking
+        conditional_run = task.get("ConditionalRun")
+        if conditional_run and isinstance(conditional_run, list):
+            device_state = device_state_manager.get_state(device_id)
+            
+            # Check if all specified keys are set to 1
+            all_conditions_met = True
+            status_info = []
+            
+            for key in conditional_run:
+                value = device_state.get(key, 0)
+                status_info.append(f"{key}:{value}")
+                if value != 1:
+                    all_conditions_met = False
+            
+            status_str = " ".join(status_info)
+            
+            if all_conditions_met:
+                print(f"[{device_id}] All conditions met ({status_str}) → Sub Stories")
+                self.process_monitor.set_active_tasks(device_id, "substories")
+                return
+            else:
+                print(f"[{device_id}] Conditions not met ({status_str}) → Continue normal flow")
+        
         # Handle JSON flag updates first
         json_flags = [
             "json_EasyMode", "json_HardMode", "json_SideMode",

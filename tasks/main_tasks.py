@@ -1,6 +1,7 @@
 from .detect_chapter_end import DETECT_CHAPTER_END
 
 Main_Tasks = [
+
     {
         "task_name": "Click Story MAP",
         "type": "template",
@@ -24,6 +25,7 @@ Main_Tasks = [
         "shared_detection": True,
         "priority": 30,
         "cooldown": 2.0,
+        "StopSupport": "json_SideMode",
     },
     {
         "task_name": "All Posibile Ways of Stars Map #1",
@@ -38,6 +40,7 @@ Main_Tasks = [
         "multi_click": True,  # Click all stars found
         "priority": 20,
         "cooldown": 3.0,
+        "StopSupport": "json_SideMode",
     },
     
     # Battle Preparation - Medium Priority
@@ -52,6 +55,7 @@ Main_Tasks = [
         "isLogical": False,
         "priority": 35,
         "cooldown": 0.5,  # Short cooldown for tap-to-continue
+        "StopSupport": "json_SideMode",
     },
    
     
@@ -64,6 +68,7 @@ Main_Tasks = [
         "search_array": ["249,153","#0d12b5","259,163","#e60012","535,262","#ffffff","612,263","#ffffff","542,258","#ffffff"],
         "isLogical": False,
         "priority": 20,
+        "StopSupport": "json_SideMode",
     },
     
     # Chapter Navigation
@@ -78,6 +83,7 @@ Main_Tasks = [
         "priority": 1,
         "cooldown": 2.0,
         "sleep": 8.5,
+        "StopSupport": "json_SideMode",
     },
     
     # Uncleared Content Selection
@@ -92,6 +98,7 @@ Main_Tasks = [
         "isLogical": False,
         "priority": 25,
         "cooldown": 2.0,
+        "StopSupport": "json_SideMode",
     },
         {
         "task_name": "Choose Uncleared Part",
@@ -104,6 +111,7 @@ Main_Tasks = [
         "shared_detection": True,
         "priority": 25,
         "cooldown": 2.0,
+        "StopSupport": "json_SideMode",
     },
         # HARD MODE SWITCHER (STORY MODE FINISHED)
             {

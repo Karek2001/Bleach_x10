@@ -10,6 +10,9 @@ HardStory_Tasks = [
         "priority": 1,
         "Sub-Stores": True,
         "KeepChecking": 5.0,
+        "json_EasyMode": True,
+        "json_HardMode": True,
+        "json_SideMode": True
     },
     {
         "task_name": "Active Hard Mode If It Doesn't Activited",
@@ -42,6 +45,7 @@ HardStory_Tasks = [
         "priority": 20,
         "cooldown": 2.0,
         "BackToStory": True,
+        "json_EasyMode": True,
     },
         {
         "task_name": "Let's Start With Part-1 HARD! [Side Story]",
@@ -55,6 +59,7 @@ HardStory_Tasks = [
         "priority": 20,
         "cooldown": 2.0,
         "BackToStory": True,
+        
     },
 
     
