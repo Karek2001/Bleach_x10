@@ -55,15 +55,7 @@ Main_Tasks = [
     },
    
     
-    # Social/Cancel Actions - Lower Priority
-    {
-        "task_name": "Click [Cancel] For Friend Request",
-        "type": "pixel",
-        "click_location_str": "344,409",
-        "search_array": ["720,121","#0d12b5","713,134","#e60012","489,175","#ffffff","565,174","#ffffff"],
-        "isLogical": False,
-        "priority": 50,
-    },
+
     # Story Already Clear But Trying to Re Read
     {
         "task_name": "Click [Cancel] For Re-Read Story",

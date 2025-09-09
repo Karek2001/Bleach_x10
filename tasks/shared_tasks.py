@@ -154,4 +154,21 @@ Shared_Tasks = [
         "isLogical": False,
         "priority": 20,
     },
+        {
+        "task_name": "New Record Quest Obtained",
+        "type": "pixel",
+        "click_location_str": "469,504",
+        "search_array": ["183,77","#ffffff","398,503","#ffffff","567,508","#ffffff","339,428","#1f9bf4"],
+        "isLogical": False,
+        "priority": 20,
+    },
+        # Social/Cancel Actions - Lower Priority
+    {
+        "task_name": "Click [Cancel] For Friend Request",
+        "type": "pixel",
+        "click_location_str": "344,409",
+        "search_array": ["720,121","#0d12b5","713,134","#e60012","489,175","#ffffff","565,174","#ffffff"],
+        "isLogical": False,
+        "priority": 50,
+    },
 ]

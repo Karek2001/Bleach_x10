@@ -1,7 +1,8 @@
 # logical_process.py
 import asyncio
-# Import the functions from actions
-from actions import screenshot_manager, find_template_in_region, execute_tap, execute_swipe
+from actions import execute_tap, find_template_in_region, execute_swipe
+from screenrecord_manager import get_screenrecord_manager
+import settings
 
 async def run_hard_mode_swipes(device_id):
     """
@@ -12,7 +13,8 @@ async def run_hard_mode_swipes(device_id):
     print(f"\n--- Executing Smart Hard Mode Swipe Sequence on {device_id} ---")
     
     # First check if Part-1 HARD template is already visible
-    print(f"[{device_id}] Checking if Part-1 HARD template is already visible...")
+    if settings.SPAM_LOGS:
+        print(f"[{device_id}] Checking if Part-1 HARD template is already visible...")
     screenshot = await screenshot_manager.get_screenshot(device_id)
     
     if screenshot is not None:
@@ -24,7 +26,8 @@ async def run_hard_mode_swipes(device_id):
         )
         
         if part1_hard_pos:
-            print(f"[{device_id}] Part-1 HARD template already found at {part1_hard_pos} - no swipes needed!")
+            if settings.SPAM_LOGS:
+                print(f"[{device_id}] Part-1 HARD template already found at {part1_hard_pos} - no swipes needed!")
             return
     
     # Execute swipes until template is found or max swipes reached
@@ -40,7 +43,8 @@ async def run_hard_mode_swipes(device_id):
         await asyncio.sleep(2)
         
         # Check if Part-1 HARD template is now visible
-        print(f"[{device_id}] Checking for Part-1 HARD template after swipe {swipe_num}...")
+        if settings.SPAM_LOGS:
+            print(f"[{device_id}] Checking for Part-1 HARD template after swipe {swipe_num}...")
         screenshot = await screenshot_manager.get_screenshot(device_id)
         
         if screenshot is not None:
@@ -52,10 +56,13 @@ async def run_hard_mode_swipes(device_id):
             )
             
             if part1_hard_pos:
-                print(f"[{device_id}] ✅ Part-1 HARD template found at {part1_hard_pos} after {swipe_num} swipe(s)!")
-                print(f"[{device_id}] Smart swipe sequence complete - target found efficiently!")
+                if settings.SPAM_LOGS:
+                    print(f"[{device_id}] ✅ Part-1 HARD template found at {part1_hard_pos} after {swipe_num} swipe(s)!")
+                    print(f"[{device_id}] Smart swipe sequence complete - target found efficiently!")
                 return
         else:
-            print(f"[{device_id}] Failed to capture screenshot after swipe {swipe_num}")
+            if settings.SPAM_LOGS:
+                print(f"[{device_id}] Failed to capture screenshot after swipe {swipe_num}")
     
-    print(f"[{device_id}] ⚠️ Part-1 HARD template not found after 7 swipes - sequence complete")
+    if settings.SPAM_LOGS:
+        print(f"[{device_id}] ⚠️ Part-1 HARD template not found after 7 swipes - sequence complete")

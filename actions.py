@@ -12,6 +12,7 @@ import numpy as np
 from PIL import Image
 import cv2
 from screenrecord_manager import get_screenrecord_manager, cleanup_all_screenrecord
+import settings
 
 # OCR imports
 try:
@@ -118,7 +119,8 @@ class TemplateCache:
             return self.templates[template_path]
         
         if not os.path.exists(template_path):
-            print(f"Template not found: {template_path}")
+            if settings.SPAM_LOGS:
+                print(f"Template not found: {template_path}")
             return None
         
         try:
@@ -134,7 +136,8 @@ class TemplateCache:
             self.templates[template_path] = template
             return template
         except Exception as e:
-            print(f"Error loading template {template_path}: {e}")
+            if settings.SPAM_LOGS:
+                print(f"Error loading template {template_path}: {e}")
             return None
 
 template_cache = TemplateCache()
@@ -348,7 +351,8 @@ async def find_all_templates_smart(screenshot: np.ndarray,
                 all_matches[template_path] = matches
                 
         except Exception as e:
-            print(f"Error matching template {template_path}: {e}")
+            if settings.SPAM_LOGS:
+                print(f"Error matching template {template_path}: {e}")
             continue
     
     return all_matches
@@ -523,7 +527,8 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 continue
             
             if task.get("multi_click", False) or "UnClear" in task_name:
-                print(f"[MULTI-DETECT] {task_name}: Found {len(positions)} matches")
+                if settings.SPAM_LOGS:
+                    print(f"[MULTI-DETECT] {task_name}: Found {len(positions)} matches")
                 for i, (x, y) in enumerate(positions):
                     await execute_tap(device_id, f"{x},{y}")
                     await asyncio.sleep(0.05)
@@ -630,7 +635,8 @@ async def find_template_in_region(screenshot: np.ndarray, template_path: str,
         return None
         
     except Exception as e:
-        print(f"Template matching error: {e}")
+        if settings.SPAM_LOGS:
+            print(f"Template matching error: {e}")
         return None
 
 # Configure default cooldowns

@@ -8,7 +8,7 @@ SubStories = [
         "use_match_position": True,
         "template_path": "templates/Sub-Stories/Sub-Storie-Map-UnClear.png",
         "priority": 1,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Leave [Story Mode Menu] For [Going To Sub-Stories]",
@@ -16,7 +16,7 @@ SubStories = [
         "click_location_str": "25,20",
         "search_array": ["113,70","#ffff00","136,82","#750000","113,78","#ffffff","25,20","#ffffff"],
         "priority": 1,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Sub-Stories]",
@@ -24,7 +24,7 @@ SubStories = [
         "click_location_str": "694,189",
         "search_array": ["679,180","#ffffff","736,202","#ffffff","794,201","#9c1212","791,204","#9c1212"],
         "priority": 1,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
 
     {
@@ -37,7 +37,7 @@ SubStories = [
         "use_match_position": True,
         "multi_click": True,
         "priority": 20,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
 
@@ -49,7 +49,7 @@ SubStories = [
         "use_match_position": True,
         "multi_click": True,
         "priority": 21,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
 
@@ -61,7 +61,7 @@ SubStories = [
         "use_match_position": True,
         "multi_click": True,
         "priority": 22,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
 
@@ -73,7 +73,7 @@ SubStories = [
         "use_match_position": True,
         "multi_click": True,
         "priority": 23,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
 
@@ -85,19 +85,18 @@ SubStories = [
         "use_match_position": True,
         "multi_click": True,
         "priority": 24,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
         {
 
         "task_name": "Choose Sub Storie Part To Complete",
         "type": "template",
         "template_path": "templates/Sub-Stories/NewPart.png",
-        "roi": [130, 93, 709, 360],
-        "confidence": 0.90,
+        "roi": [116, 80, 729, 382],
+        "confidence": 0.70,
         "use_match_position": True,
-        "multi_click": True,
-        "priority": 30,
-        "cooldown": 2.0,
+        "priority": 20,
+        "cooldown": 5.0,
     },
 
         {
@@ -106,7 +105,7 @@ SubStories = [
         "search_array": ["146,504","#0b3be2","172,510","#ffffff","220,508","#ffffff"],
         "click_location_str": "751,507",
         "priority": 1,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Currently Story Detect All Maps Are Cleared! [Sub Stories]",
@@ -115,7 +114,7 @@ SubStories = [
         "click_location_str": "483,500",
         "priority": 1,
         "CheckSubStoriesAllCleared": True,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
    {
         "task_name": "Click [Close] For Prize",
@@ -123,8 +122,16 @@ SubStories = [
         "search_array": ["723,34","#0d12b5","714,48","#e60012","612,491","#235df9"],
         "click_location_str": "488,487",
         "priority": 30,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
-
+        {
+        "task_name": "Not All Sub-Storiies sheet are clear",
+        "type": "Pixel-OneOrMoreMatched",
+        "pixel-values":["611,116","#009bff","611,201","#0199ff","611,286","#0298ff","149,286","#0298ff"],
+        "click_location_str": "0,0",
+        "priority": 30,
+        "cooldown": 5.0,
+        "CheckSubStoriesAllCleared": True,
+    },
 
 ]

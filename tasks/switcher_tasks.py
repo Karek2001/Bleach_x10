@@ -30,10 +30,9 @@ Switcher_Tasks = [
         "task_name": "Character FULL",
         "type": "pixel",
         "click_location_str": "0,0",  # No click needed, just detection
-        "search_array": ["254,151","#0d12b5","268,162","#e60012","255,252","#ffffff","299,251","#ffffff","356,254","#ffffff","432,149","#191919"],
+        "search_array": ["718,148","#0d12b5","709,163","#e60012","418,372","#ffffff","513,372","#ffffff"],
         "isLogical": False,
         "Characters_Full": True,  # Switches to Sell_Characters
-        "ShowsIn": ["main_tasks", "restarting_tasks"],  # Only active in these task sets
     },
         {
         "task_name": "Character FULL #2",
@@ -42,7 +41,6 @@ Switcher_Tasks = [
         "search_array": ["257,154","#0d12b5","262,164","#e60012","491,236","#ffffff","591,237","#ffffff"],
         "isLogical": False,
         "Characters_Full": True,  # Switches to Sell_Characters
-        "ShowsIn": ["main_tasks", "restarting_tasks"],  # Only active in these task sets
     },
     
     # From GUILD_TUTORIAL_TASKS to Guild_Rejoin

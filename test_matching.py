@@ -17,21 +17,119 @@ from PIL import Image, ImageTk, ImageDraw
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Import settings
+try:
+    import settings
+except ImportError:
+    # Fallback if settings not available
+    class MockSettings:
+        SPAM_LOGS = True  # Default to True for test file
+    settings = MockSettings()
+
 # Import from tasks
 try:
-    from tasks.main_tasks import Main_Tasks
+    from tasks import (
+        Main_Tasks, Restarting_Tasks, Shared_Tasks, Switcher_Tasks,
+        GUILD_TUTORIAL_TASKS, Guild_Rejoin, Sell_Characters,
+        HardStory_Tasks, SideStory, SubStories, SubStories_check
+    )
+    
+    # Combine all task lists into a dictionary for easy access
+    ALL_TASK_CATEGORIES = {
+        "Main Tasks": Main_Tasks,
+        "Restarting Tasks": Restarting_Tasks,
+        "Shared Tasks": Shared_Tasks,
+        "Switcher Tasks": Switcher_Tasks,
+        "Guild Tutorial Tasks": GUILD_TUTORIAL_TASKS,
+        "Guild Rejoin": Guild_Rejoin,
+        "Sell Characters": Sell_Characters,
+        "Hard Story Tasks": HardStory_Tasks,
+        "Side Story": SideStory,
+        "Sub Stories": SubStories,
+        "Sub Stories Check": SubStories_check
+    }
 except ImportError as e:
-    print(f"Warning: Could not import Main_Tasks: {e}")
-    print("Using empty list")
-    Main_Tasks = []
+    print(f"Warning: Could not import tasks: {e}")
+    print("Using empty task categories")
+    ALL_TASK_CATEGORIES = {"Main Tasks": []}
 
 def hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
     """Converts a hex color string to an (R, G, B) tuple."""
     hex_color = hex_color.lstrip('#')
     return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
 
+def check_pixel_task(screenshot: np.ndarray, task: dict) -> bool:
+    """Check if a pixel task matches the screenshot"""
+    search_array = task.get("search_array", [])
+    if len(search_array) < 2:
+        return False
+    
+    # Check all pixel-color pairs
+    for i in range(0, len(search_array), 2):
+        if i + 1 >= len(search_array):
+            break
+            
+        coords_str = search_array[i]
+        hex_color = search_array[i + 1]
+        
+        try:
+            x, y = map(int, coords_str.split(','))
+            expected_rgb = hex_to_rgb(hex_color)
+            
+            # Check bounds
+            if 0 <= y < screenshot.shape[0] and 0 <= x < screenshot.shape[1]:
+                pixel_color = screenshot[y, x]
+                if not np.array_equal(pixel_color, np.array(expected_rgb)):
+                    return False
+            else:
+                return False
+        except (ValueError, IndexError):
+            return False
+    
+    return True
+
+def check_pixel_one_or_more_task(screenshot: np.ndarray, task: dict) -> bool:
+    """Check if a Pixel-OneOrMoreMatched task has any matching pairs"""
+    pixel_values = task.get("pixel-values", [])
+    if len(pixel_values) < 4:
+        return False
+    
+    # Check consecutive pairs
+    for i in range(0, len(pixel_values) - 3, 2):
+        try:
+            coords1_str = pixel_values[i]
+            color1 = pixel_values[i + 1]
+            coords2_str = pixel_values[i + 2] 
+            color2 = pixel_values[i + 3]
+            
+            x1, y1 = map(int, coords1_str.split(','))
+            x2, y2 = map(int, coords2_str.split(','))
+            
+            expected_rgb1 = hex_to_rgb(color1)
+            expected_rgb2 = hex_to_rgb(color2)
+            
+            # Check bounds and colors
+            if (0 <= y1 < screenshot.shape[0] and 0 <= x1 < screenshot.shape[1] and
+                0 <= y2 < screenshot.shape[0] and 0 <= x2 < screenshot.shape[1]):
+                
+                pixel_color1 = screenshot[y1, x1]
+                pixel_color2 = screenshot[y2, x2]
+                
+                if (np.array_equal(pixel_color1, np.array(expected_rgb1)) and
+                    np.array_equal(pixel_color2, np.array(expected_rgb2))):
+                    return True
+        except (ValueError, IndexError):
+            continue
+    
+    return False
+
 def load_template(template_path: str) -> Optional[np.ndarray]:
     """Load and convert template image"""
+    # Convert relative paths to absolute paths from project root
+    if not os.path.isabs(template_path):
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        template_path = os.path.join(project_root, template_path)
+    
     if not os.path.exists(template_path):
         print(f"Template not found: {template_path}")
         return None
@@ -135,6 +233,55 @@ def draw_matches(image: np.ndarray, matches: List[Tuple[int, int, float]],
     
     return result_img
 
+def draw_pixel_matches(image: np.ndarray, task: dict, task_name: str, 
+                      color: Tuple[int, int, int]) -> np.ndarray:
+    """Draw pixel detection points and labels"""
+    result_img = image.copy()
+    
+    if task.get("type") == "pixel":
+        search_array = task.get("search_array", [])
+        for i in range(0, len(search_array), 2):
+            if i + 1 >= len(search_array):
+                break
+            try:
+                coords_str = search_array[i]
+                hex_color = search_array[i + 1]
+                x, y = map(int, coords_str.split(','))
+                
+                # Draw pixel point
+                cv2.circle(result_img, (x, y), 3, color, -1)
+                cv2.circle(result_img, (x, y), 8, color, 2)
+                
+                # Draw label with expected color
+                label = f"{task_name} [{i//2+1}]: {hex_color}"
+                cv2.putText(result_img, label, (x + 10, y - 10), 
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1)
+            except (ValueError, IndexError):
+                continue
+    
+    elif task.get("type") == "Pixel-OneOrMoreMatched":
+        pixel_values = task.get("pixel-values", [])
+        for i in range(0, len(pixel_values), 2):
+            if i + 1 >= len(pixel_values):
+                break
+            try:
+                coords_str = pixel_values[i]
+                hex_color = pixel_values[i + 1]
+                x, y = map(int, coords_str.split(','))
+                
+                # Draw pixel point
+                cv2.circle(result_img, (x, y), 3, color, -1)
+                cv2.circle(result_img, (x, y), 8, color, 2)
+                
+                # Draw label
+                label = f"{task_name} [{i//2+1}]: {hex_color}"
+                cv2.putText(result_img, label, (x + 10, y - 10), 
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, 1)
+            except (ValueError, IndexError):
+                continue
+    
+    return result_img
+
 def display_results_tkinter(image: np.ndarray):
     """Display results using Tkinter instead of OpenCV"""
     try:
@@ -206,12 +353,12 @@ def draw_roi(image: np.ndarray, roi: Tuple[int, int, int, int],
 def run_template_matching_browser():
     """Run template matching with integrated image browser"""
     root = tk.Tk()
-    root.title("Template Matching Tool - /home/karek/Downloads/shared")
+    root.title("Template Matching Tool - /mnt/storagebox")
     root.geometry("1600x900")
     root.configure(bg="#2E2E2E")
     
     # Directory for images
-    image_dir = "/home/karek/Downloads/shared"
+    image_dir = "/mnt/storagebox"
     
     # Variables
     selected_buttons = set()
@@ -285,41 +432,117 @@ def run_template_matching_browser():
         total_matches_found = 0
         color_idx = 0
         
-        # Process each task
-        for task in Main_Tasks:
-            if task.get("type") != "template":
+        # Process each task category
+        for category_name, task_list in ALL_TASK_CATEGORIES.items():
+            if not task_list:  # Skip empty task lists
                 continue
-            
-            task_name = task.get("task_name", "Unknown Task")
-            template_path = task.get("template_path")
-            roi = task.get("roi")
-            confidence = 0.9
-            
-            print(f"\nTesting: {task_name}")
-            print(f"  Template: {template_path}")
-            print(f"  ROI: {roi}")
-            
-            if not template_path or not os.path.exists(template_path):
-                print(f"  ✗ Template not found: {template_path}")
-                continue
-            
-            is_multi_click = task.get("multi_click", False)
-            all_matches_for_task = find_template_matches(screenshot, template_path, roi, confidence, is_multi_click)
-            
-            if all_matches_for_task:
-                print(f"  ✓ Found {len(all_matches_for_task)} matches at confidence {confidence}")
-                for i, (x, y, c) in enumerate(all_matches_for_task):
-                    print(f"    Match {i+1}: ({x}, {y}) confidence: {c:.3f}")
                 
-                color = colors[color_idx % len(colors)]
-                result_img = draw_matches(result_img, all_matches_for_task, task_name, color, is_multi_click)
-                if roi:
-                    result_img = draw_roi(result_img, roi, color)
+            print(f"\n{'='*60}")
+            print(f"TESTING CATEGORY: {category_name}")
+            print(f"{'='*60}")
+            
+            # Process each task in the category
+            for task in task_list:
+                task_type = task.get("type", "pixel")
+                if task_type not in ["template", "pixel", "Pixel-OneOrMoreMatched"]:
+                    continue
                 
-                total_matches_found += len(all_matches_for_task)
-                color_idx += 1
-            else:
-                print(f"  ✗ No matches found at confidence {confidence}")
+                task_name = task.get("task_name", "Unknown Task")
+                
+                if task_type == "template":
+                    template_path = task.get("template_path")
+                    roi = task.get("roi")
+                    confidence = 0.9
+                    
+                    if settings.SPAM_LOGS:
+                        print(f"\nTesting: {task_name} [{category_name}] [TEMPLATE]")
+                        print(f"  Template: {template_path}")
+                        print(f"  ROI: {roi}")
+                    
+                    if not template_path:
+                        if settings.SPAM_LOGS:
+                            print(f"  ✗ No template path specified")
+                        continue
+                    
+                    # Convert relative paths to absolute paths from project root
+                    if not os.path.isabs(template_path):
+                        project_root = os.path.dirname(os.path.abspath(__file__))
+                        full_template_path = os.path.join(project_root, template_path)
+                    else:
+                        full_template_path = template_path
+                    
+                    if not os.path.exists(full_template_path):
+                        if settings.SPAM_LOGS:
+                            print(f"  ✗ Template not found: {full_template_path}")
+                        continue
+                    
+                    is_multi_click = task.get("multi_click", False)
+                    all_matches_for_task = find_template_matches(screenshot, template_path, roi, confidence, is_multi_click)
+                    
+                    if all_matches_for_task:
+                        if settings.SPAM_LOGS:
+                            print(f"  ✓ Found {len(all_matches_for_task)} matches at confidence {confidence}")
+                            for i, (x, y, c) in enumerate(all_matches_for_task):
+                                print(f"    Match {i+1}: ({x}, {y}) confidence: {c:.3f}")
+                        
+                        color = colors[color_idx % len(colors)]
+                        result_img = draw_matches(result_img, all_matches_for_task, task_name, color, is_multi_click)
+                        if roi:
+                            result_img = draw_roi(result_img, roi, color)
+                        
+                        total_matches_found += len(all_matches_for_task)
+                        color_idx += 1
+                    else:
+                        if settings.SPAM_LOGS:
+                            print(f"  ✗ No matches found at confidence {confidence}")
+                
+                elif task_type == "pixel":
+                    search_array = task.get("search_array", [])
+                    
+                    if settings.SPAM_LOGS:
+                        print(f"\nTesting: {task_name} [{category_name}] [PIXEL]")
+                        print(f"  Search Array: {len(search_array)//2} pixel-color pairs")
+                        for i in range(0, len(search_array), 2):
+                            if i + 1 < len(search_array):
+                                print(f"    Pixel {i//2+1}: {search_array[i]} -> {search_array[i+1]}")
+                    
+                    pixel_match = check_pixel_task(screenshot, task)
+                    
+                    if pixel_match:
+                        if settings.SPAM_LOGS:
+                            print(f"  ✓ All pixels match expected colors")
+                        
+                        color = colors[color_idx % len(colors)]
+                        result_img = draw_pixel_matches(result_img, task, task_name, color)
+                        total_matches_found += 1
+                        color_idx += 1
+                    else:
+                        if settings.SPAM_LOGS:
+                            print(f"  ✗ Pixel colors do not match")
+                
+                elif task_type == "Pixel-OneOrMoreMatched":
+                    pixel_values = task.get("pixel-values", [])
+                    
+                    if settings.SPAM_LOGS:
+                        print(f"\nTesting: {task_name} [{category_name}] [PIXEL-ONE-OR-MORE]")
+                        print(f"  Pixel Values: {len(pixel_values)//2} pixel-color pairs")
+                        for i in range(0, len(pixel_values), 2):
+                            if i + 1 < len(pixel_values):
+                                print(f"    Pixel {i//2+1}: {pixel_values[i]} -> {pixel_values[i+1]}")
+                    
+                    pixel_match = check_pixel_one_or_more_task(screenshot, task)
+                    
+                    if pixel_match:
+                        if settings.SPAM_LOGS:
+                            print(f"  ✓ At least one pixel pair matches")
+                        
+                        color = colors[color_idx % len(colors)]
+                        result_img = draw_pixel_matches(result_img, task, task_name, color)
+                        total_matches_found += 1
+                        color_idx += 1
+                    else:
+                        if settings.SPAM_LOGS:
+                            print(f"  ✗ No pixel pairs match")
         
         print(f"\nTotal matches found: {total_matches_found}")
         

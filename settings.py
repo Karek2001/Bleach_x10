@@ -83,6 +83,9 @@ ECD_FILES = {
 # -------------------
 EMULATOR_RESOLUTION = (960, 540)
 
+# Control template matching and pixel detection logging
+SPAM_LOGS = False  # Set to True to enable detailed logging of each pixel/template found
+
 # Number of concurrent threads (only used if USE_ASYNC_PROCESSING is False)
 NUM_THREADS = 4
 
