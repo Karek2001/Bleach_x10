@@ -7,7 +7,7 @@ suppress_libpng_warning()
 
 from background_process import monitor
 from screenrecord_manager import cleanup_all_screenrecord
-from logical_process import run_hard_mode_swipes
+from logical_process import run_hard_mode_swipes, handle_game_ready_routing
 from device_state_manager import device_state_manager
 from actions import run_adb_command
 
@@ -134,10 +134,13 @@ async def monitor_single_device_with_logical_tasks(device_id: str):
                 logical_task_info = getattr(monitor, 'logical_task_info', {})
                 task_info = logical_task_info.get(triggered_device, {})
                 
-                # Only check for and run the hard mode swipe logic
+                # Handle different logical task types
                 if task_info.get("HardModeSwipe", False):
                     print(f"[{triggered_device}] Executing Hard Mode swipes...")
                     await run_hard_mode_swipes(triggered_device)
+                elif "Game Opened Ready To Use" in task_info.get("task_name", ""):
+                    print(f"[{triggered_device}] Handling game ready routing...")
+                    await handle_game_ready_routing(triggered_device)
                 
                 print(f"✓ [{triggered_device}] Logical process complete")
                 

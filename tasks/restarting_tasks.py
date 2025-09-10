@@ -3,6 +3,15 @@
 Restarting_Tasks = [
 # Click White Screen of Klab Company So when it spams 10 Times that Means game freezed
     {
+        "task_name": "Game Opened Ready To Use",
+        "type": "pixel",
+        "click_location_str": "0,0",
+        "search_array": ["894,485","#978e74","497,524","#ffffff","790,16","#593b0d","873,190","#ffffff"],
+        "isLogical": True,  # Use logical processing to determine routing
+        "priority": 1,
+        "cooldown": 60.0,
+    },
+    {
         "task_name": "Bleach isn't Responsing",
         "type": "pixel",
         "click_location_str": "364,292",

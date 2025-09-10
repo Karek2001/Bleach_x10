@@ -168,7 +168,7 @@ SubStories = [
         {
         "task_name": "Detect Many Clear Sub-Stories Part",
         "type": "Pixel-OneOrMoreMatched",
-        "pixel-values":["611,116","#009bff","611,201","#0199ff","611,286","#0298ff","149,286","#0298ff","407,116","#028dff"],
+        "pixel-values":["611,116","#009bff","611,201","#0199ff","611,286","#0298ff","149,286","#0298ff","407,116","#028dff","159,112","#24a9ff","159,201","#24a9ff","159,286","#24a9ff"],
         "click_location_str": "0,0",
         "priority": 30,
         "cooldown": 5.0,
