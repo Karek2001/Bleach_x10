@@ -11,7 +11,7 @@ Sell_Characters = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 10,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
         {
         "task_name": "Go To Character List #2",
@@ -22,7 +22,7 @@ Sell_Characters = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 10,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     
     # Selling process - Sequential steps
@@ -33,7 +33,7 @@ Sell_Characters = [
         "search_array": ["141,516","#eaeaea","168,515","#ffffff","132,513","#2b3a48"],
         "isLogical": False,
         "priority": 15,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Multi Select]",
@@ -42,7 +42,7 @@ Sell_Characters = [
         "search_array": ["218,521","#ffbc2e","276,513","#d9dada","291,511","#f9f9fa","857,516","#16337d"],
         "isLogical": False,
         "priority": 20,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [All]",
@@ -53,7 +53,7 @@ Sell_Characters = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 25,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [3 Stars]",
@@ -65,7 +65,7 @@ Sell_Characters = [
         "isLogical": False,
         "shared_detection": True,  # Check with other selection options
         "priority": 30,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Select 50 Characters]",
@@ -74,7 +74,7 @@ Sell_Characters = [
         "search_array": ["473,207","#ec4d01","456,423","#ec4d01","458,314","#e94b01","472,208","#ee5001","769,492","#215af9","586,485","#0c3be2"],
         "isLogical": False,
         "priority": 35,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Sell]",
@@ -83,7 +83,7 @@ Sell_Characters = [
         "search_array": ["806,509","#ffffff","832,510","#ffffff","859,506","#0a3ae1"],
         "isLogical": False,
         "priority": 40,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     
     # Confirmation steps
@@ -94,7 +94,7 @@ Sell_Characters = [
         "search_array": ["603,486","#ffffff","622,489","#ffffff","225,433","#191925","686,485","#0939e0"],
         "isLogical": False,
         "priority": 45,
-        "cooldown": 3.0,  # Longer cooldown to ensure sale processes
+        "cooldown": 5.0,  # Longer cooldown to ensure sale processes
     },
     {
         "task_name": "Click [Close]",
@@ -106,6 +106,6 @@ Sell_Characters = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 50,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
 ]

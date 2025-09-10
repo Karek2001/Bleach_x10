@@ -29,7 +29,7 @@ Restarting_Tasks = [
         "search_array": ["216,512","#e24601","74,26","#ffffff","24,21","#ffffff","53,27","#ffffff"],
         "isLogical": False,
         "priority": 5,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     
     # HIGH PRIORITY - Game Start/Mod Menu (Priority 10-15)
@@ -40,7 +40,7 @@ Restarting_Tasks = [
         "search_array": ["265,470","#1c262b","338,469","#ffffff"],
         "isLogical": False,
         "priority": 10,
-        "cooldown": 3.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Game Start]",
@@ -49,7 +49,7 @@ Restarting_Tasks = [
         "search_array": ["880,490","#515151","937,512","#e60012"],
         "isLogical": False,
         "priority": 15,
-        "cooldown": 3.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Game Start 2]",
@@ -58,7 +58,7 @@ Restarting_Tasks = [
         "search_array": ["845,505","#fdfdfd","856,513","#e81828","14,21","#ffffff"],
         "isLogical": False,
         "priority": 15,
-        "cooldown": 3.0,
+        "cooldown": 5.0,
     },
     
     # MEDIUM PRIORITY - Quest/Event Handling (Priority 20-30)
@@ -69,7 +69,7 @@ Restarting_Tasks = [
         "search_array": ["251,153","#0d12b5","260,165","#e60012","432,151","#191925","239,224","#ffffff","368,227","#ffffff"],
         "isLogical": False,
         "priority": 20,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
        {
         "task_name": "Click [Yes] For Continue Playing Quest",
@@ -78,7 +78,7 @@ Restarting_Tasks = [
         "search_array": ["246,154","#0d12b5","262,164","#e60012","430,276","#ffffff","471,275","#ffffff","496,275","#ffffff"],
         "isLogical": False,
         "priority": 20,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Exit News",
@@ -90,7 +90,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 25,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     
     # LOWER PRIORITY - Navigation/Menu Access (Priority 35-40)
@@ -103,7 +103,7 @@ Restarting_Tasks = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 35,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     
     # LOW PRIORITY - Login Bonuses (Priority 40-50)
@@ -114,7 +114,7 @@ Restarting_Tasks = [
         "search_array": ["195,93","#e50012","182,82","#0d12b4","334,79","#191925"],
         "isLogical": False,
         "priority": 40,
-        "cooldown": 3.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Login Bonus",
@@ -123,7 +123,7 @@ Restarting_Tasks = [
         "search_array": ["405,36","#191925","483,36","#191925","255,47","#e50012","255,35","#0d12b4"],
         "isLogical": False,
         "priority": 40,
-        "cooldown": 3.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Skip Any New Events/Windows Opened By Clicking [OK]",
@@ -135,6 +135,6 @@ Restarting_Tasks = [
         "isLogical": False,
         "shared_detection": True,  # Check with other UI elements
         "priority": 50,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
 ]

@@ -125,7 +125,7 @@ SubStories = [
         "cooldown": 5.0,
     },
         {
-        "task_name": "Not All Sub-Storiies sheet are clear",
+        "task_name": "Detect Many Clear Sub-Stories Part",
         "type": "Pixel-OneOrMoreMatched",
         "pixel-values":["611,116","#009bff","611,201","#0199ff","611,286","#0298ff","149,286","#0298ff"],
         "click_location_str": "0,0",

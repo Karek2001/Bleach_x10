@@ -31,7 +31,7 @@ HardStory_Tasks = [
         "HardModeSwipe": True,  # Flag to identify this as hard mode swipe task
         "shared_detection": True,
         "priority": 20,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Let's Start With Part-1 HARD!",
@@ -43,7 +43,7 @@ HardStory_Tasks = [
         "isLogical": True,
         "shared_detection": True,
         "priority": 20,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
         "BackToStory": True,
         "json_EasyMode": True,
     },
@@ -57,7 +57,7 @@ HardStory_Tasks = [
         "isLogical": True,
         "shared_detection": True,
         "priority": 20,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
         "BackToStory": True,
         
     },

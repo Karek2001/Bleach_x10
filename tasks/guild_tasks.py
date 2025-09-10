@@ -10,7 +10,7 @@ GUILD_TUTORIAL_TASKS = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 15,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Join]",
@@ -19,7 +19,7 @@ GUILD_TUTORIAL_TASKS = [
         "search_array": ["801,173","#fbfcff","807,87","#485563","860,88","#ffffff"],
         "isLogical": False,
         "priority": 20,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [OK]",
@@ -31,7 +31,7 @@ GUILD_TUTORIAL_TASKS = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 25,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Guild TOP]",
@@ -42,7 +42,7 @@ GUILD_TUTORIAL_TASKS = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 30,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
 ]
 
@@ -57,7 +57,7 @@ Guild_Rejoin = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 15,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click Refresh",
@@ -66,7 +66,7 @@ Guild_Rejoin = [
         "search_array": ["859,88","#ffffff","861,78","#4d555c","876,100","#dedddd"],
         "isLogical": False,
         "priority": 10,  # Higher priority to refresh guild list
-        "cooldown": 3.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Guild TOP]",
@@ -78,6 +78,6 @@ Guild_Rejoin = [
         "isLogical": False,
         "NeedGuildTutorial": True,
         "priority": 25,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
 ]

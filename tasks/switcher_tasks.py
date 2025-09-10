@@ -10,7 +10,7 @@ Switcher_Tasks = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 1,
-        "cooldown": 3.0,
+        "cooldown": 5.0,
         "BackToRestarting": True,
     },
     # From Restarting_Tasks to GUILD_TUTORIAL_TASKS

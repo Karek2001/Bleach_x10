@@ -12,7 +12,7 @@ Main_Tasks = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 30,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
         {
         "task_name": "Click feetMap",
@@ -24,7 +24,7 @@ Main_Tasks = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 30,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
         "StopSupport": "json_SideMode",
     },
     {
@@ -39,7 +39,7 @@ Main_Tasks = [
         "shared_detection": True,
         "multi_click": True,  # Click all stars found
         "priority": 20,
-        "cooldown": 3.0,
+        "cooldown": 5.0,
         "StopSupport": "json_SideMode",
     },
     
@@ -54,7 +54,7 @@ Main_Tasks = [
         "search_array": ["917,13","#0e2988","671,500","#4e4e67"],
         "isLogical": False,
         "priority": 35,
-        "cooldown": 0.5,  # Short cooldown for tap-to-continue
+        "cooldown": 5.0,  # Short cooldown for tap-to-continue
         "StopSupport": "json_SideMode",
     },
    
@@ -81,7 +81,7 @@ Main_Tasks = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 1,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
         "sleep": 8.5,
         "StopSupport": "json_SideMode",
     },
@@ -97,7 +97,7 @@ Main_Tasks = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 25,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
         "StopSupport": "json_SideMode",
     },
         {
@@ -110,7 +110,7 @@ Main_Tasks = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 25,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
         "StopSupport": "json_SideMode",
     },
         # HARD MODE SWITCHER (STORY MODE FINISHED)

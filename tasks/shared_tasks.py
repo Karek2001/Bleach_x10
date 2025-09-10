@@ -47,7 +47,7 @@ Shared_Tasks = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 1,
-        "cooldown": 1.0,
+        "cooldown": 5.0,
     },
     
     # HIGH PRIORITY - UI Elements/Popups (Priority 5-10)
@@ -61,7 +61,7 @@ Shared_Tasks = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 5,
-        "cooldown": 3.0,  # Prevent skip button spam
+        "cooldown": 5.0,  # Prevent skip button spam
     },
     {
         "task_name": "Click [Close] for Hard Mode Unlocked",
@@ -73,7 +73,7 @@ Shared_Tasks = [
         "isLogical": False,
         "shared_detection": True,
         "priority": 8,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     
     # MEDIUM PRIORITY - Store/Purchase Actions (Priority 40-50)
@@ -86,7 +86,7 @@ Shared_Tasks = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 40,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click 25 Tickets",
@@ -97,7 +97,7 @@ Shared_Tasks = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 45,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Confirm Ticket Purchase",
@@ -108,7 +108,7 @@ Shared_Tasks = [
         "use_match_position": True,
         "isLogical": False,
         "priority": 45,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
 
         {
@@ -118,7 +118,7 @@ Shared_Tasks = [
         "search_array": ["527,486","#0c3be2","567,490","#ffffff","660,493","#ffffff","754,492","#ffffff"],
         "isLogical": False,
         "priority": 5,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click [Start Quest]",
@@ -127,7 +127,7 @@ Shared_Tasks = [
         "search_array": ["583,490","#ffffff","652,491","#0d3de4","671,498","#ffffff","735,496","#ffffff"],
         "isLogical": False,
         "priority": 5,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
     },
 
      {
