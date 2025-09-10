@@ -6,6 +6,7 @@ from .shared_tasks import Shared_Tasks
 from .switcher_tasks import Switcher_Tasks
 from .guild_tasks import GUILD_TUTORIAL_TASKS, Guild_Rejoin
 from .sell_characters_tasks import Sell_Characters
+from .sell_accsesurry_tasks import Sell_Accessury
 from .hard_story import HardStory_Tasks
 from .side_story import SideStory
 from .sub_stories import SubStories
@@ -19,6 +20,7 @@ __all__ = [
     'GUILD_TUTORIAL_TASKS',
     'Guild_Rejoin',
     'Sell_Characters',
+    'Sell_Accessury',
     'HardStory_Tasks',
     'SideStory',
     'SubStories',

@@ -1,29 +1,6 @@
 # tasks/sell_characters_tasks.py - Complete tasks for selling excess characters
 
-Sell_Characters = [
-    # Navigation to character management
-    {
-        "task_name": "Go To Character List",
-        "type": "template",
-        "template_path": "templates/Sell_Characters/CharacterList.png",
-        "roi": [174, 330, 607, 87],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": False,
-        "priority": 10,
-        "cooldown": 5.0,
-    },
-        {
-        "task_name": "Go To Character List #2",
-        "type": "template",
-        "template_path": "templates/Sell_Characters/CharacterList2.png",
-        "roi": [497, 331, 252, 86],
-        "confidence": 0.80,
-        "use_match_position": True,
-        "isLogical": False,
-        "priority": 10,
-        "cooldown": 5.0,
-    },
+Sell_Accessury = [
     
     # Selling process - Sequential steps
     {
@@ -109,5 +86,13 @@ Sell_Characters = [
         "cooldown": 5.0,
     },
 
-
+    {
+        "task_name": "Leave No More Accessury To Sell",
+        "type": "pixel",
+        "click_location_str": "25,21",
+        "search_array": ["210,516","#222930","220,512","#7f7f7f","188,523","#730009","343,129","#f05801"],
+        "isLogical": False,
+        "priority": 51,
+        "cooldown": 5.0,
+    },
 ]

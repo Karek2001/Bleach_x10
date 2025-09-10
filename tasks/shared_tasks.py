@@ -171,4 +171,14 @@ Shared_Tasks = [
         "isLogical": False,
         "priority": 50,
     },
+
+    # Map Already Clear But Trying to Re Read
+    {
+        "task_name": "Click [Cancel] For Re-Read Map",
+        "type": "pixel",
+        "click_location_str": "343,374",
+        "search_array": ["249,153","#0d12b5","259,163","#e60012","535,262","#ffffff","612,263","#ffffff","542,258","#ffffff"],
+        "isLogical": False,
+        "priority": 20,
+    },
 ]

@@ -1,25 +1,26 @@
 # tasks/restarting_tasks.py - Complete tasks for game startup and initial navigation
 
 Restarting_Tasks = [
-        # From Restarting_Tasks to StoryMode_Tasks
-        {
-        "task_name": "Open Story Window",
+# Click White Screen of Klab Company So when it spams 10 Times that Means game freezed
+    {
+        "task_name": "Bleach isn't Responsing",
         "type": "pixel",
-        "click_location_str": "531,193",
-        "search_array": ["479,146","#ebebea","457,184","#ffffff","524,191","#ffffff"],
+        "click_location_str": "364,292",
+        "search_array": ["244,218","#191c1e","239,289","#00658c","211,198","#f0f1f3"],
         "isLogical": False,
-        "BackToStory": True,  # Switches to StoryMode_Tasks,
-        "StopSupport": "json_SideMode"
+        "priority": 1,
+        "cooldown": 1.0,
     },
-        {
-        "task_name": "Click [Sub-Stories] Window.",
+    {
+        "task_name": "Click Klab Logo To Restart Game",
         "type": "pixel",
-        "click_location_str": "694,189",
-        "search_array": ["679,180","#ffffff","736,202","#ffffff","794,201","#9c1212","791,204","#9c1212"],
+        "click_location_str": "490,276",
+        "search_array": ["367,275","#005ead","444,296","#e95293","448,244","#005ead","588,249","#005ead"],
+        "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
-        "ConditionalRun": ["EasyMode", "HardMode", "SideMode"],  # Only execute if all modes are complete
     },
+
     # HIGHEST PRIORITY - Error Recovery/Back Navigation (Priority 5-10)
     {
         "task_name": "Click[Back] In Selling Character Window",
@@ -92,18 +93,7 @@ Restarting_Tasks = [
         "cooldown": 5.0,
     },
     
-    # LOWER PRIORITY - Navigation/Menu Access (Priority 35-40)
-    {
-        "task_name": "Open [SOLO] Menu",
-        "type": "template",
-        "template_path": "templates/Restarting/Solo.png",
-        "roi": [814, 420, 142, 118],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": False,
-        "priority": 35,
-        "cooldown": 5.0,
-    },
+
     
     # LOW PRIORITY - Login Bonuses (Priority 40-50)
     {

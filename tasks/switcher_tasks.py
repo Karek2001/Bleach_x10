@@ -84,5 +84,37 @@ Switcher_Tasks = [
         "isLogical": False,
         "BackToRestartingTasks": True,  # Switches to Restarting_Tasks
     },
+        # We Need to Sell Accsesurry
+    {
+        "task_name": "Detected Sell Accessury",
+        "type": "pixel",
+        "click_location_str": "486,375",
+        "search_array": ["708,149","#0d12b5","708,161","#e60012","587,269","#ffffff","700,274","#ffffff","584,296","#ffffff"],
+        "isLogical": False,
+        "SellAccsesurry": True,
+    },
 
+    {
+        "task_name": "Game Opened Ready To Use - Route to Sub Stories",
+        "type": "pixel",
+        "click_location_str": "0,0",
+        "search_array": ["894,485","#978e74","497,524","#ffffff","790,16","#593b0d","873,190","#ffffff"],
+        "isLogical": False,
+        "ConditionalRun": ["EasyMode", "HardMode", "SideMode"],  # Only execute if all modes are complete
+        "Sub-Stores": True,  # Switch to sub-stories if conditions are met
+        "priority": 1,
+        "cooldown": 60.0,
+
+    },
+    {
+        "task_name": "Game Opened Ready To Use - Route to Story Mode",
+        "type": "pixel",
+        "click_location_str": "0,0",
+        "search_array": ["894,485","#978e74","497,524","#ffffff","790,16","#593b0d","873,190","#ffffff"],
+        "isLogical": False,
+        "BackToStory": True,  # Switch to main story tasks if not all modes complete
+        "priority": 2,
+        "cooldown": 60.0,
+    },
+    
 ]

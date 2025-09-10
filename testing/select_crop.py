@@ -11,7 +11,7 @@ class ImageCropper:
         self.root.configure(bg="#2E2E2E")
         
         # Directory for images
-        self.image_dir = "/home/karek/Downloads/shared"
+        self.image_dir = "/mnt/storagebox/SellAccessury"
         self.output_dir = os.path.join(self.image_dir, "output")
         
         # Create output directory if it doesn't exist

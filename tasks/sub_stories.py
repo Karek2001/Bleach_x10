@@ -1,5 +1,27 @@
 
 SubStories = [
+        # LOWER PRIORITY - Navigation/Menu Access (Priority 35-40)
+    {
+        "task_name": "Open [SOLO] Menu For Sub-Stories",
+        "type": "template",
+        "template_path": "templates/Restarting/Solo.png",
+        "roi": [814, 420, 142, 118],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "isLogical": False,
+        "priority": 35,
+        "cooldown": 5.0,
+    },
+
+            {
+        "task_name": "Click [Sub-Stories] Window.",
+        "type": "pixel",
+        "click_location_str": "694,189",
+        "search_array": ["679,180","#ffffff","736,202","#ffffff","794,201","#9c1212","791,204","#9c1212"],
+        "priority": 1,
+        "cooldown": 5.0,
+        "ConditionalRun": ["EasyMode", "HardMode", "SideMode"],  # Only execute if all modes are complete
+    },
         {
         "task_name": "Unclear Sub-Stories Map",
         "type": "template",
@@ -8,7 +30,7 @@ SubStories = [
         "use_match_position": True,
         "template_path": "templates/Sub-Stories/Sub-Storie-Map-UnClear.png",
         "priority": 1,
-        "cooldown": 5.0,
+        "cooldown": 9.0,
     },
 
         {
@@ -106,7 +128,7 @@ SubStories = [
         "confidence": 0.70,
         "use_match_position": True,
         "priority": 20,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
     },
 
         {

@@ -2,6 +2,28 @@ from .detect_chapter_end import DETECT_CHAPTER_END
 
 StoryMode_Tasks = [
 
+        # LOWER PRIORITY - Navigation/Menu Access (Priority 35-40)
+    {
+        "task_name": "Open [SOLO] Menu For Story Mode",
+        "type": "template",
+        "template_path": "templates/Restarting/Solo.png",
+        "roi": [814, 420, 142, 118],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "isLogical": False,
+        "priority": 35,
+        "cooldown": 5.0,
+    },
+
+            {
+        "task_name": "Open Story Window",
+        "type": "pixel",
+        "click_location_str": "531,193",
+        "search_array": ["479,146","#ebebea","457,184","#ffffff","524,191","#ffffff"],
+        "isLogical": False,
+        "StopSupport": "json_SideMode"
+    },
+
     {
         "task_name": "Click Story MAP",
         "type": "template",
@@ -58,18 +80,7 @@ StoryMode_Tasks = [
         "StopSupport": "json_SideMode",
     },
    
-    
 
-    # Story Already Clear But Trying to Re Read
-    {
-        "task_name": "Click [Cancel] For Re-Read Story",
-        "type": "pixel",
-        "click_location_str": "343,374",
-        "search_array": ["249,153","#0d12b5","259,163","#e60012","535,262","#ffffff","612,263","#ffffff","542,258","#ffffff"],
-        "isLogical": False,
-        "priority": 20,
-        "StopSupport": "json_SideMode",
-    },
     
     # Chapter Navigation
     {

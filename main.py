@@ -37,12 +37,15 @@ def main():
     
     try:
         # Start continuous monitoring loop with logical task handling
+        print("🔄 Starting async monitoring loop...")
         asyncio.run(run_monitoring_with_logical_tasks())
     except KeyboardInterrupt:
         print("\n🛑 Monitoring stopped by user.")
         cleanup_handler()
     except Exception as e:
-        print(f"Error occurred: {e}")
+        print(f"❌ Error occurred: {e}")
+        import traceback
+        traceback.print_exc()
         cleanup_handler()
     finally:
         cleanup_handler()
@@ -81,27 +84,41 @@ async def run_monitoring_with_logical_tasks():
     """Run parallel monitoring for all devices with per-device logical task handling"""
     import settings
     
-    # Apply emulator optimizations first
-    await optimize_emulators()
-    
-    # Print initial state summary
-    device_state_manager.print_all_device_states()
-    
-    # Create monitoring tasks for each device
-    device_tasks = []
-    for device_id in settings.DEVICE_IDS:
-        task = asyncio.create_task(monitor_single_device_with_logical_tasks(device_id))
-        device_tasks.append(task)
-    
     try:
+        print("🔧 Importing settings...")
+        print(f"📱 Found {len(settings.DEVICE_IDS)} devices: {settings.DEVICE_IDS}")
+        
+        # Apply emulator optimizations first
+        print("⚡ Starting emulator optimization...")
+        await optimize_emulators()
+        
+        # Print initial state summary
+        print("📊 Printing device states...")
+        device_state_manager.print_all_device_states()
+        
+        # Create monitoring tasks for each device
+        print("🚀 Creating monitoring tasks...")
+        device_tasks = []
+        for device_id in settings.DEVICE_IDS:
+            print(f"📋 Creating task for {device_id}")
+            task = asyncio.create_task(monitor_single_device_with_logical_tasks(device_id))
+            device_tasks.append(task)
+        
+        print(f"✅ Created {len(device_tasks)} monitoring tasks")
+        print("🔄 Starting parallel monitoring...")
+        
         # Run all device monitoring in parallel
         await asyncio.gather(*device_tasks)
     except Exception as e:
-        print(f"Error in parallel monitoring: {e}")
+        print(f"❌ Error in run_monitoring_with_logical_tasks: {e}")
+        import traceback
+        traceback.print_exc()
         # Cancel all tasks on error
-        for task in device_tasks:
-            if not task.done():
-                task.cancel()
+        if 'device_tasks' in locals():
+            for task in device_tasks:
+                if not task.done():
+                    task.cancel()
+        raise
 
 async def monitor_single_device_with_logical_tasks(device_id: str):
     """Monitor a single device and handle its logical tasks independently"""

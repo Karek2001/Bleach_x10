@@ -20,6 +20,7 @@ from tasks import (
     GUILD_TUTORIAL_TASKS,
     Guild_Rejoin,
     Sell_Characters,
+    Sell_Accessury,
     HardStory_Tasks,
     SideStory,
     SubStories,
@@ -170,6 +171,7 @@ class ProcessMonitor:
             "guild_tutorial": GUILD_TUTORIAL_TASKS,
             "guild_rejoin": Guild_Rejoin,
             "sell_characters": Sell_Characters,
+            "sell_accsesurry": Sell_Accessury,
             "hardstory": HardStory_Tasks,
             "sidestory": SideStory,
             "substories": SubStories,
@@ -199,7 +201,7 @@ class ProcessMonitor:
     
     def set_active_tasks(self, device_id: str, task_set: str):
         """Set the active task set for a device and update state"""
-        valid_sets = ["main", "restarting", "guild_tutorial", "guild_rejoin", "sell_characters", "hardstory", "sidestory", "substories", "substories_check"]
+        valid_sets = ["main", "restarting", "guild_tutorial", "guild_rejoin", "sell_characters", "sell_accsesurry", "hardstory", "sidestory", "substories", "substories_check"]
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
             
@@ -212,6 +214,7 @@ class ProcessMonitor:
                 "guild_tutorial": "Guild Tutorial",
                 "guild_rejoin": "Guild Rejoin",
                 "sell_characters": "Sell Characters",
+                "sell_accsesurry": "Sell Accessory",
                 "hardstory": "Hard Story",
                 "sidestory": "Side Story",
                 "substories": "Sub Stories",
@@ -398,6 +401,7 @@ class OptimizedBackgroundMonitor:
             "BackToRestartingTasks": ("restarting", "→ Restarting"),
             "BackToMain": ("main", "→ Main"),
             "Characters_Full": ("sell_characters", "→ Sell Characters"),
+            "SellAccsesurry": ("sell_accsesurry", "→ Sell Accessory"),
             "HardStory": ("hardstory", "→ Hard Story"),
             "SideStory": ("sidestory", "→ Side Story"),
             "Sub-Stores": ("substories", "→ Sub Stories"),
