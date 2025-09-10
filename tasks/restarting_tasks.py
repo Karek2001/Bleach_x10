@@ -1,14 +1,14 @@
 # tasks/restarting_tasks.py - Complete tasks for game startup and initial navigation
 
 Restarting_Tasks = [
-        # From Restarting_Tasks to Main_Tasks
+        # From Restarting_Tasks to StoryMode_Tasks
         {
         "task_name": "Open Story Window",
         "type": "pixel",
         "click_location_str": "531,193",
         "search_array": ["479,146","#ebebea","457,184","#ffffff","524,191","#ffffff"],
         "isLogical": False,
-        "BackToStory": True,  # Switches to Main_Tasks,
+        "BackToStory": True,  # Switches to StoryMode_Tasks,
         "StopSupport": "json_SideMode"
     },
         {
@@ -18,8 +18,7 @@ Restarting_Tasks = [
         "search_array": ["679,180","#ffffff","736,202","#ffffff","794,201","#9c1212","791,204","#9c1212"],
         "priority": 1,
         "cooldown": 5.0,
-        "ConditionalRun": ["EasyMode", "HardMode", "SideMode"],  # Dynamic conditional checking
-        "Sub-Stores": True,  # Switch to sub-stories if conditions are met
+        "ConditionalRun": ["EasyMode", "HardMode", "SideMode"],  # Only execute if all modes are complete
     },
     # HIGHEST PRIORITY - Error Recovery/Back Navigation (Priority 5-10)
     {
@@ -72,9 +71,9 @@ Restarting_Tasks = [
         "cooldown": 5.0,
     },
        {
-        "task_name": "Click [Yes] For Continue Playing Quest",
+        "task_name": "Click [No] For Continue Playing Quest",
         "type":"pixel",
-        "click_location_str": "621,373",
+        "click_location_str": "345,374",
         "search_array": ["246,154","#0d12b5","262,164","#e60012","430,276","#ffffff","471,275","#ffffff","496,275","#ffffff"],
         "isLogical": False,
         "priority": 20,

@@ -266,10 +266,14 @@ class DeviceStateManager:
         """Determine if device should skip to a specific mode after restarting"""
         state = self.get_state(device_id)
         
+        # Debug: Show current state values
+        easy_mode = state.get("EasyMode", 0)
+        hard_mode = state.get("HardMode", 0)
+        side_mode = state.get("SideMode", 0)
+        print(f"[{device_id}] Mode check: EasyMode={easy_mode}, HardMode={hard_mode}, SideMode={side_mode}")
+        
         # Check if all three modes are complete - start with sub-stories tasks
-        if (state.get("EasyMode", 0) == 1 and 
-            state.get("HardMode", 0) == 1 and 
-            state.get("SideMode", 0) == 1):
+        if (easy_mode == 1 and hard_mode == 1 and side_mode == 1):
             print(f"[{device_id}] All modes complete (EasyMode, HardMode, SideMode) → Starting with substories")
             return "substories"
         

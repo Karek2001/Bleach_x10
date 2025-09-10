@@ -10,6 +10,16 @@ SubStories = [
         "priority": 1,
         "cooldown": 5.0,
     },
+
+        {
+        "task_name": "Map Has Only Story No Gameplay [Sub-Storie]",
+        "type": "pixel",
+        "click_location_str": "402,116",
+        "search_array": ["375,122","#191925","436,122","#191925","421,105","#1616f1","451,113","#02023c","95,72","#ff506e"],
+        "priority": 1,
+        "cooldown": 5.0,
+    },
+
     {
         "task_name": "Leave [Story Mode Menu] For [Going To Sub-Stories]",
         "type": "pixel",
@@ -116,6 +126,15 @@ SubStories = [
         "CheckSubStoriesAllCleared": True,
         "cooldown": 5.0,
     },
+       {
+        "task_name": "Currently Story Detect All Maps Are Cleared! [Story Only Last Map] [Sub Stories]",
+        "type": "pixel",
+        "search_array": ["95,68","#fffc35","157,73","#f89a2f","193,74","#fb9b30"],
+        "click_location_str": "483,500",
+        "priority": 1,
+        "CheckSubStoriesAllCleared": True,
+        "cooldown": 5.0,
+    },
    {
         "task_name": "Click [Close] For Prize",
         "type": "pixel",
@@ -127,7 +146,7 @@ SubStories = [
         {
         "task_name": "Detect Many Clear Sub-Stories Part",
         "type": "Pixel-OneOrMoreMatched",
-        "pixel-values":["611,116","#009bff","611,201","#0199ff","611,286","#0298ff","149,286","#0298ff"],
+        "pixel-values":["611,116","#009bff","611,201","#0199ff","611,286","#0298ff","149,286","#0298ff","407,116","#028dff"],
         "click_location_str": "0,0",
         "priority": 30,
         "cooldown": 5.0,

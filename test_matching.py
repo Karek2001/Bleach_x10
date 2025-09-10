@@ -29,14 +29,14 @@ except ImportError:
 # Import from tasks
 try:
     from tasks import (
-        Main_Tasks, Restarting_Tasks, Shared_Tasks, Switcher_Tasks,
+        StoryMode_Tasks, Restarting_Tasks, Shared_Tasks, Switcher_Tasks,
         GUILD_TUTORIAL_TASKS, Guild_Rejoin, Sell_Characters,
         HardStory_Tasks, SideStory, SubStories, SubStories_check
     )
     
     # Combine all task lists into a dictionary for easy access
     ALL_TASK_CATEGORIES = {
-        "Main Tasks": Main_Tasks,
+        "Story Mode Tasks": StoryMode_Tasks,
         "Restarting Tasks": Restarting_Tasks,
         "Shared Tasks": Shared_Tasks,
         "Switcher Tasks": Switcher_Tasks,

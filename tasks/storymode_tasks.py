@@ -1,6 +1,6 @@
 from .detect_chapter_end import DETECT_CHAPTER_END
 
-Main_Tasks = [
+StoryMode_Tasks = [
 
     {
         "task_name": "Click Story MAP",

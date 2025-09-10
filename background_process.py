@@ -13,7 +13,7 @@ import settings
 from actions import batch_check_pixels_enhanced, execute_tap, screenshot_manager, run_adb_command, task_tracker
 from device_state_manager import device_state_manager
 from tasks import (
-    Main_Tasks, 
+    StoryMode_Tasks, 
     Restarting_Tasks, 
     Shared_Tasks, 
     Switcher_Tasks,
@@ -140,10 +140,24 @@ class ProcessMonitor:
         return False
     
     def should_skip_task(self, device_id: str, task: dict) -> bool:
-        """Check if a task should be skipped based on StopSupport flag"""
+        """Check if a task should be skipped based on StopSupport flag or ConditionalRun"""
+        # Check StopSupport flag
         stop_support = task.get("StopSupport")
         if stop_support:
-            return device_state_manager.check_stop_support(device_id, stop_support)
+            if device_state_manager.check_stop_support(device_id, stop_support):
+                return True
+        
+        # Check ConditionalRun - skip task if conditions are NOT met
+        conditional_run = task.get("ConditionalRun")
+        if conditional_run and isinstance(conditional_run, list):
+            device_state = device_state_manager.get_state(device_id)
+            
+            # Check if all specified keys are set to 1
+            for key in conditional_run:
+                value = device_state.get(key, 0)
+                if value != 1:
+                    return True  # Skip task if any condition is not met
+        
         return False
     
     def get_active_tasks(self, device_id: str) -> List[dict]:
@@ -151,7 +165,7 @@ class ProcessMonitor:
         task_set = self.active_task_set.get(device_id, "restarting")
         
         task_map = {
-            "main": Main_Tasks,
+            "main": StoryMode_Tasks,
             "restarting": Restarting_Tasks,
             "guild_tutorial": GUILD_TUTORIAL_TASKS,
             "guild_rejoin": Guild_Rejoin,
@@ -162,7 +176,14 @@ class ProcessMonitor:
             "substories_check": SubStories_check
         }
         
+        # Debug: Log which task set is active and how many tasks it contains
         base_tasks = task_map.get(task_set, Restarting_Tasks)
+        print(f"[{device_id}] Active task set: {task_set}, Base tasks: {len(base_tasks)}")
+        
+        # Debug: If substories is active, log the task names
+        if task_set == "substories":
+            task_names = [task.get("task_name", "Unknown") for task in base_tasks]
+            print(f"[{device_id}] SubStories tasks: {task_names}")
         
         # Combine base tasks with shared tasks and switcher tasks
         all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
@@ -399,7 +420,7 @@ class OptimizedBackgroundMonitor:
                 if shows_in:
                     current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
                     task_set_mapping = {
-                        "main": "main_tasks",
+                        "main": "storymode_tasks",
                         "restarting": "restarting_tasks", 
                         "guild_tutorial": "guild_tutorial_tasks",
                         "guild_rejoin": "guild_rejoin_tasks",

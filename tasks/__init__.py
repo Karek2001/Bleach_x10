@@ -1,6 +1,6 @@
 # tasks/__init__.py - Central import for all task modules
 
-from .main_tasks import Main_Tasks
+from .storymode_tasks import StoryMode_Tasks
 from .restarting_tasks import Restarting_Tasks
 from .shared_tasks import Shared_Tasks
 from .switcher_tasks import Switcher_Tasks
@@ -12,7 +12,7 @@ from .sub_stories import SubStories
 from .sub_stories_check import SubStories_check
 
 __all__ = [
-    'Main_Tasks',
+    'StoryMode_Tasks',
     'Restarting_Tasks',
     'Shared_Tasks',
     'Switcher_Tasks',
