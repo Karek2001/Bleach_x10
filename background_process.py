@@ -28,6 +28,7 @@ from tasks import (
     Character_Slots_Purchase,
     Exchange_Gold_Characters,
     Recive_GiftBox,
+    Recive_Giftbox_Check,
     Skip_Kon_Bonaza
 )
 
@@ -115,7 +116,7 @@ class ProcessMonitor:
         if self.last_action_name[device_id] == action_name:
             self.action_count[device_id][action_name] += 1
             
-            max_repetitions = 5 if "template" in action_name.lower() else 10
+            max_repetitions = 5 if "template" in action_name.lower() else 13
             
             if self.action_count[device_id][action_name] >= max_repetitions:
                 print(f"[{device_id}] Task repeated {max_repetitions}x - restart needed")
@@ -183,6 +184,7 @@ class ProcessMonitor:
             "character_slots_purchase": Character_Slots_Purchase,
             "exchange_gold_characters": Exchange_Gold_Characters,
             "recive_giftbox": Recive_GiftBox,
+            "recive_giftbox_check": Recive_Giftbox_Check,
             "skip_kon_bonaza": Skip_Kon_Bonaza
         }
         
@@ -457,6 +459,7 @@ class OptimizedBackgroundMonitor:
             "Character_Slots_Purchase_Tasks": ("character_slots_purchase", "→ Character Slots Purchase"),
             "Exchange_Gold_Characters_Tasks": ("exchange_gold_characters", "→ Exchange Gold Characters"),
             "Recive_GiftBox_Tasks": ("recive_giftbox", "→ Receive Gift Box"),
+            "recive_giftbox_check": ("recive_giftbox_check", "→ Receive Gift Box Check"),
             "Skip_Kon_Bonaza_Tasks": ("skip_kon_bonaza", "→ Skip Kon Bonanza"),
             "ScreenShot_MainMenu_Tasks": ("screenshot_mainmenu", "→ Screenshot Main Menu")
         }
@@ -667,7 +670,9 @@ class OptimizedBackgroundMonitor:
                 await asyncio.sleep(interval)
                 
             except Exception as e:
-                print(f"[{device_id}] Monitoring error")
+                print(f"[{device_id}] Monitoring error: {e}")
+                import traceback
+                traceback.print_exc()
                 await asyncio.sleep(1)
         
         return None

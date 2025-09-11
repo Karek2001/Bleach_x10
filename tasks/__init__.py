@@ -14,6 +14,7 @@ from .sub_stories_check import SubStories_check
 from .character_slots_purchase import Character_Slots_Purchase
 from .exchange_gold_characters import Exchange_Gold_Characters
 from .recive_giftbox import Recive_GiftBox
+from .recive_giftbox_check import Recive_Giftbox_Check
 from .skip_kon_bonaza import Skip_Kon_Bonaza
 
 __all__ = [
@@ -32,5 +33,6 @@ __all__ = [
     'Character_Slots_Purchase',
     'Exchange_Gold_Characters',
     'Recive_GiftBox',
+    'Recive_Giftbox_Check',
     'Skip_Kon_Bonaza'
 ]

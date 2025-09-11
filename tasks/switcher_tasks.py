@@ -2,17 +2,17 @@
 
 Switcher_Tasks = [
         # STORY COMPLETED LET'S Back To Restarting SO WE CAN RESTART THE GAME
-    {
-        "task_name": "Story Completed",
-        "type": "pixel",
-        "click_location_str": "482,373",
-        "search_array": ["395,155","#191925","460,152","#191925","567,155","#191925","263,154","536,153","#191925","#0d12b5","265,166","#e60012"],
-        "isLogical": False,
-        "shared_detection": True,
-        "priority": 1,
-        "cooldown": 5.0,
-        "BackToRestarting": True,
-    },
+    # {
+    #     "task_name": "Story Completed",
+    #     "type": "pixel",
+    #     "click_location_str": "482,373",
+    #     "search_array": ["395,155","#191925","460,152","#191925","567,155","#191925","263,154","536,153","#191925","#0d12b5","265,166","#e60012"],
+    #     "isLogical": False,
+    #     "shared_detection": True,
+    #     "priority": 1,
+    #     "cooldown": 5.0,
+    #     "BackToRestarting": True,
+    # },
     # From Restarting_Tasks to GUILD_TUTORIAL_TASKS
     {
         "task_name": "Guild Tutorial Detected",

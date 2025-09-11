@@ -43,7 +43,7 @@ Exchange_Gold_Characters = [
         "search_array": ["158,423","#a9aab9","173,424","#121215","221,424","#151518","347,427","#a9aab9"],
         "isLogical": False,
         "priority": 10,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
     },
     {
         "task_name": "Choose Characcter has 10 Remaining",
@@ -54,8 +54,8 @@ Exchange_Gold_Characters = [
         "confidence": 0.90,
         "use_match_position": True,
         "DownPixels": 32,
-        "priority": 1,
-        "cooldown": 7.0,
+        "priority": 20,
+        "cooldown": 20.0,
     },
         {
         "task_name": "Click [Confirm Exchange]",
@@ -64,7 +64,7 @@ Exchange_Gold_Characters = [
         "search_array": ["228,124","#0d12b5","246,139","#e60012","368,126","#191925","478,127","#191925","553,413","#ffffff"],
         "isLogical": False,
         "priority": 10,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
     },
             {
         "task_name": "Click [Close] After Confirming the Exchange",
@@ -73,7 +73,7 @@ Exchange_Gold_Characters = [
         "search_array": ["230,121","#0d12b5","245,135","#e60012","351,123","#191925","610,125","#191925","608,409","#2159f9"],
         "isLogical": False,
         "priority": 10,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
     },
         {
         "task_name": "Detect 3 Characters Are 9 Remaining",
@@ -88,6 +88,7 @@ Exchange_Gold_Characters = [
         "click_location_str": "0,0",
         "priority": 2,
         "cooldown": 30.0,
+        "sleep":4,
     },
                 {
         "task_name": "Detect Finished List [Leave Exchange]",

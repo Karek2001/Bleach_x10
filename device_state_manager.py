@@ -153,6 +153,7 @@ class DeviceStateManager:
             "json_SideMode": "SideMode",
             "json_SubStory": "SubStory",
             "json_Character_Slots_Purchased": "Character_Slots_Purchased",
+            "json_Exchange_Gold_Characters": "Exchange_Gold_Characters",
             "json_Recive_GiftBox": "Recive_GiftBox",
             "json_ScreenShot_MainMenu": "ScreenShot_MainMenu"
         }

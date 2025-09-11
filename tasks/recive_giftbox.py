@@ -4,37 +4,29 @@ Recive_GiftBox = [
     # Navigate to Gift Box
     {
         "task_name": "Open Gift Box",
-        "type": "template",
-        "template_path": "templates/GiftBox/GiftBox_Icon.png",
-        "roi": [850, 50, 100, 100],
-        "confidence": 0.90,
-        "use_match_position": True,
+        "type": "pixel",
+        "click_location_str": "910,165",
+        "search_array": ["899,179","#d42929","873,190","#ffffff","941,189","#ffffff","910,173","#fcf9f4"],
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
     },
     
-    # Select All Gifts
     {
-        "task_name": "Select All Gifts",
-        "type": "template",
-        "template_path": "templates/GiftBox/Select_All.png",
-        "roi": [100, 450, 200, 60],
-        "confidence": 0.90,
-        "use_match_position": True,
+        "task_name": "Click [Collect All Page]",
+        "type": "pixel",
+        "click_location_str": "221,484",
+        "search_array": ["127,486","#ffffff","183,494","#57626f","236,494","#57626f"],
         "isLogical": False,
         "priority": 15,
         "cooldown": 5.0,
     },
     
-    # Receive Selected Gifts
     {
-        "task_name": "Receive All Selected Gifts",
-        "type": "template",
-        "template_path": "templates/GiftBox/Receive.png",
-        "roi": [650, 450, 200, 60],
-        "confidence": 0.90,
-        "use_match_position": True,
+        "task_name": "Click [Confirm Select Gift Page]",
+        "type": "pixel",
+        "click_location_str": "621,372",
+        "search_array": ["723,154","#0d12b5","714,165","#e60012","432,152","#191925","518,157","#191925"],
         "isLogical": False,
         "priority": 20,
         "cooldown": 5.0,
@@ -42,37 +34,32 @@ Recive_GiftBox = [
     
     # Confirm Receipt
     {
-        "task_name": "Confirm Gift Receipt",
+        "task_name": "Menu Collect All Gifts Click [Close]",
         "type": "pixel",
-        "click_location_str": "480,372",
-        "search_array": ["385,152","#191925","522,153","#191925","480,370","#ffffff"],
+        "click_location_str": "472,485",
+        "search_array": ["710,34","#0d12b5","709,46","#e60012","384,37","#191925","492,40","#191925","523,37","#191925"],
         "isLogical": False,
         "priority": 25,
         "cooldown": 5.0,
     },
-    
-    # Check if gift box is empty
-    {
-        "task_name": "Gift Box Empty - All Received",
+        {
+        "task_name": "All Gifts Recived From Currently Section Let's Switch To Check",
         "type": "pixel",
-        "click_location_str": "480,480",
-        "search_array": ["480,250","#808080","480,300","#808080","480,350","#808080"],
+        "click_location_str": "0,0",
+        "search_array": ["781,488","#fdfbfb","300,482","#252b31","267,474","#7f7f7f","832,488","#fdfbfb"],
         "isLogical": False,
-        "json_Recive_GiftBox": True,
-        "Skip_Kon_Bonaza_Tasks": True,  # Move to next task set
         "priority": 30,
         "cooldown": 5.0,
+        "recive_giftbox_check": True,
     },
-    
-    # Exit Gift Box
     {
-        "task_name": "Exit Gift Box",
+        "task_name": "Reached Maximum Tickets Click [Close] [Kon Bonaza]",
         "type": "pixel",
-        "click_location_str": "25,25",
-        "search_array": ["25,25","#ffffff","50,25","#ffffff","75,25","#ffffff"],
+        "click_location_str": "482,489",
+        "search_array": ["263,433","#ff0000","363,480","#1341ea"],
         "isLogical": False,
-        "BackToRestartingTasks": True,
-        "priority": 35,
+        "priority": 10,
         "cooldown": 5.0,
     },
+
 ]

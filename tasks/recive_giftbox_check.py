@@ -1,0 +1,51 @@
+Recive_Giftbox_Check = [
+
+    {
+        "task_name": "From [Gifts] To [Soul Tickets]",
+        "type": "pixel",
+        "click_location_str": "396,80",
+        "search_array": ["293,81","#6365ce","325,80","#616060"],
+        "isLogical": False,
+        "priority": 25,
+        "cooldown": 5.0,
+    },
+        {
+        "task_name": "From [Soul Tickets] To [Characters]",
+        "type": "pixel",
+        "click_location_str": "396,80",
+        "search_array": ["321,81","#6365ce","503,80","#616060"],
+        "isLogical": False,
+        "priority": 25,
+        "cooldown": 5.0,
+    },
+        {
+        "task_name": "From [Characters] To [Friend Points]",
+        "type": "pixel",
+        "click_location_str": "396,80",
+        "search_array": ["500,81","#6365ce","670,80","#616060"],
+        "isLogical": False,
+        "priority": 25,
+        "cooldown": 5.0,
+    },
+        {
+        "task_name": "Tickets Are Fully. Let's Spend The 1000 Tickets In Kon Event",
+        "type": "pixel",
+        "click_location_str": "477,375",
+        "search_array": ["702,152","#0d12b5","701,166","#e60012","432,152","#191925","499,275","#ffffff","517,272","#ffffff","538,274","#ffffff"],
+        "isLogical": False,
+        "priority": 25,
+        "cooldown": 5.0,
+        "Skip_Kon_Bonaza_Tasks": True,
+    },
+    #         {
+    #     "task_name": "All Gift Box is Recived Fully",
+    #     "type": "pixel",
+    #     "click_location_str": "483,488",
+    #     "search_array": ["675,81","#6365ce"],
+    #     "isLogical": False,
+    #     "priority": 25,
+    #     "cooldown": 5.0,
+    #     "json_Recive_GiftBox": True,    
+    # },
+
+]
