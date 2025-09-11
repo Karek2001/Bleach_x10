@@ -7,7 +7,7 @@ Restarting_Tasks = [
         "type": "pixel",
         "click_location_str": "0,0",
         "search_array": ["894,485","#978e74","497,524","#ffffff","790,16","#593b0d","873,190","#ffffff"],
-        "isLogical": True,  # Use logical processing to determine routing
+        "BackToStory": True,  # Use normal progression logic like when game is running
         "priority": 1,
         "cooldown": 60.0,
     },

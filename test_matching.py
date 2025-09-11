@@ -30,8 +30,10 @@ except ImportError:
 try:
     from tasks import (
         StoryMode_Tasks, Restarting_Tasks, Shared_Tasks, Switcher_Tasks,
-        GUILD_TUTORIAL_TASKS, Guild_Rejoin, Sell_Characters,
-        HardStory_Tasks, SideStory, SubStories, SubStories_check
+        GUILD_TUTORIAL_TASKS, Guild_Rejoin, Sell_Characters, Sell_Accessury,
+        HardStory_Tasks, SideStory, SubStories, SubStories_check,
+        Character_Slots_Purchase, Exchange_Gold_Characters, Recive_GiftBox,
+        Skip_Kon_Bonaza
     )
     
     # Combine all task lists into a dictionary for easy access
@@ -43,10 +45,15 @@ try:
         "Guild Tutorial Tasks": GUILD_TUTORIAL_TASKS,
         "Guild Rejoin": Guild_Rejoin,
         "Sell Characters": Sell_Characters,
+        "Sell Accessory": Sell_Accessury,
         "Hard Story Tasks": HardStory_Tasks,
         "Side Story": SideStory,
         "Sub Stories": SubStories,
-        "Sub Stories Check": SubStories_check
+        "Sub Stories Check": SubStories_check,
+        "Character Slots Purchase": Character_Slots_Purchase,
+        "Exchange Gold Characters": Exchange_Gold_Characters,
+        "Receive Gift Box": Recive_GiftBox,
+        "Skip Kon Bonaza": Skip_Kon_Bonaza
     }
 except ImportError as e:
     print(f"Warning: Could not import tasks: {e}")

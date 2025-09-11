@@ -118,4 +118,22 @@ SubStories_check = [
         "cooldown": 5.0,
         "Sub-Stores": True
     },
+
+
+        {
+        "task_name": "Currently Story Detect All Maps Are Cleared! [Sub Stories]",
+        "type": "pixel",
+        "search_array": ["96,68","#3fc5ff","150,71","#159fff","158,71","#17a0ff"],
+        "click_location_str": "483,500",
+        "priority": 30,
+        "cooldown": 5.0,
+    },
+       {
+        "task_name": "Currently Story Detect All Maps Are Cleared! [Story Only Last Map] [Sub Stories]",
+        "type": "pixel",
+        "search_array": ["95,68","#fffc35","157,73","#f89a2f","193,74","#fb9b30"],
+        "click_location_str": "483,500",
+        "priority": 30,
+        "cooldown": 5.0,
+    },
 ]

@@ -11,6 +11,10 @@ from .hard_story import HardStory_Tasks
 from .side_story import SideStory
 from .sub_stories import SubStories
 from .sub_stories_check import SubStories_check
+from .character_slots_purchase import Character_Slots_Purchase
+from .exchange_gold_characters import Exchange_Gold_Characters
+from .recive_giftbox import Recive_GiftBox
+from .skip_kon_bonaza import Skip_Kon_Bonaza
 
 __all__ = [
     'StoryMode_Tasks',
@@ -24,5 +28,9 @@ __all__ = [
     'HardStory_Tasks',
     'SideStory',
     'SubStories',
-    'SubStories_check'
+    'SubStories_check',
+    'Character_Slots_Purchase',
+    'Exchange_Gold_Characters',
+    'Recive_GiftBox',
+    'Skip_Kon_Bonaza'
 ]

@@ -7,33 +7,17 @@ import settings
 async def handle_game_ready_routing(device_id):
     """
     Handle conditional routing when game is ready to use.
-    Route to sub-stories if all modes complete, otherwise to story mode.
+    Use the updated progression logic from device_state_manager.
     """
     from device_state_manager import device_state_manager
     from background_process import monitor
     
     print(f"[{device_id}] Game ready - determining routing...")
     
-    # Get device state
-    state = device_state_manager.get_state(device_id)
-    
-    # Check if all three modes are complete
-    easy_complete = state.get("EasyMode", 0) == 1
-    hard_complete = state.get("HardMode", 0) == 1
-    side_complete = state.get("SideMode", 0) == 1
-    
-    if easy_complete and hard_complete and side_complete:
-        print(f"[{device_id}] All modes complete → Routing to Sub Stories")
-        monitor.process_monitor.set_active_tasks(device_id, "substories")
-    else:
-        print(f"[{device_id}] Modes incomplete (Easy:{easy_complete}, Hard:{hard_complete}, Side:{side_complete}) → Routing to Story Mode")
-        # Use the existing BackToStory logic which handles state-based routing
-        current_task_set = monitor.process_monitor.active_task_set.get(device_id, "restarting")
-        if current_task_set == "restarting":
-            recommended_mode = device_state_manager.should_skip_to_mode(device_id)
-            monitor.process_monitor.set_active_tasks(device_id, recommended_mode)
-        else:
-            monitor.process_monitor.set_active_tasks(device_id, "main")
+    # Use the updated progression logic that handles all completion flags
+    recommended_mode = device_state_manager.get_next_task_set_after_restarting(device_id)
+    print(f"[{device_id}] Progression logic → {recommended_mode}")
+    monitor.process_monitor.set_active_tasks(device_id, recommended_mode)
 
 async def run_hard_mode_swipes(device_id):
     """

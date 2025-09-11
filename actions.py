@@ -529,16 +529,47 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
             if task.get("multi_click", False) or "UnClear" in task_name:
                 if settings.SPAM_LOGS:
                     print(f"[MULTI-DETECT] {task_name}: Found {len(positions)} matches")
-                for i, (x, y) in enumerate(positions):
-                    await execute_tap(device_id, f"{x},{y}")
-                    await asyncio.sleep(0.05)
+                
+                # Check for swipe condition
+                min_matches_for_swipe = task.get("min_matches_for_swipe")
+                swipe_command = task.get("swipe_command")
+                
+                if min_matches_for_swipe and swipe_command and len(positions) >= min_matches_for_swipe:
+                    print(f"[SWIPE] {task_name}: {len(positions)} matches >= {min_matches_for_swipe}, executing swipe")
+                    print(f"[SWIPE] Command: {swipe_command}")
+                    await run_adb_command(swipe_command, device_id)
+                    task_copy = task.copy()
+                    task_copy["task_name"] = f"{task_name} [Swipe: {len(positions)} matches]"
+                    matched_tasks.append(task_copy)
+                else:
+                    # Regular multi-click behavior
+                    for i, (x, y) in enumerate(positions):
+                        await execute_tap(device_id, f"{x},{y}")
+                        await asyncio.sleep(0.05)
+                    
+                    task_copy = task.copy()
+                    task_copy["task_name"] = f"{task_name} [Multi: {len(positions)} clicks]"
+                    matched_tasks.append(task_copy)
                 
                 task_tracker.record_execution(device_id, task_name)
-                task_copy = task.copy()
-                task_copy["task_name"] = f"{task_name} [Multi: {len(positions)} clicks]"
-                matched_tasks.append(task_copy)
             else:
-                if positions:
+                # Check if this is a detection-only task with swipe functionality
+                min_matches_for_swipe = task.get("min_matches_for_swipe")
+                swipe_command = task.get("swipe_command")
+                
+                if min_matches_for_swipe and swipe_command:
+                    # Detection-only mode - check if swipe threshold is met
+                    if len(positions) >= min_matches_for_swipe:
+                        print(f"[SWIPE] {task_name}: {len(positions)} matches >= {min_matches_for_swipe}, executing swipe")
+                        print(f"[SWIPE] Command: {swipe_command}")
+                        await run_adb_command(swipe_command, device_id)
+                        task_copy = task.copy()
+                        task_copy["task_name"] = f"{task_name} [Swipe: {len(positions)} matches]"
+                        matched_tasks.append(task_copy)
+                    # If threshold not met, do nothing (detection-only)
+                    task_tracker.record_execution(device_id, task_name)
+                elif positions:
+                    # Regular template matching behavior
                     x, y = positions[0]
                     task_copy = task.copy()
                     task_copy["click_location_str"] = f"{x},{y}"

@@ -1,4 +1,4 @@
-# device_state_manager.py - Enhanced with SubStory tracking and JSON flag support
+# device_state_manager.py - Enhanced with new account management and task progression
 import json
 import os
 from typing import Dict, Any
@@ -7,7 +7,7 @@ import asyncio
 from threading import Lock
 
 class DeviceStateManager:
-    """Manages persistent state for each device including character upgrades and substory progress"""
+    """Manages persistent state for each device including account info and task progression"""
     
     def __init__(self):
         self.states: Dict[str, Dict[str, Any]] = {}
@@ -43,21 +43,27 @@ class DeviceStateManager:
     def _get_default_state(self) -> Dict[str, Any]:
         """Get default state structure for a new device"""
         return {
+            "AccountID": "",
+            "UserName": "Player",
+            "Orbs": 0,
+            "isLinked": 0,
+            "Email": "",
+            "Password": "",
             "EasyMode": 0,
             "HardMode": 0,
             "SideMode": 0,
-            "SubStory": 0,  # Main SubStory flag
-            "SubStory-TheHumanWorld": 0,
-            "SubStory-TheSoulSociety": 0,
-            "SubStory-HuecoMundo": 0,
-            "SubStory-TheFutureSociety": 0,
-            "SubStory-Others": 0,
+            "SubStory": 0,
+            "Character_Slots_Purchased": 0,
+            "Exchange_Gold_Characters": 0,
+            "Recive_GiftBox": 0,
+            "Skip_Kon_Bonaza_100Times": 0,
+            "Character_Slots_Count": 0,
+            "ScreenShot_MainMenu": 0,
             "RestartingCount": 0,
             "2-Stars-Upgraded": 0,
             "3-Stars-Upgraded": 0,
             "4-Stars-Upgraded": 0,
             "5-Stars-Upgraded": 0,
-            "isLinked": False,
             "LastUpdated": datetime.now().isoformat(),
             "CurrentTaskSet": "restarting",
             "SessionStats": {
@@ -80,7 +86,20 @@ class DeviceStateManager:
                 try:
                     with open(state_file, 'r') as f:
                         loaded_state = json.load(f)
-                        
+                    
+                    # Migrate old states - remove SubStory sub-keys if they exist
+                    keys_to_remove = [
+                        "SubStory-TheHumanWorld",
+                        "SubStory-TheSoulSociety", 
+                        "SubStory-HuecoMundo",
+                        "SubStory-TheFutureSociety",
+                        "SubStory-Others"
+                    ]
+                    
+                    for key in keys_to_remove:
+                        if key in loaded_state:
+                            del loaded_state[key]
+                    
                     # Ensure all required keys exist (for backward compatibility)
                     default_state = self._get_default_state()
                     for key, value in default_state.items():
@@ -123,31 +142,7 @@ class DeviceStateManager:
                 self.states[device_id] = self._get_default_state()
             
             self.states[device_id][key] = value
-            
-            # Check if all SubStory sub-keys are complete
-            self._check_substory_completion(device_id)
-            
             self._save_state(device_id)
-    
-    def _check_substory_completion(self, device_id: str):
-        """Check if all SubStory sub-keys are complete and update main SubStory flag"""
-        substory_keys = [
-            "SubStory-TheHumanWorld",
-            "SubStory-TheSoulSociety",
-            "SubStory-HuecoMundo",
-            "SubStory-TheFutureSociety",
-            "SubStory-Others"
-        ]
-        
-        # Check if all substory keys are set to 1 (true)
-        all_complete = all(
-            self.states[device_id].get(key, 0) == 1 
-            for key in substory_keys
-        )
-        
-        if all_complete:
-            self.states[device_id]["SubStory"] = 1
-            print(f"[{self._get_device_name(device_id)}] ✓ All SubStories complete!")
     
     def set_json_flag(self, device_id: str, flag_name: str, value: Any = 1):
         """Set a JSON flag based on task detection"""
@@ -157,11 +152,9 @@ class DeviceStateManager:
             "json_HardMode": "HardMode",
             "json_SideMode": "SideMode",
             "json_SubStory": "SubStory",
-            "json_S_TheHumanWorld": "SubStory-TheHumanWorld",
-            "json_S_TheSoulSociety": "SubStory-TheSoulSociety",
-            "json_S_HuecoMundo": "SubStory-HuecoMundo",
-            "json_S_TheFutureSociety": "SubStory-TheFutureSociety",
-            "json_S_Others": "SubStory-Others"
+            "json_Character_Slots_Purchased": "Character_Slots_Purchased",
+            "json_Recive_GiftBox": "Recive_GiftBox",
+            "json_ScreenShot_MainMenu": "ScreenShot_MainMenu"
         }
         
         if flag_name in flag_mapping:
@@ -170,30 +163,71 @@ class DeviceStateManager:
             device_name = self._get_device_name(device_id)
             print(f"[{device_name}] Set {state_key} = {value}")
     
+    def increment_kon_bonaza_skip(self, device_id: str):
+        """Increment Skip_Kon_Bonaza_100Times counter"""
+        with self.locks.get(device_id, Lock()):
+            if device_id not in self.states:
+                self.states[device_id] = self._get_default_state()
+            
+            current_value = self.states[device_id].get("Skip_Kon_Bonaza_100Times", 0)
+            if current_value < 100:
+                self.states[device_id]["Skip_Kon_Bonaza_100Times"] = current_value + 1
+                self._save_state(device_id)
+                device_name = self._get_device_name(device_id)
+                print(f"[{device_name}] Kon Bonaza skips: {current_value + 1}/100")
+    
+    def increment_character_slots_count(self, device_id: str):
+        """Increment Character_Slots_Count counter and set Character_Slots_Purchased when reaching 200"""
+        with self.locks.get(device_id, Lock()):
+            if device_id not in self.states:
+                self.states[device_id] = self._get_default_state()
+            
+            current_value = self.states[device_id].get("Character_Slots_Count", 0)
+            new_value = current_value + 1
+            self.states[device_id]["Character_Slots_Count"] = new_value
+            
+            # Set Character_Slots_Purchased to 1 when reaching 200
+            if new_value >= 200:
+                self.states[device_id]["Character_Slots_Purchased"] = 1
+            
+            self._save_state(device_id)
+            device_name = self._get_device_name(device_id)
+            print(f"[{device_name}] Character slots purchased: {new_value}/200")
+            
+            if new_value >= 200:
+                print(f"[{device_name}] Character slots purchase complete!")
+    
     def check_stop_support(self, device_id: str, stop_flag: str) -> bool:
         """Check if a task should be stopped based on device state"""
-        # Map json_ prefixed flags to actual state keys
         flag_mapping = {
             "json_EasyMode": "EasyMode",
             "json_HardMode": "HardMode",
             "json_SideMode": "SideMode",
             "json_SubStory": "SubStory",
-            "json_S_TheHumanWorld": "SubStory-TheHumanWorld",
-            "json_S_TheSoulSociety": "SubStory-TheSoulSociety",
-            "json_S_HuecoMundo": "SubStory-HuecoMundo",
-            "json_S_TheFutureSociety": "SubStory-TheFutureSociety",
-            "json_S_Others": "SubStory-Others"
+            "json_Character_Slots_Purchased": "Character_Slots_Purchased",
+            "json_Recive_GiftBox": "Recive_GiftBox",
+            "json_Skip_Kon_Bonaza_Complete": "Skip_Kon_Bonaza_100Times"
         }
         
         if stop_flag in flag_mapping:
             state_key = flag_mapping[stop_flag]
             state = self.get_state(device_id)
+            
+            # Special case for Skip_Kon_Bonaza
+            if stop_flag == "json_Skip_Kon_Bonaza_Complete":
+                return state.get(state_key, 0) >= 100
+            
             return state.get(state_key, 0) == 1
         
         return False
     
     def increment_counter(self, device_id: str, counter_name: str):
-        """Increment a counter value"""
+        """Increment a counter value (Fixed for RestartingCount)"""
+        # Only increment RestartingCount when game is actually restarted
+        if counter_name == "RestartingCount":
+            # This should only be called from kill_and_restart_game function
+            pass
+        
         with self.locks.get(device_id, Lock()):
             if device_id not in self.states:
                 self.states[device_id] = self._get_default_state()
@@ -212,10 +246,30 @@ class DeviceStateManager:
     
     def set_linked_status(self, device_id: str, is_linked: bool):
         """Set the linked status of a device account"""
-        self.update_state(device_id, "isLinked", is_linked)
+        self.update_state(device_id, "isLinked", 1 if is_linked else 0)
         device_name = self._get_device_name(device_id)
         status = "linked" if is_linked else "not linked"
         print(f"[{device_name}] Account {status}")
+    
+    def update_account_info(self, device_id: str, account_id: str = None, username: str = None, 
+                           orbs: int = None, email: str = None, password: str = None):
+        """Update account information for a device"""
+        with self.locks.get(device_id, Lock()):
+            if device_id not in self.states:
+                self.states[device_id] = self._get_default_state()
+            
+            if account_id is not None:
+                self.states[device_id]["AccountID"] = account_id
+            if username is not None:
+                self.states[device_id]["UserName"] = username
+            if orbs is not None:
+                self.states[device_id]["Orbs"] = orbs
+            if email is not None:
+                self.states[device_id]["Email"] = email
+            if password is not None:
+                self.states[device_id]["Password"] = password
+            
+            self._save_state(device_id)
     
     def mark_easy_mode_complete(self, device_id: str):
         """Mark EasyMode as complete for a device"""
@@ -227,7 +281,6 @@ class DeviceStateManager:
             if device_id not in self.states:
                 self.states[device_id] = self._get_default_state()
             
-            # If HardMode is complete, EasyMode must also be complete
             self.states[device_id]["EasyMode"] = 1
             self.states[device_id]["HardMode"] = 1
             self._save_state(device_id)
@@ -238,55 +291,49 @@ class DeviceStateManager:
             if device_id not in self.states:
                 self.states[device_id] = self._get_default_state()
             
-            # If SideMode is active, both Easy and Hard must be complete
             self.states[device_id]["EasyMode"] = 1
             self.states[device_id]["HardMode"] = 1
             self.states[device_id]["SideMode"] = 1
             self._save_state(device_id)
     
-    def get_recommended_task_set(self, device_id: str) -> str:
-        """Get the recommended task set based on device state"""
+    def get_next_task_set_after_restarting(self, device_id: str) -> str:
+        """Determine next task set based on progression logic"""
         state = self.get_state(device_id)
         
-        if state.get("SubStory", 0) == 1:
-            return "substory"
+        # Check story modes first
+        if state.get("EasyMode", 0) == 0 or state.get("HardMode", 0) == 0 or state.get("SideMode", 0) == 0:
+            return "main"  # Stay in story mode tasks
         
-        if state.get("SideMode", 0) == 1:
-            return "sidestory"
+        # All story modes complete, check SubStory
+        if state.get("SubStory", 0) == 0:
+            return "substories"
         
-        if state.get("HardMode", 0) == 1:
-            return "sidestory"
+        # SubStory complete, check Character Slots
+        if state.get("Character_Slots_Purchased", 0) == 0:
+            return "character_slots_purchase"
         
-        if state.get("EasyMode", 0) == 1:
-            return "hardstory"
+        # Character Slots complete, check Exchange Gold Characters
+        if state.get("Exchange_Gold_Characters", 0) == 0:
+            return "exchange_gold_characters"
         
-        return "main"
+        # Exchange Gold Characters complete, check Gift Box
+        if state.get("Recive_GiftBox", 0) == 0:
+            return "recive_giftbox"
+        
+        # Gift Box complete, check Kon Bonaza
+        if state.get("Skip_Kon_Bonaza_100Times", 0) < 100:
+            return "skip_kon_bonaza"
+        
+        # All tasks complete, take screenshot and restart
+        if state.get("ScreenShot_MainMenu", 0) == 0:
+            return "screenshot_mainmenu"
+        
+        # Everything complete
+        return "main"  # Default fallback
     
     def should_skip_to_mode(self, device_id: str) -> str:
         """Determine if device should skip to a specific mode after restarting"""
-        state = self.get_state(device_id)
-        
-        # Debug: Show current state values
-        easy_mode = state.get("EasyMode", 0)
-        hard_mode = state.get("HardMode", 0)
-        side_mode = state.get("SideMode", 0)
-        print(f"[{device_id}] Mode check: EasyMode={easy_mode}, HardMode={hard_mode}, SideMode={side_mode}")
-        
-        # Check if all three modes are complete - start with sub-stories tasks
-        if (easy_mode == 1 and hard_mode == 1 and side_mode == 1):
-            print(f"[{device_id}] All modes complete (EasyMode, HardMode, SideMode) → Starting with substories")
-            return "substories"
-        
-        if state.get("SubStory", 0) == 1:
-            return "substory"
-        elif state.get("SideMode", 0) == 1:
-            return "sidestory"
-        elif state.get("HardMode", 0) == 1:
-            return "sidestory"
-        elif state.get("EasyMode", 0) == 1:
-            return "hardstory"
-        
-        return "main"
+        return self.get_next_task_set_after_restarting(device_id)
     
     def update_session_stats(self, device_id: str, task_name: str):
         """Update session statistics"""
@@ -310,6 +357,7 @@ class DeviceStateManager:
         state = self.get_state(device_id)
         device_name = self._get_device_name(device_id)
         
+        # Build progress indicators
         modes = []
         if state.get("EasyMode", 0) == 1:
             modes.append("Easy✓")
@@ -319,25 +367,20 @@ class DeviceStateManager:
             modes.append("Side✓")
         if state.get("SubStory", 0) == 1:
             modes.append("Sub✓")
+        if state.get("Character_Slots_Purchased", 0) == 1:
+            modes.append("Slots✓")
+        if state.get("Recive_GiftBox", 0) == 1:
+            modes.append("Gift✓")
         
-        # Check individual substories
-        substories = []
-        if state.get("SubStory-TheHumanWorld", 0) == 1:
-            substories.append("HW")
-        if state.get("SubStory-TheSoulSociety", 0) == 1:
-            substories.append("SS")
-        if state.get("SubStory-HuecoMundo", 0) == 1:
-            substories.append("HM")
-        if state.get("SubStory-TheFutureSociety", 0) == 1:
-            substories.append("FS")
-        if state.get("SubStory-Others", 0) == 1:
-            substories.append("O")
+        kon_bonaza = state.get("Skip_Kon_Bonaza_100Times", 0)
+        if kon_bonaza > 0:
+            modes.append(f"Kon:{kon_bonaza}/100")
         
         if not modes:
             modes.append("Starting")
         
         restart_count = state.get("RestartingCount", 0)
-        linked = "Linked" if state.get("isLinked", False) else "Unlinked"
+        linked = "Linked" if state.get("isLinked", 1) == 1 else "Unlinked"
         
         # Character upgrades summary
         upgrades = []
@@ -347,9 +390,12 @@ class DeviceStateManager:
                 upgrades.append(f"{stars}★:{count}")
         
         upgrade_str = f" Upgrades[{', '.join(upgrades)}]" if upgrades else ""
-        substory_str = f" Sub[{','.join(substories)}]" if substories else ""
         
-        return f"{device_name}: [{' → '.join(modes)}] ({linked}) Restarts:{restart_count}{substory_str}{upgrade_str}"
+        # Account info
+        account_id = state.get("AccountID", "")
+        account_str = f" ID:{account_id[:8]}..." if account_id else ""
+        
+        return f"{device_name}: [{' → '.join(modes)}] ({linked}) Restarts:{restart_count}{account_str}{upgrade_str}"
     
     def print_all_device_states(self):
         """Print a summary of all device states"""

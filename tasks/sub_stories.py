@@ -174,5 +174,14 @@ SubStories = [
         "cooldown": 5.0,
         "CheckSubStoriesAllCleared": True,
     },
-
+   {
+        "task_name": "Check is Sub Stories Are Finished?",
+        "type": "pixel",
+        "search_array": ["112,114","#fdfbfb","373,114","#fdfbfb","645,112","#fdfbfb","245,329","#fdfbfb","512,329","#fdfbfb","441,407","#fec46c","546,373","#fee6d6","284,158","#fad2c2"],
+        "click_location_str": "23,22",
+        "priority": 30,
+        "cooldown": 5.0,
+        "json_SubStory":True,
+        "Character_Slots_Purchase_Tasks": True,
+    },
 ]

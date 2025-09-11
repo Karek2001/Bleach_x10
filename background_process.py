@@ -24,7 +24,11 @@ from tasks import (
     HardStory_Tasks,
     SideStory,
     SubStories,
-    SubStories_check
+    SubStories_check,
+    Character_Slots_Purchase,
+    Exchange_Gold_Characters,
+    Recive_GiftBox,
+    Skip_Kon_Bonaza
 )
 
 # Bleach game package name
@@ -175,7 +179,11 @@ class ProcessMonitor:
             "hardstory": HardStory_Tasks,
             "sidestory": SideStory,
             "substories": SubStories,
-            "substories_check": SubStories_check
+            "substories_check": SubStories_check,
+            "character_slots_purchase": Character_Slots_Purchase,
+            "exchange_gold_characters": Exchange_Gold_Characters,
+            "recive_giftbox": Recive_GiftBox,
+            "skip_kon_bonaza": Skip_Kon_Bonaza
         }
         
         # Debug: Log which task set is active and how many tasks it contains
@@ -201,7 +209,15 @@ class ProcessMonitor:
     
     def set_active_tasks(self, device_id: str, task_set: str):
         """Set the active task set for a device and update state"""
-        valid_sets = ["main", "restarting", "guild_tutorial", "guild_rejoin", "sell_characters", "sell_accsesurry", "hardstory", "sidestory", "substories", "substories_check"]
+        valid_sets = [
+            "main", "restarting", "guild_tutorial", "guild_rejoin", 
+            "sell_characters", "sell_accsesurry", "hardstory", "sidestory", 
+            "substories", "substories_check",
+            "character_slots_purchase",
+            "exchange_gold_characters",
+            "recive_giftbox",
+            "skip_kon_bonaza"
+        ]
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
             
@@ -218,7 +234,11 @@ class ProcessMonitor:
                 "hardstory": "Hard Story",
                 "sidestory": "Side Story",
                 "substories": "Sub Stories",
-                "substories_check": "Sub Stories Check"
+                "substories_check": "Sub Stories Check",
+                "character_slots_purchase": "Character Slots Purchase",
+                "exchange_gold_characters": "Exchange Gold Characters",
+                "recive_giftbox": "Receive Gift Box",
+                "skip_kon_bonaza": "Skip Kon Bonanza"
             }
             print(f"[{device_id}] → {task_names.get(task_set, task_set)}")
     
@@ -371,13 +391,41 @@ class OptimizedBackgroundMonitor:
         # Handle JSON flag updates first
         json_flags = [
             "json_EasyMode", "json_HardMode", "json_SideMode",
-            "json_S_TheHumanWorld", "json_S_TheSoulSociety", 
-            "json_S_HuecoMundo", "json_S_TheFutureSociety", "json_S_Others"
+            "json_SubStory", "json_Character_Slots_Purchased",
+            "json_Exchange_Gold_Characters", "json_Recive_GiftBox", "json_ScreenShot_MainMenu"
         ]
         
         for flag in json_flags:
             if task.get(flag, False):
                 device_state_manager.set_json_flag(device_id, flag, 1)
+        
+        # Handle Kon Bonanza increment
+        if task.get("Increment_Kon_Bonaza", False):
+            device_state_manager.increment_kon_bonaza_skip(device_id)
+        
+        # Handle Character Slots Count increment
+        if task.get("Increment_Character_Slots_Count", False):
+            device_state_manager.increment_character_slots_count(device_id)
+        
+        # Handle ConditionalCheck for Kon Bonanza
+        if task.get("type") == "ConditionalCheck":
+            check_key = task.get("check_key")
+            check_value = task.get("check_value")
+            check_operator = task.get("check_operator", "==")
+            
+            state = device_state_manager.get_state(device_id)
+            current_value = state.get(check_key, 0)
+            
+            condition_met = False
+            if check_operator == ">=":
+                condition_met = current_value >= check_value
+            elif check_operator == "==":
+                condition_met = current_value == check_value
+            
+            if condition_met and task.get("ScreenShot_MainMenu_Tasks"):
+                print(f"[{device_id}] Kon Bonanza complete → Screenshot Main Menu")
+                self.process_monitor.set_active_tasks(device_id, "screenshot_mainmenu")
+                return
         
         # Legacy handling for backward compatibility
         if "Part 21 Finished Detected" in task.get("task_name", ""):
@@ -392,7 +440,7 @@ class OptimizedBackgroundMonitor:
             device_state_manager.mark_side_mode_active(device_id)
             print(f"[{device_id}] ✓ SideMode complete")
         
-        # Handle standard task switching flags
+        # Handle standard task switching flags (including new ones)
         flag_handlers = {
             "BackToStory": ("main", "→ Main"),
             "NeedGuildTutorial": ("guild_tutorial", "→ Guild Tutorial"),
@@ -405,18 +453,23 @@ class OptimizedBackgroundMonitor:
             "HardStory": ("hardstory", "→ Hard Story"),
             "SideStory": ("sidestory", "→ Side Story"),
             "Sub-Stores": ("substories", "→ Sub Stories"),
-            "CheckSubStoriesAllCleared": ("substories_check", "→ Sub Stories Check")
+            "CheckSubStoriesAllCleared": ("substories_check", "→ Sub Stories Check"),
+            "Character_Slots_Purchase_Tasks": ("character_slots_purchase", "→ Character Slots Purchase"),
+            "Exchange_Gold_Characters_Tasks": ("exchange_gold_characters", "→ Exchange Gold Characters"),
+            "Recive_GiftBox_Tasks": ("recive_giftbox", "→ Receive Gift Box"),
+            "Skip_Kon_Bonaza_Tasks": ("skip_kon_bonaza", "→ Skip Kon Bonanza"),
+            "ScreenShot_MainMenu_Tasks": ("screenshot_mainmenu", "→ Screenshot Main Menu")
         }
         
-        # Special handling for transitioning from Restarting to Story
+        # Enhanced BackToStory handling with new progression logic
         if task.get("BackToStory", False):
             current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
             if current_task_set == "restarting":
-                recommended_mode = device_state_manager.should_skip_to_mode(device_id)
-                if recommended_mode != "main":
-                    print(f"[{device_id}] State override → {recommended_mode}")
-                    self.process_monitor.set_active_tasks(device_id, recommended_mode)
-                    return
+                # Use new progression logic from device_state_manager
+                recommended_mode = device_state_manager.get_next_task_set_after_restarting(device_id)
+                print(f"[{device_id}] Progression → {recommended_mode}")
+                self.process_monitor.set_active_tasks(device_id, recommended_mode)
+                return
         
         for flag, (task_set, message) in flag_handlers.items():
             if task.get(flag, False):
