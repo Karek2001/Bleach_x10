@@ -99,6 +99,8 @@ Skip_Kon_Bonaza = [
         "priority": 10,
         "cooldown": 5.0,
         "Increment_Kon_Bonaza": True,
+        "StopSupport":"json_Kon_Bonaza",
+        
 
     },
                            {
@@ -110,6 +112,20 @@ Skip_Kon_Bonaza = [
         "priority": 10,
         "cooldown": 5.0,
     },
+
+                           {
+        "task_name": "Click [Home] After Finishing 100 Match of Kon Bonaza",
+        "type": "pixel",
+        "click_location_str": "389,511",
+        "search_array": ["357,506","#ffffff","368,507","#ffffff","450,505","#0939e0"],
+        "isLogical": False,
+        "priority": 10,
+        "cooldown": 5.0,
+        "ConditionalRun": ["Skip_Kon_Bonaza"],
+        "Recive_GiftBox_Tasks": True,
+
+    },
+
 
 ]
 

@@ -57,6 +57,7 @@ class DeviceStateManager:
             "Exchange_Gold_Characters": 0,
             "Recive_GiftBox": 0,
             "Skip_Kon_Bonaza_100Times": 0,
+            "Skip_Kon_Bonaza": 0,
             "Character_Slots_Count": 0,
             "ScreenShot_MainMenu": 0,
             "RestartingCount": 0,
@@ -155,7 +156,8 @@ class DeviceStateManager:
             "json_Character_Slots_Purchased": "Character_Slots_Purchased",
             "json_Exchange_Gold_Characters": "Exchange_Gold_Characters",
             "json_Recive_GiftBox": "Recive_GiftBox",
-            "json_ScreenShot_MainMenu": "ScreenShot_MainMenu"
+            "json_ScreenShot_MainMenu": "ScreenShot_MainMenu",
+            "json_Kon_Bonaza": "Skip_Kon_Bonaza"
         }
         
         if flag_name in flag_mapping:
@@ -165,17 +167,26 @@ class DeviceStateManager:
             print(f"[{device_name}] Set {state_key} = {value}")
     
     def increment_kon_bonaza_skip(self, device_id: str):
-        """Increment Skip_Kon_Bonaza_100Times counter"""
+        """Increment Skip_Kon_Bonaza_100Times counter and set Skip_Kon_Bonaza when reaching 100"""
         with self.locks.get(device_id, Lock()):
             if device_id not in self.states:
                 self.states[device_id] = self._get_default_state()
             
             current_value = self.states[device_id].get("Skip_Kon_Bonaza_100Times", 0)
             if current_value < 100:
-                self.states[device_id]["Skip_Kon_Bonaza_100Times"] = current_value + 1
+                new_value = current_value + 1
+                self.states[device_id]["Skip_Kon_Bonaza_100Times"] = new_value
+                
+                # Set Skip_Kon_Bonaza to 1 when reaching 100
+                if new_value >= 100:
+                    self.states[device_id]["Skip_Kon_Bonaza"] = 1
+                
                 self._save_state(device_id)
                 device_name = self._get_device_name(device_id)
-                print(f"[{device_name}] Kon Bonaza skips: {current_value + 1}/100")
+                print(f"[{device_name}] Kon Bonaza skips: {new_value}/100")
+                
+                if new_value >= 100:
+                    print(f"[{device_name}] Kon Bonaza skip complete! Skip_Kon_Bonaza set to true.")
     
     def increment_character_slots_count(self, device_id: str):
         """Increment Character_Slots_Count counter and set Character_Slots_Purchased when reaching 200"""
@@ -207,7 +218,8 @@ class DeviceStateManager:
             "json_SubStory": "SubStory",
             "json_Character_Slots_Purchased": "Character_Slots_Purchased",
             "json_Recive_GiftBox": "Recive_GiftBox",
-            "json_Skip_Kon_Bonaza_Complete": "Skip_Kon_Bonaza_100Times"
+            "json_Skip_Kon_Bonaza_Complete": "Skip_Kon_Bonaza_100Times",
+            "json_Kon_Bonaza": "Skip_Kon_Bonaza"
         }
         
         if stop_flag in flag_mapping:

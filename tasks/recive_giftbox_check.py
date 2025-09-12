@@ -31,15 +31,28 @@ Recive_Giftbox_Check = [
         "Recive_GiftBox_Tasks": True,
     },
 
-    #         {
-    #     "task_name": "All Gift Box is Recived Fully",
-    #     "type": "pixel",
-    #     "click_location_str": "483,488",
-    #     "search_array": ["675,81","#6365ce"],
-    #     "isLogical": False,
-    #     "priority": 25,
-    #     "cooldown": 5.0,
-    #     "json_Recive_GiftBox": True,    
-    # },
+            {
+        "task_name": "All Gifts Are Recived No More To Recive",
+        "type": "pixel",
+        "click_location_str": "486,487",
+        "search_array": ["462,72","#727171","461,72","#727171","638,72","#727171","812,72","#8789d9"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 5.0,
+        "ConditionalRun": ["Skip_Kon_Bonaza"],
+        # HERE RUN NEXT TASK
+    },
+            {
+        "task_name": "All Gifts Are Recived No More To Recive But Kon Event Isn't Finished Yet",
+        "type": "pixel",
+        "click_location_str": "484,486",
+        "search_array": ["462,72","#727171","461,72","#727171","638,72","#727171","812,72","#8789d9"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 5.0,
+        "StopSupport": "json_Kon_Bonaza",
+        # HERE RETURN TO KON IF IT DOESN't TRUE
+        "Skip_Kon_Bonaza_Tasks": True,
+    },
 
 ]

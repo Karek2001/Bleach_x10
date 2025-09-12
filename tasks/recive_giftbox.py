@@ -37,7 +37,16 @@ Recive_GiftBox = [
         "task_name": "Menu Collect All Gifts Click [Close]",
         "type": "pixel",
         "click_location_str": "472,485",
-        "search_array": ["242,34","#0d12b5","265,48","#e60012","383,36","#191925","523,37","#191925","576,43","#191925","312,80","#ffffff",],
+        "search_array": ["242,34","#0d12b5","265,48","#e60012","383,36","#191925","523,37","#191925","576,43","#191925","312,80","#ffffff"],
+        "isLogical": False,
+        "priority": 25,
+        "cooldown": 5.0,
+    },
+        {
+        "task_name": "Menu Collect All Gifts Click [Close] [For Single Gift]",
+        "type": "pixel",
+        "click_location_str": "478,483",
+        "search_array": ["384,37","#191925","713,34","#0d12b5","700,47","#e60012","609,477","#1b46f0"],
         "isLogical": False,
         "priority": 25,
         "cooldown": 5.0,
@@ -73,5 +82,6 @@ Recive_GiftBox = [
         "cooldown": 5.0,
         "Skip_Kon_Bonaza_Tasks": True,
     },
+
 
 ]

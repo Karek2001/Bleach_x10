@@ -164,10 +164,16 @@ Sets ScreenShot_MainMenu to complete (1)
 - **Type**: Boolean flag
 - **Sets**: `ScreenShot_MainMenu = 1` in device state
 
+### `json_Kon_Bonaza`
+Sets Skip_Kon_Bonaza to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Skip_Kon_Bonaza = 1` in device state
+
 ### `Increment_Kon_Bonaza`
 Increments Skip_Kon_Bonaza_100Times counter by 1
 - **Type**: Boolean flag
-- **Action**: Increments counter up to 100
+- **Action**: Increments counter up to 100, sets Skip_Kon_Bonaza to 1 when reaching 100
+- **Usage**: Tracks Kon Bonaza skips until completion threshold
 
 ### `Increment_Character_Slots_Count`
 Increments Character_Slots_Count counter by 1

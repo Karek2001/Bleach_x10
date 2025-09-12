@@ -183,4 +183,12 @@ Shared_Tasks = [
         "isLogical": False,
         "priority": 20,
     },
+        {
+        "task_name": "Sinkaemon Event Unlocked Click [Close]",
+        "type": "pixel",
+        "click_location_str": "344,481",
+        "search_array": ["318,49","#191919","384,50","#191919","454,46","#191919","652,49","#191919","738,45","#0d12b5","727,58","#e60012"],
+        "isLogical": False,
+        "priority": 20,
+    },
 ]
