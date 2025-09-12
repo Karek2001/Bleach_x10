@@ -169,6 +169,31 @@ Sets Skip_Kon_Bonaza to complete (1)
 - **Type**: Boolean flag
 - **Sets**: `Skip_Kon_Bonaza = 1` in device state
 
+### `json_Skip_Yukio_Event`
+Sets Skip_Yukio_Event to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Skip_Yukio_Event = 1` in device state
+
+### `json_Sort_Characters_Lowest_Level`
+Sets Sort_Characters_Lowest_Level to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Sort_Characters_Lowest_Level = 1` in device state
+
+### `json_Sort_Filter_Ascension`
+Sets Sort_Filter_Ascension to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Sort_Filter_Ascension = 1` in device state
+
+### `json_Sort_Multi_Select_Garbage_First`
+Sets Sort_Multi_Select_Garbage_First to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Sort_Multi_Select_Garbage_First = 1` in device state
+
+### `json_Upgrade_Characters_Level`
+Sets Upgrade_Characters_Level to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Upgrade_Characters_Level = 1` in device state
+
 ### `Increment_Kon_Bonaza`
 Increments Skip_Kon_Bonaza_100Times counter by 1
 - **Type**: Boolean flag
@@ -269,6 +294,31 @@ Switch to skip Kon Bonanza tasks
 Switch to screenshot main menu tasks
 - **Type**: Boolean flag
 - **Target**: `ScreenShot_MainMenu`
+
+### `Skip_Yukio_Event_Tasks`
+Switch to skip Yukio Event tasks
+- **Type**: Boolean flag
+- **Target**: `Skip_Yukio_Event`
+
+### `Sort_Characters_Lowest_Level_Tasks`
+Switch to sort characters by lowest level tasks
+- **Type**: Boolean flag
+- **Target**: `Sort_Characters_Lowest_Level_Tasks`
+
+### `Sort_Filter_Ascension_Tasks`
+Switch to sort filter ascension tasks
+- **Type**: Boolean flag
+- **Target**: `Sort_Filter_Ascension_Tasks`
+
+### `Sort_Multi_Select_Garbage_First_Tasks`
+Switch to sort multi-select garbage first tasks
+- **Type**: Boolean flag
+- **Target**: `Sort_Multi_Select_Garbage_First_Tasks`
+
+### `Upgrade_Characters_Level_Tasks`
+Switch to upgrade characters level tasks
+- **Type**: Boolean flag
+- **Target**: `Upgrade_Characters_Level`
 
 ---
 

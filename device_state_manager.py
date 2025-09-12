@@ -60,6 +60,11 @@ class DeviceStateManager:
             "Skip_Kon_Bonaza": 0,
             "Character_Slots_Count": 0,
             "ScreenShot_MainMenu": 0,
+            "Skip_Yukio_Event": 0,
+            "Sort_Characters_Lowest_Level": 0,
+            "Sort_Filter_Ascension": 0,
+            "Sort_Multi_Select_Garbage_First": 0,
+            "Upgrade_Characters_Level": 0,
             "RestartingCount": 0,
             "2-Stars-Upgraded": 0,
             "3-Stars-Upgraded": 0,
@@ -157,7 +162,9 @@ class DeviceStateManager:
             "json_Exchange_Gold_Characters": "Exchange_Gold_Characters",
             "json_Recive_GiftBox": "Recive_GiftBox",
             "json_ScreenShot_MainMenu": "ScreenShot_MainMenu",
-            "json_Kon_Bonaza": "Skip_Kon_Bonaza"
+            "json_Kon_Bonaza": "Skip_Kon_Bonaza",
+            "json_Skip_Yukio_Event": "Skip_Yukio_Event",
+            "json_Upgrade_Characters_Level": "Upgrade_Characters_Level"
         }
         
         if flag_name in flag_mapping:
@@ -333,7 +340,27 @@ class DeviceStateManager:
         if state.get("Recive_GiftBox", 0) == 0:
             return "recive_giftbox"
         
-        # Gift Box complete, check Kon Bonaza
+        # Gift Box complete, check Skip Yukio Event
+        if state.get("Skip_Yukio_Event", 0) == 0:
+            return "skip_yukio_event"
+        
+        # Skip Yukio Event complete, check Sort Characters Lowest Level
+        if state.get("Sort_Characters_Lowest_Level", 0) == 0:
+            return "sort_characters_lowest_level"
+        
+        # Sort Characters complete, check Sort Filter Ascension
+        if state.get("Sort_Filter_Ascension", 0) == 0:
+            return "sort_filter_ascension"
+        
+        # Sort Filter Ascension complete, check Sort Multi Select Garbage First
+        if state.get("Sort_Multi_Select_Garbage_First", 0) == 0:
+            return "sort_multi_select_garbage_first"
+        
+        # All sorting complete, check Upgrade Characters Level
+        if state.get("Upgrade_Characters_Level", 0) == 0:
+            return "upgrade_characters_level"
+        
+        # Upgrade Characters complete, check Kon Bonaza
         if state.get("Skip_Kon_Bonaza_100Times", 0) < 100:
             return "skip_kon_bonaza"
         
@@ -384,6 +411,8 @@ class DeviceStateManager:
             modes.append("Slots✓")
         if state.get("Recive_GiftBox", 0) == 1:
             modes.append("Gift✓")
+        if state.get("Skip_Yukio_Event", 0) == 1:
+            modes.append("Yukio✓")
         
         kon_bonaza = state.get("Skip_Kon_Bonaza_100Times", 0)
         if kon_bonaza > 0:

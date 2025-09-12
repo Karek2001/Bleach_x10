@@ -16,6 +16,11 @@ from .exchange_gold_characters import Exchange_Gold_Characters
 from .recive_giftbox import Recive_GiftBox
 from .recive_giftbox_check import Recive_Giftbox_Check
 from .skip_kon_bonaza import Skip_Kon_Bonaza
+from .skip_yukio_event_tasks import Skip_Yukio_Event_Tasks
+from .sort_characters_lowest_level_tasks import Sort_Characters_Lowest_Level_Tasks
+from .sort_filter_ascension_tasks import Sort_Filter_Ascension_Tasks
+from .sort_multi_select_garbage_first_tasks import Sort_Multi_Select_Garbage_First_Tasks
+from .upgrade_characters_level_tasks import Upgrade_Characters_Level
 
 __all__ = [
     'StoryMode_Tasks',
@@ -34,5 +39,10 @@ __all__ = [
     'Exchange_Gold_Characters',
     'Recive_GiftBox',
     'Recive_Giftbox_Check',
-    'Skip_Kon_Bonaza'
+    'Skip_Kon_Bonaza',
+    'Skip_Yukio_Event_Tasks',
+    'Sort_Characters_Lowest_Level_Tasks',
+    'Sort_Filter_Ascension_Tasks',
+    'Sort_Multi_Select_Garbage_First_Tasks',
+    'Upgrade_Characters_Level'
 ]

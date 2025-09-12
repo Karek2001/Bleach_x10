@@ -29,7 +29,9 @@ from tasks import (
     Exchange_Gold_Characters,
     Recive_GiftBox,
     Recive_Giftbox_Check,
-    Skip_Kon_Bonaza
+    Skip_Kon_Bonaza,
+    Skip_Yukio_Event_Tasks,
+    Upgrade_Characters_Level
 )
 
 # Bleach game package name
@@ -185,7 +187,12 @@ class ProcessMonitor:
             "exchange_gold_characters": Exchange_Gold_Characters,
             "recive_giftbox": Recive_GiftBox,
             "recive_giftbox_check": Recive_Giftbox_Check,
-            "skip_kon_bonaza": Skip_Kon_Bonaza
+            "skip_kon_bonaza": Skip_Kon_Bonaza,
+            "skip_yukio_event": Skip_Yukio_Event_Tasks,
+            "sort_characters_lowest_level": Sort_Characters_Lowest_Level_Tasks,
+            "sort_filter_ascension": Sort_Filter_Ascension_Tasks,
+            "sort_multi_select_garbage_first": Sort_Multi_Select_Garbage_First_Tasks,
+            "upgrade_characters_level": Upgrade_Characters_Level
         }
         
         # Debug: Log which task set is active and how many tasks it contains
@@ -219,7 +226,9 @@ class ProcessMonitor:
             "exchange_gold_characters",
             "recive_giftbox",
             "recive_giftbox_check",
-            "skip_kon_bonaza"
+            "skip_kon_bonaza",
+            "skip_yukio_event",
+            "upgrade_characters_level"
         ]
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
@@ -241,7 +250,9 @@ class ProcessMonitor:
                 "character_slots_purchase": "Character Slots Purchase",
                 "exchange_gold_characters": "Exchange Gold Characters",
                 "recive_giftbox": "Receive Gift Box",
-                "skip_kon_bonaza": "Skip Kon Bonanza"
+                "skip_kon_bonaza": "Skip Kon Bonanza",
+                "skip_yukio_event": "Skip Yukio Event",
+                "upgrade_characters_level": "Upgrade Characters Level"
             }
             print(f"[{device_id}] → {task_names.get(task_set, task_set)}")
     
@@ -384,18 +395,20 @@ class OptimizedBackgroundMonitor:
             
             status_str = " ".join(status_info)
             
-            if all_conditions_met:
-                print(f"[{device_id}] All conditions met ({status_str}) → Sub Stories")
-                self.process_monitor.set_active_tasks(device_id, "substories")
-                return
+            if not all_conditions_met:
+                print(f"[{device_id}] Conditions not met ({status_str}) → Skip task")
+                return  # Skip this task, don't process its flags
             else:
-                print(f"[{device_id}] Conditions not met ({status_str}) → Continue normal flow")
+                print(f"[{device_id}] All conditions met ({status_str}) → Process task flags")
         
         # Handle JSON flag updates first
         json_flags = [
             "json_EasyMode", "json_HardMode", "json_SideMode",
             "json_SubStory", "json_Character_Slots_Purchased",
-            "json_Exchange_Gold_Characters", "json_Recive_GiftBox", "json_ScreenShot_MainMenu"
+            "json_Exchange_Gold_Characters", "json_Recive_GiftBox", "json_ScreenShot_MainMenu",
+            "json_Skip_Yukio_Event", "json_Sort_Characters_Lowest_Level",
+            "json_Sort_Filter_Ascension", "json_Sort_Multi_Select_Garbage_First",
+            "json_Upgrade_Characters_Level"
         ]
         
         for flag in json_flags:
@@ -462,6 +475,11 @@ class OptimizedBackgroundMonitor:
             "Recive_GiftBox_Tasks": ("recive_giftbox", "→ Receive Gift Box"),
             "Recive_GiftBox_Check_Tasks": ("recive_giftbox_check", "→ Receive Gift Box Check"),
             "Skip_Kon_Bonaza_Tasks": ("skip_kon_bonaza", "→ Skip Kon Bonanza"),
+            "Skip_Yukio_Event_Tasks": ("skip_yukio_event", "→ Skip Yukio Event"),
+            "Sort_Characters_Lowest_Level_Tasks": ("sort_characters_lowest_level", "→ Sort Characters Lowest Level"),
+            "Sort_Filter_Ascension_Tasks": ("sort_filter_ascension", "→ Sort Filter Ascension"),
+            "Sort_Multi_Select_Garbage_First_Tasks": ("sort_multi_select_garbage_first", "→ Sort Multi Select Garbage First"),
+            "Upgrade_Characters_Level_Tasks": ("upgrade_characters_level", "→ Upgrade Characters Level"),
             "ScreenShot_MainMenu_Tasks": ("screenshot_mainmenu", "→ Screenshot Main Menu")
         }
         
