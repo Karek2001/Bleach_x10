@@ -37,7 +37,7 @@ Recive_GiftBox = [
         "task_name": "Menu Collect All Gifts Click [Close]",
         "type": "pixel",
         "click_location_str": "472,485",
-        "search_array": ["710,34","#0d12b5","709,46","#e60012","384,37","#191925","492,40","#191925","523,37","#191925"],
+        "search_array": ["242,34","#0d12b5","265,48","#e60012","383,36","#191925","523,37","#191925","576,43","#191925","312,80","#ffffff",],
         "isLogical": False,
         "priority": 25,
         "cooldown": 5.0,
@@ -50,7 +50,9 @@ Recive_GiftBox = [
         "isLogical": False,
         "priority": 30,
         "cooldown": 5.0,
-        "recive_giftbox_check": True,
+        "sleep": 2.0,
+        "Recive_GiftBox_Check_Tasks": True,
+        "ShowsIn": ["recive_giftbox"],
     },
     {
         "task_name": "Reached Maximum Tickets Click [Close] [Kon Bonaza]",
@@ -60,6 +62,16 @@ Recive_GiftBox = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+    },
+    {
+        "task_name": "Tickets Are Fully. Let's Spend The 1000 Tickets In Kon Event",
+        "type": "pixel",
+        "click_location_str": "477,375",
+        "search_array": ["702,152","#0d12b5","701,166","#e60012","432,152","#191925","499,275","#ffffff","517,272","#ffffff","538,274","#ffffff"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 5.0,
+        "Skip_Kon_Bonaza_Tasks": True,
     },
 
 ]

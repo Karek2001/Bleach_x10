@@ -74,6 +74,7 @@ Shared_Tasks = [
         "shared_detection": True,
         "priority": 8,
         "cooldown": 5.0,
+        "StopSupport": "json_Character_Slots_Purchased",
     },
     
     # MEDIUM PRIORITY - Store/Purchase Actions (Priority 40-50)
@@ -128,6 +129,7 @@ Shared_Tasks = [
         "isLogical": False,
         "priority": 5,
         "cooldown": 5.0,
+        "StopSupport": "json_Character_Slots_Purchased",
     },
 
      {

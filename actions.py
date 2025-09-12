@@ -411,8 +411,12 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 break
         
         if all_match:
-            if task_tracker.can_execute_task(device_id, task["task_name"]):
+            task_cooldown = task.get("cooldown", 2.0)
+            if task_tracker.can_execute_task(device_id, task["task_name"], task_cooldown):
                 matched_tasks.append(task)
+                # IMPORTANT: Record execution immediately for detection-only tasks
+                if task.get("click_location_str") == "0,0":
+                    task_tracker.record_execution(device_id, task["task_name"])
     
     # Process Pixel-OneOrMoreMatched tasks
     pixel_one_or_more_tasks = [task for task in tasks if task.get("type") == "Pixel-OneOrMoreMatched"]
@@ -461,7 +465,8 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 continue
         
         if match_found:
-            if task_tracker.can_execute_task(device_id, task["task_name"]):
+            task_cooldown = task.get("cooldown", 2.0)
+            if task_tracker.can_execute_task(device_id, task["task_name"], task_cooldown):
                 matched_tasks.append(task)
     
     # Process OCR tasks
@@ -476,7 +481,8 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
         roi = task.get("roi", [0, 0, img_gpu.shape[1], img_gpu.shape[0]])
         
         # Check if we can execute this task
-        if not task_tracker.can_execute_task(device_id, task["task_name"]):
+        task_cooldown = task.get("cooldown", 2.0)
+        if not task_tracker.can_execute_task(device_id, task["task_name"], task_cooldown):
             continue
         
         # Find text in region
@@ -523,7 +529,8 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
             task = task_map[template_path]
             task_name = task["task_name"]
             
-            if not task_tracker.can_execute_task(device_id, task_name):
+            task_cooldown = task.get("cooldown", 2.0)
+            if not task_tracker.can_execute_task(device_id, task_name, task_cooldown):
                 continue
             
             if task.get("multi_click", False) or "UnClear" in task_name:
@@ -581,7 +588,8 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
     for task in template_tasks:
         task_name = task["task_name"]
         
-        if not task_tracker.can_execute_task(device_id, task_name):
+        task_cooldown = task.get("cooldown", 2.0)
+        if not task_tracker.can_execute_task(device_id, task_name, task_cooldown):
             continue
         
         template_paths = task.get("template_paths", [])

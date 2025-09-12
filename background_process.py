@@ -218,6 +218,7 @@ class ProcessMonitor:
             "character_slots_purchase",
             "exchange_gold_characters",
             "recive_giftbox",
+            "recive_giftbox_check",
             "skip_kon_bonaza"
         ]
         if task_set in valid_sets:
@@ -459,7 +460,7 @@ class OptimizedBackgroundMonitor:
             "Character_Slots_Purchase_Tasks": ("character_slots_purchase", "→ Character Slots Purchase"),
             "Exchange_Gold_Characters_Tasks": ("exchange_gold_characters", "→ Exchange Gold Characters"),
             "Recive_GiftBox_Tasks": ("recive_giftbox", "→ Receive Gift Box"),
-            "recive_giftbox_check": ("recive_giftbox_check", "→ Receive Gift Box Check"),
+            "Recive_GiftBox_Check_Tasks": ("recive_giftbox_check", "→ Receive Gift Box Check"),
             "Skip_Kon_Bonaza_Tasks": ("skip_kon_bonaza", "→ Skip Kon Bonanza"),
             "ScreenShot_MainMenu_Tasks": ("screenshot_mainmenu", "→ Screenshot Main Menu")
         }
@@ -488,7 +489,9 @@ class OptimizedBackgroundMonitor:
                         "hardstory": "hardstory_tasks",
                         "sidestory": "sidestory_tasks",
                         "substories": "substories_tasks",
-                        "substories_check": "substories_check_tasks"
+                        "substories_check": "substories_check_tasks",
+                        "recive_giftbox": "recive_giftbox",
+                        "recive_giftbox_check": "recive_giftbox_check"
                     }
                     current_task_name = task_set_mapping.get(current_task_set, current_task_set)
                     
