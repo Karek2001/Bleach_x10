@@ -31,7 +31,11 @@ from tasks import (
     Recive_Giftbox_Check,
     Skip_Kon_Bonaza,
     Skip_Yukio_Event_Tasks,
-    Upgrade_Characters_Level
+    Sort_Characters_Lowest_Level_Tasks,
+    Sort_Filter_Ascension_Tasks,
+    Sort_Multi_Select_Garbage_First_Tasks,
+    Upgrade_Characters_Level,
+    Upgrade_Characters_Back_To_Edit
 )
 
 # Bleach game package name
@@ -162,9 +166,14 @@ class ProcessMonitor:
             
             # Check if all specified keys are set to 1
             for key in conditional_run:
-                value = device_state.get(key, 0)
-                if value != 1:
-                    return True  # Skip task if any condition is not met
+                # Special handling for Stop/Support conditions
+                if key == "Skip_Yukio_Event_Retry_At_3":
+                    if not device_state_manager.check_stop_support(device_id, key):
+                        return True  # Skip task if retry count < 3
+                else:
+                    value = device_state.get(key, 0)
+                    if value != 1:
+                        return True  # Skip task if any condition is not met
         
         return False
     
@@ -192,7 +201,8 @@ class ProcessMonitor:
             "sort_characters_lowest_level": Sort_Characters_Lowest_Level_Tasks,
             "sort_filter_ascension": Sort_Filter_Ascension_Tasks,
             "sort_multi_select_garbage_first": Sort_Multi_Select_Garbage_First_Tasks,
-            "upgrade_characters_level": Upgrade_Characters_Level
+            "upgrade_characters_level": Upgrade_Characters_Level,
+            "upgrade_characters_back_to_edit": Upgrade_Characters_Back_To_Edit
         }
         
         # Debug: Log which task set is active and how many tasks it contains
@@ -228,7 +238,11 @@ class ProcessMonitor:
             "recive_giftbox_check",
             "skip_kon_bonaza",
             "skip_yukio_event",
-            "upgrade_characters_level"
+            "sort_characters_lowest_level",
+            "sort_filter_ascension", 
+            "sort_multi_select_garbage_first",
+            "upgrade_characters_level",
+            "upgrade_characters_back_to_edit"
         ]
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
@@ -252,7 +266,8 @@ class ProcessMonitor:
                 "recive_giftbox": "Receive Gift Box",
                 "skip_kon_bonaza": "Skip Kon Bonanza",
                 "skip_yukio_event": "Skip Yukio Event",
-                "upgrade_characters_level": "Upgrade Characters Level"
+                "upgrade_characters_level": "Upgrade Characters Level",
+                "upgrade_characters_back_to_edit": "Upgrade Characters Back To Edit"
             }
             print(f"[{device_id}] → {task_names.get(task_set, task_set)}")
     
@@ -388,10 +403,18 @@ class OptimizedBackgroundMonitor:
             status_info = []
             
             for key in conditional_run:
-                value = device_state.get(key, 0)
-                status_info.append(f"{key}:{value}")
-                if value != 1:
-                    all_conditions_met = False
+                # Special handling for Stop/Support conditions
+                if key == "Skip_Yukio_Event_Retry_At_3":
+                    retry_count = device_state.get("Skip_Yukio_Event_Retry_Count", 0)
+                    value = 1 if retry_count >= 3 else 0
+                    status_info.append(f"{key}:{value}")
+                    if value != 1:
+                        all_conditions_met = False
+                else:
+                    value = device_state.get(key, 0)
+                    status_info.append(f"{key}:{value}")
+                    if value != 1:
+                        all_conditions_met = False
             
             status_str = " ".join(status_info)
             
@@ -422,6 +445,18 @@ class OptimizedBackgroundMonitor:
         # Handle Character Slots Count increment
         if task.get("Increment_Character_Slots_Count", False):
             device_state_manager.increment_character_slots_count(device_id)
+        
+        # Handle Yukio Event Retry Counter
+        if task.get("Increment_Yukio_Retry", False):
+            retry_count = device_state_manager.increment_yukio_retry(device_id)
+            print(f"[{device_id}] Yukio Event Retry: {retry_count}/3")
+            
+            if retry_count >= 3:
+                print(f"[{device_id}] Yukio Event 3 retries complete - ready for Home button")
+        
+        if task.get("Reset_Yukio_Retry", False):
+            device_state_manager.reset_yukio_retry(device_id)
+            print(f"[{device_id}] Yukio Event Retry counter reset")
         
         # Handle ConditionalCheck for Kon Bonanza
         if task.get("type") == "ConditionalCheck":
@@ -480,6 +515,7 @@ class OptimizedBackgroundMonitor:
             "Sort_Filter_Ascension_Tasks": ("sort_filter_ascension", "→ Sort Filter Ascension"),
             "Sort_Multi_Select_Garbage_First_Tasks": ("sort_multi_select_garbage_first", "→ Sort Multi Select Garbage First"),
             "Upgrade_Characters_Level_Tasks": ("upgrade_characters_level", "→ Upgrade Characters Level"),
+            "Upgrade_Characters_Back_To_Edit_Tasks": ("upgrade_characters_back_to_edit", "→ Upgrade Characters Back To Edit"),
             "ScreenShot_MainMenu_Tasks": ("screenshot_mainmenu", "→ Screenshot Main Menu")
         }
         
@@ -495,6 +531,9 @@ class OptimizedBackgroundMonitor:
         
         for flag, (task_set, message) in flag_handlers.items():
             if task.get(flag, False):
+                if flag == "Upgrade_Characters_Back_To_Edit_Tasks":
+                    print(f"[DEBUG] {device_id}: {flag} triggered, switching to {task_set}")
+                
                 shows_in = task.get("ShowsIn")
                 if shows_in:
                     current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
@@ -672,6 +711,24 @@ class OptimizedBackgroundMonitor:
                         await self.process_monitor.launch_bleach(device_id)
                         self.process_monitor.set_active_tasks(device_id, "restarting")
                         device_state_manager.increment_counter(device_id, "RestartingCount")
+                
+                # Check if current task set is completed and should progress
+                # Skip progression logic for intentional helper task switches
+                helper_task_sets = [
+                    "restarting",
+                    "upgrade_characters_back_to_edit",
+                    "recive_giftbox_check", 
+                    "sort_filter_ascension",
+                    "sort_multi_select_garbage_first",
+                    "skip_yukio_event"
+                ]
+                current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
+                if current_task_set not in helper_task_sets:
+                    recommended_mode = device_state_manager.get_next_task_set_after_restarting(device_id)
+                    if recommended_mode != current_task_set:
+                        print(f"[{device_id}] Task set '{current_task_set}' complete → {recommended_mode}")
+                        self.process_monitor.set_active_tasks(device_id, recommended_mode)
+                        continue  # Skip to next iteration with new task set
                 
                 all_tasks = self.get_prioritized_tasks(device_id)
                 

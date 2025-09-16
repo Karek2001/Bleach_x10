@@ -1,15 +1,50 @@
-# tasks/sort_characters_lowest_level_tasks.py - Tasks for sorting characters by lowest level
-
 Sort_Characters_Lowest_Level_Tasks = [
-    # Placeholder task - implement your sorting logic here
     {
-        "task_name": "Sort Characters by Lowest Level - Placeholder",
+        "task_name": "Click [Edit] [Sort by lowest level]",
         "type": "pixel",
-        "click_location_str": "0,0",
-        "search_array": ["0,0","#000000"],
+        "click_location_str": "384,494",
+        "search_array": ["380,481","#e1773a","367,462","#323348","362,524","#ffffff"],
         "isLogical": False,
         "priority": 1,
-        "cooldown": 1.0,
+        "cooldown": 5.0,
+    },
+
+        {
+        "task_name": "Click [Sort] [Sort by lowest level]",
+        "type": "pixel",
+        "click_location_str": "795,90",
+        "search_array": ["866,92","#404b59","798,91","#ffffff","786,100","#e60012"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 5.0,
+    },
+            {
+        "task_name": "Change Sort From [Rarity] To [Level] [Sort by lowest level]",
+        "type": "pixel",
+        "click_location_str": "385,96",
+        "search_array": ["258,96","#e64801","362,95","#ffffff","404,96","#ffffff"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 5.0,
+    },
+                {
+        "task_name": "Change Sort From [Desc] To [ASC] [Sort by lowest level]",
+        "type": "pixel",
+        "click_location_str": "679,413",
+        "search_array": ["450,98","#ec4c01","167,96","#ffffff","405,415","#e84b01"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 5.0,
+    },
+
+                    {
+        "task_name": "Click [Confirm] After Clicking [ASC + Sort By Level] [Sort by lowest level]",
+        "type": "pixel",
+        "click_location_str": "483,487",
+        "search_array": ["445,98","#ec4c01","789,416","#ec4c01","436,487","#ffffff"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 5.0,
         "json_Sort_Characters_Lowest_Level": True,
         "Sort_Filter_Ascension_Tasks": True,
     },

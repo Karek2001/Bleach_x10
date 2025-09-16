@@ -320,6 +320,11 @@ Switch to upgrade characters level tasks
 - **Type**: Boolean flag
 - **Target**: `Upgrade_Characters_Level`
 
+### `Upgrade_Characters_Back_To_Edit_Tasks`
+Switch to upgrade characters back to edit tasks
+- **Type**: Boolean flag
+- **Target**: `Upgrade_Characters_Back_To_Edit`
+
 ---
 
 ## Conditional Execution Flags

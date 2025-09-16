@@ -269,7 +269,8 @@ class TaskExecutionTracker:
             return False
         
         last_time = self.last_execution[device_id].get(task_name, 0)
-        cooldown = self.cooldowns.get(task_name, default_cooldown)
+        # Task's own cooldown takes priority over global settings
+        cooldown = default_cooldown if default_cooldown != 2.0 else self.cooldowns.get(task_name, default_cooldown)
         
         if current_time - last_time < cooldown:
             return False
@@ -413,10 +414,20 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
         if all_match:
             task_cooldown = task.get("cooldown", 2.0)
             if task_tracker.can_execute_task(device_id, task["task_name"], task_cooldown):
-                matched_tasks.append(task)
-                # IMPORTANT: Record execution immediately for detection-only tasks
-                if task.get("click_location_str") == "0,0":
+                # Check for swipe functionality in pixel tasks
+                if task.get("swipe_command") and task.get("multi_click"):
+                    print(f"[SWIPE] {task['task_name']}: Executing swipe command")
+                    print(f"[SWIPE] Command: {task['swipe_command']}")
+                    await run_adb_command(task["swipe_command"], device_id)
+                    task_copy = task.copy()
+                    task_copy["task_name"] = f"{task['task_name']} [Swipe executed]"
+                    matched_tasks.append(task_copy)
                     task_tracker.record_execution(device_id, task["task_name"])
+                else:
+                    matched_tasks.append(task)
+                    # IMPORTANT: Record execution immediately for detection-only tasks
+                    if task.get("click_location_str") == "0,0":
+                        task_tracker.record_execution(device_id, task["task_name"])
     
     # Process Pixel-OneOrMoreMatched tasks
     pixel_one_or_more_tasks = [task for task in tasks if task.get("type") == "Pixel-OneOrMoreMatched"]
@@ -531,6 +542,8 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
             
             task_cooldown = task.get("cooldown", 2.0)
             if not task_tracker.can_execute_task(device_id, task_name, task_cooldown):
+                if "Swipe All Tasks" in task_name:
+                    print(f"[DEBUG] {task_name}: BLOCKED by cooldown ({task_cooldown}s)")
                 continue
             
             if task.get("multi_click", False) or "UnClear" in task_name:

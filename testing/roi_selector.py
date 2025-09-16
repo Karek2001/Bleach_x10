@@ -285,7 +285,7 @@ class ImageSelectorApp:
 
 if __name__ == "__main__":
     # Define the default directory for screenshots
-    default_directory = "/mnt/storagebox"
+    default_directory = "/mnt/storagebox/LevelUp_Characters"
 
     # Create and run the main GUI application
     main_root = tk.Tk()

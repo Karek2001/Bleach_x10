@@ -42,6 +42,7 @@ Recive_Giftbox_Check = [
         "ConditionalRun": ["Skip_Kon_Bonaza"],
         "json_Recive_GiftBox":True,
         "Skip_Yukio_Event_Tasks": True,
+ "Reset_Yukio_Retry": True,
     },
             {
         "task_name": "All Gifts Are Recived No More To Recive But Kon Event Isn't Finished Yet",

@@ -21,6 +21,7 @@ from .sort_characters_lowest_level_tasks import Sort_Characters_Lowest_Level_Tas
 from .sort_filter_ascension_tasks import Sort_Filter_Ascension_Tasks
 from .sort_multi_select_garbage_first_tasks import Sort_Multi_Select_Garbage_First_Tasks
 from .upgrade_characters_level_tasks import Upgrade_Characters_Level
+from .upgrade_characters_back_to_edit import Upgrade_Characters_Back_To_Edit
 
 __all__ = [
     'StoryMode_Tasks',
@@ -44,5 +45,6 @@ __all__ = [
     'Sort_Characters_Lowest_Level_Tasks',
     'Sort_Filter_Ascension_Tasks',
     'Sort_Multi_Select_Garbage_First_Tasks',
-    'Upgrade_Characters_Level'
+    'Upgrade_Characters_Level',
+    'Upgrade_Characters_Back_To_Edit'
 ]

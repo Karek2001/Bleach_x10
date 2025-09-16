@@ -61,15 +61,12 @@ class DeviceStateManager:
             "Character_Slots_Count": 0,
             "ScreenShot_MainMenu": 0,
             "Skip_Yukio_Event": 0,
+            "Skip_Yukio_Event_Retry_Count": 0,
             "Sort_Characters_Lowest_Level": 0,
             "Sort_Filter_Ascension": 0,
             "Sort_Multi_Select_Garbage_First": 0,
             "Upgrade_Characters_Level": 0,
             "RestartingCount": 0,
-            "2-Stars-Upgraded": 0,
-            "3-Stars-Upgraded": 0,
-            "4-Stars-Upgraded": 0,
-            "5-Stars-Upgraded": 0,
             "LastUpdated": datetime.now().isoformat(),
             "CurrentTaskSet": "restarting",
             "SessionStats": {
@@ -164,6 +161,9 @@ class DeviceStateManager:
             "json_ScreenShot_MainMenu": "ScreenShot_MainMenu",
             "json_Kon_Bonaza": "Skip_Kon_Bonaza",
             "json_Skip_Yukio_Event": "Skip_Yukio_Event",
+            "json_Sort_Characters_Lowest_Level": "Sort_Characters_Lowest_Level",
+            "json_Sort_Filter_Ascension": "Sort_Filter_Ascension",
+            "json_Sort_Multi_Select_Garbage_First": "Sort_Multi_Select_Garbage_First",
             "json_Upgrade_Characters_Level": "Upgrade_Characters_Level"
         }
         
@@ -216,6 +216,31 @@ class DeviceStateManager:
             if new_value >= 200:
                 print(f"[{device_name}] Character slots purchase complete!")
     
+    def increment_yukio_retry(self, device_id: str) -> int:
+        """Increment Yukio Event retry counter and return current count"""
+        if device_id not in self.locks:
+            self.locks[device_id] = Lock()
+        
+        with self.locks[device_id]:
+            if device_id not in self.states:
+                self.states[device_id] = self._get_default_state()
+            
+            current_count = self.states[device_id].get("Skip_Yukio_Event_Retry_Count", 0)
+            
+            # Only increment if less than 3
+            if current_count < 3:
+                new_count = current_count + 1
+                self.states[device_id]["Skip_Yukio_Event_Retry_Count"] = new_count
+                self._save_state(device_id)
+                return new_count
+            else:
+                # Already at max, don't increment further
+                return current_count
+
+    def reset_yukio_retry(self, device_id: str):
+        """Reset Yukio Event retry counter to 0"""
+        self.update_state(device_id, "Skip_Yukio_Event_Retry_Count", 0)
+    
     def check_stop_support(self, device_id: str, stop_flag: str) -> bool:
         """Check if a task should be stopped based on device state"""
         flag_mapping = {
@@ -226,8 +251,21 @@ class DeviceStateManager:
             "json_Character_Slots_Purchased": "Character_Slots_Purchased",
             "json_Recive_GiftBox": "Recive_GiftBox",
             "json_Skip_Kon_Bonaza_Complete": "Skip_Kon_Bonaza_100Times",
-            "json_Kon_Bonaza": "Skip_Kon_Bonaza"
+            "json_Kon_Bonaza": "Skip_Kon_Bonaza",
+            "json_Skip_Yukio_Event": "Skip_Yukio_Event",
+            "json_Sort_Characters_Lowest_Level": "Sort_Characters_Lowest_Level",
+            "json_Sort_Filter_Ascension": "Sort_Filter_Ascension",
+            "json_Sort_Multi_Select_Garbage_First": "Sort_Multi_Select_Garbage_First",
+            "json_Upgrade_Characters_Level": "Upgrade_Characters_Level"
         }
+        
+        # Special conditional checks
+        if stop_flag == "Skip_Yukio_Event_Retry_At_3":
+            state = self.get_state(device_id)
+            retry_count = state.get("Skip_Yukio_Event_Retry_Count", 0)
+            should_stop = retry_count >= 3
+            print(f"[{device_id}] StopSupport check: retry_count={retry_count}, should_stop={should_stop}")
+            return should_stop
         
         if stop_flag in flag_mapping:
             state_key = flag_mapping[stop_flag]
@@ -256,13 +294,6 @@ class DeviceStateManager:
             self.states[device_id][counter_name] = current_value + 1
             self._save_state(device_id)
     
-    def increment_star_upgrade(self, device_id: str, star_level: int):
-        """Increment character upgrade counter for specific star level"""
-        counter_name = f"{star_level}-Stars-Upgraded"
-        if counter_name in ["2-Stars-Upgraded", "3-Stars-Upgraded", "4-Stars-Upgraded", "5-Stars-Upgraded"]:
-            self.increment_counter(device_id, counter_name)
-            device_name = self._get_device_name(device_id)
-            print(f"[{device_name}] {counter_name}: {self.states[device_id][counter_name]}")
     
     def set_linked_status(self, device_id: str, is_linked: bool):
         """Set the linked status of a device account"""
@@ -340,11 +371,7 @@ class DeviceStateManager:
         if state.get("Recive_GiftBox", 0) == 0:
             return "recive_giftbox"
         
-        # Gift Box complete, check Skip Yukio Event
-        if state.get("Skip_Yukio_Event", 0) == 0:
-            return "skip_yukio_event"
-        
-        # Skip Yukio Event complete, check Sort Characters Lowest Level
+        # Gift Box complete, check Sort Characters Lowest Level
         if state.get("Sort_Characters_Lowest_Level", 0) == 0:
             return "sort_characters_lowest_level"
         
@@ -424,20 +451,11 @@ class DeviceStateManager:
         restart_count = state.get("RestartingCount", 0)
         linked = "Linked" if state.get("isLinked", 1) == 1 else "Unlinked"
         
-        # Character upgrades summary
-        upgrades = []
-        for stars in [2, 3, 4, 5]:
-            count = state.get(f"{stars}-Stars-Upgraded", 0)
-            if count > 0:
-                upgrades.append(f"{stars}★:{count}")
-        
-        upgrade_str = f" Upgrades[{', '.join(upgrades)}]" if upgrades else ""
-        
         # Account info
         account_id = state.get("AccountID", "")
         account_str = f" ID:{account_id[:8]}..." if account_id else ""
         
-        return f"{device_name}: [{' → '.join(modes)}] ({linked}) Restarts:{restart_count}{account_str}{upgrade_str}"
+        return f"{device_name}: [{' → '.join(modes)}] ({linked}) Restarts:{restart_count}{account_str}"
     
     def print_all_device_states(self):
         """Print a summary of all device states"""

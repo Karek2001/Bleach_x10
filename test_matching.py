@@ -33,7 +33,10 @@ try:
         GUILD_TUTORIAL_TASKS, Guild_Rejoin, Sell_Characters, Sell_Accessury,
         HardStory_Tasks, SideStory, SubStories, SubStories_check,
         Character_Slots_Purchase, Exchange_Gold_Characters, Recive_GiftBox,
-        Skip_Kon_Bonaza
+        Recive_Giftbox_Check, Skip_Kon_Bonaza, Skip_Yukio_Event_Tasks,
+        Sort_Characters_Lowest_Level_Tasks, Sort_Filter_Ascension_Tasks,
+        Sort_Multi_Select_Garbage_First_Tasks, Upgrade_Characters_Level,
+        Upgrade_Characters_Back_To_Edit
     )
     
     # Combine all task lists into a dictionary for easy access
@@ -53,7 +56,14 @@ try:
         "Character Slots Purchase": Character_Slots_Purchase,
         "Exchange Gold Characters": Exchange_Gold_Characters,
         "Receive Gift Box": Recive_GiftBox,
-        "Skip Kon Bonaza": Skip_Kon_Bonaza
+        "Receive Gift Box Check": Recive_Giftbox_Check,
+        "Skip Kon Bonaza": Skip_Kon_Bonaza,
+        "Skip Yukio Event": Skip_Yukio_Event_Tasks,
+        "Sort Characters Lowest Level": Sort_Characters_Lowest_Level_Tasks,
+        "Sort Filter Ascension": Sort_Filter_Ascension_Tasks,
+        "Sort Multi Select Garbage First": Sort_Multi_Select_Garbage_First_Tasks,
+        "Upgrade Characters Level": Upgrade_Characters_Level,
+        "Upgrade Characters Back To Edit": Upgrade_Characters_Back_To_Edit
     }
 except ImportError as e:
     print(f"Warning: Could not import tasks: {e}")

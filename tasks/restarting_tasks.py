@@ -18,7 +18,7 @@ Restarting_Tasks = [
         "search_array": ["244,218","#191c1e","239,289","#00658c","211,198","#f0f1f3"],
         "isLogical": False,
         "priority": 1,
-        "cooldown": 1.0,
+        "cooldown": 5.0,
     },
     {
         "task_name": "Click Klab Logo To Restart Game",
@@ -135,4 +135,24 @@ Restarting_Tasks = [
         "priority": 50,
         "cooldown": 5.0,
     },
+
+    # Skip Daily Misions Showed Up
+    {
+        "task_name": "Skip Anniversary Gifts Misions Showed Up",
+        "type": "pixel",
+        "click_location_str": "893,99",
+        "search_array": ["792,79","#0d12b3","788,91","#e40012","173,81","#0d12b3","181,93","#e40012"],
+        "isLogical": False,
+        "priority": 50,
+        "cooldown": 5.0,
+    },
+        {
+        "task_name": "Skip Login Bonus Gift Misions",
+        "type": "pixel",
+        "click_location_str": "861,83",
+        "search_array": ["717,34","#0d12b4","700,47","#e50012","244,36","#0d12b4","259,47","#e50012","404,33","#191925","483,34","#191925"],
+        "isLogical": False,
+        "priority": 50,
+        "cooldown": 5.0,
+    }
 ]
