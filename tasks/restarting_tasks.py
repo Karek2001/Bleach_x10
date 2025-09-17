@@ -10,6 +10,7 @@ Restarting_Tasks = [
         "BackToStory": True,  # Use normal progression logic like when game is running
         "priority": 1,
         "cooldown": 60.0,
+        "sleep": 3,
     },
     {
         "task_name": "Bleach isn't Responsing",
@@ -19,6 +20,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click Klab Logo To Restart Game",
@@ -28,6 +30,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
 
     # HIGHEST PRIORITY - Error Recovery/Back Navigation (Priority 5-10)
@@ -39,6 +42,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 5,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     
     # HIGH PRIORITY - Game Start/Mod Menu (Priority 10-15)
@@ -50,6 +54,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Game Start]",
@@ -59,6 +64,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 15,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Game Start 2]",
@@ -68,6 +74,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 15,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     
     # MEDIUM PRIORITY - Quest/Event Handling (Priority 20-30)
@@ -79,6 +86,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 20,
         "cooldown": 5.0,
+        "sleep": 3,
     },
        {
         "task_name": "Click [No] For Continue Playing Quest",
@@ -88,6 +96,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 20,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Exit News",
@@ -113,6 +122,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 40,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Login Bonus",
@@ -122,6 +132,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 40,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Skip Any New Events/Windows Opened By Clicking [OK]",
@@ -145,6 +156,7 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 50,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Skip Login Bonus Gift Misions",
@@ -154,5 +166,6 @@ Restarting_Tasks = [
         "isLogical": False,
         "priority": 50,
         "cooldown": 5.0,
+        "sleep": 3,
     }
 ]

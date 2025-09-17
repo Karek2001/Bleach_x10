@@ -21,7 +21,8 @@ StoryMode_Tasks = [
         "click_location_str": "531,193",
         "search_array": ["479,146","#ebebea","457,184","#ffffff","524,191","#ffffff"],
         "isLogical": False,
-        "StopSupport": "json_SideMode"
+        "StopSupport": "json_SideMode",
+        "sleep": 3,
     },
 
     {
@@ -78,6 +79,7 @@ StoryMode_Tasks = [
         "priority": 35,
         "cooldown": 5.0,  # Short cooldown for tap-to-continue
         "StopSupport": "json_SideMode",
+        "sleep": 3,
     },
    
 

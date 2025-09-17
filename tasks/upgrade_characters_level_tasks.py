@@ -1,5 +1,17 @@
 Upgrade_Characters_Level = [
 
+    # Needs To Return back to edit (KON) is Base
+    {
+        "task_name": "Click [Cancel] And Back To Edit [Kon Base] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "309,495",
+        "search_array": ["352,202","#ffffff","370,204","#ffffff","379,206","#ffffff","389,202","#ffffff","123,38","#191925","264,35","#191925","467,38","#191925"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 6.0,
+        "Upgrade_Characters_Back_To_Edit_Tasks": True,
+        "sleep": 3,
+    },
     # Need To Buy Characters Level 4 {KON}
                         {
         "task_name": "Showed Up [No Available Characters] Let's Get Some [Upgrade Characters Level]",
@@ -11,6 +23,7 @@ Upgrade_Characters_Level = [
         "cooldown": 6.0,
         "Skip_Yukio_Event_Tasks": True,
  "Reset_Yukio_Retry": True,
+        "sleep": 3,
     },
                             {
         "task_name": "Characters [Select 0] Let's Get Some [Upgrade Characters Level]",
@@ -22,6 +35,7 @@ Upgrade_Characters_Level = [
         "cooldown": 6.0,
         "Skip_Yukio_Event_Tasks": True,
  "Reset_Yukio_Retry": True,
+        "sleep": 3,
     },
         
     {
@@ -32,6 +46,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
+        "sleep": 3,
     },
         {
         "task_name": "Choose [AnyCharacter] [Upgrade Characters Level]",
@@ -41,6 +56,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
+        "sleep": 3,
     },
 
        {
@@ -51,6 +67,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Soul Tree] [Upgrade Characters Level]",
@@ -60,6 +77,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 6.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Level] [Upgrade Characters Level]",
@@ -69,6 +87,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 15,
         "cooldown": 6.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Ascension] [Upgrade Characters Level]",
@@ -78,6 +97,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 20,
         "cooldown": 6.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Click [Confirm] [3Slots Clicked] [Upgrade Characters Level]",
@@ -87,6 +107,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 20,
         "cooldown": 6.0,
+        "sleep": 3,
     },
 
     # Close Window When by Mistake Clicks Cancel
@@ -99,6 +120,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 5,
         "cooldown": 6.0,
+        "sleep": 3,
     },
     # Sometimes it already upgraded and we are trying twice because we was having 
             {
@@ -109,6 +131,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 5,
         "cooldown": 6.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Click [Level] [IF Character is Already Upgraded Before] [Upgrade Characters Level]",
@@ -118,6 +141,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 5,
         "cooldown": 6.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Click [Confirm] Check if [Level] is Level been clicked or no [Upgrade Characters Level]",
@@ -127,6 +151,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 5,
         "cooldown": 6.0,
+        "sleep": 3,
     },
                     {
         "task_name": "Click [Confirm] ONLY  [Ascension] is Clickable [Upgrade Characters Level]",
@@ -136,6 +161,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 5,
         "cooldown": 6.0,
+        "sleep": 3,
     },
                     {
         "task_name": "Click [Multi Select] [Upgrade Characters Level]",
@@ -145,6 +171,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 18.0,
+        "sleep": 3,
     },
                             {
         "task_name": "Click [Confirm For Multi-Select] [Upgrade Characters Level]",
@@ -154,6 +181,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
+        "sleep": 3,
     },
                                 {
         "task_name": "Click [Select Num] For Multi-Select] [Upgrade Characters Level]",
@@ -163,6 +191,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
+        "sleep": 3,
     },
                                 {
         "task_name": "Click [PowerUP Cash] For Confirm Upgrade [Upgrade Characters Level]",
@@ -172,6 +201,7 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
+        "sleep": 3,
     },
                             {
         "task_name": "Character Upgraded Fully [Let's Return To Edit Window] [Upgrade Characters Level]",
@@ -182,15 +212,17 @@ Upgrade_Characters_Level = [
         "priority": 1,
         "cooldown": 6.0,
         "Upgrade_Characters_Back_To_Edit_Tasks": True,
+        "sleep": 3,
     },
                             {
         "task_name": "Click [Close] For Prize Recived [Upgrade Characters Level]",
         "type": "pixel",
         "click_location_str": "479,487",
-        "search_array": ["713,35","#0d12b5","704,47","#e60012","253,35","#0d12b5","256,46","#e60012"],
+        "search_array": ["713,35","#0d12b5","704,47","#e60012","253,35","#0d12b5","256,46","#e60012","452,486","#ffffff"],
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
+        "sleep": 3,
     },
     #Character is LVL5 Needs Evolve
                             {
@@ -201,15 +233,27 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
+        "sleep": 3,
     },
-                            {
-        "task_name": "Click [OK]  For Awken Character [Upgrade Characters Level]",
+                                {
+        "task_name": "Confirm Awaken Evolve [OK] [Upgrade Characters Level]",
         "type": "pixel",
-        "click_location_str": "614,485",
-        "search_array": ["713,35","#0d12b5","700,47","#e60012","449,37","#191925","595,38","#191925"],
+        "click_location_str": "620,488",
+        "search_array": ["259,35","#0d12b5","272,48","#e60012","372,39","#191925","595,38","#191925"],
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
+        "sleep": 3,
+    },
+                                    {
+        "task_name": "Click [PowerUP] For Awaken Evolve Characters [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "153,489",
+        "search_array": ["102,496","#ffffff","203,494","#ffffff","187,475","#25f854"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 6.0,
+        "sleep": 3,
     },
                             {
         "task_name": "Skip Animation Click [Star] [Upgrade Characters Level]",
@@ -219,7 +263,9 @@ Upgrade_Characters_Level = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 6.0,
-    },                                        {
+        "sleep": 3,
+    },
+                            {
         "task_name": "Character Showed [Release] Let's Return To [Edit] [Upgrade Characters Level]",
         "type": "pixel",
         "click_location_str": "0,0",
@@ -228,5 +274,6 @@ Upgrade_Characters_Level = [
         "priority": 1,
         "cooldown": 6.0,
         "Upgrade_Characters_Back_To_Edit_Tasks": True,
+        "sleep": 3,
     },
 ]

@@ -216,12 +216,29 @@ class DeviceStateManager:
             if new_value >= 200:
                 print(f"[{device_name}] Character slots purchase complete!")
     
+
+    def _reload_state(self, device_id: str):
+        """Reload state from file to ensure fresh data (for multi-device sync)"""
+        device_name = self._get_device_name(device_id)
+        state_file = self._get_state_file_path(device_name)
+        
+        if os.path.exists(state_file):
+            try:
+                with open(state_file, 'r') as f:
+                    loaded_state = json.load(f)
+                self.states[device_id] = loaded_state
+            except Exception as e:
+                print(f"[STATE] Error reloading state for {device_name}: {e}")
+
     def increment_yukio_retry(self, device_id: str) -> int:
-        """Increment Yukio Event retry counter and return current count"""
+        """Increment Yukio Event retry counter with proper locking and state reload"""
         if device_id not in self.locks:
             self.locks[device_id] = Lock()
         
         with self.locks[device_id]:
+            # Reload state to get latest data from file
+            self._reload_state(device_id)
+            
             if device_id not in self.states:
                 self.states[device_id] = self._get_default_state()
             
@@ -232,52 +249,86 @@ class DeviceStateManager:
                 new_count = current_count + 1
                 self.states[device_id]["Skip_Yukio_Event_Retry_Count"] = new_count
                 self._save_state(device_id)
+                
+                device_name = self._get_device_name(device_id)
+                print(f"[{device_name}] Yukio Retry incremented: {current_count} → {new_count}/3")
+                
+                # Check if we just hit 3
+                if new_count == 3:
+                    print(f"[{device_name}] ✓ Yukio 3 retries complete - Retry task will now be blocked")
+                
                 return new_count
             else:
-                # Already at max, don't increment further
+                device_name = self._get_device_name(device_id)
+                print(f"[{device_name}] Yukio Retry already at max (3) - not incrementing")
                 return current_count
 
     def reset_yukio_retry(self, device_id: str):
-        """Reset Yukio Event retry counter to 0"""
-        self.update_state(device_id, "Skip_Yukio_Event_Retry_Count", 0)
+        """Reset Yukio Event retry counter to 0 with proper locking"""
+        if device_id not in self.locks:
+            self.locks[device_id] = Lock()
+        
+        with self.locks[device_id]:
+            # Reload state first
+            self._reload_state(device_id)
+            
+            if device_id not in self.states:
+                self.states[device_id] = self._get_default_state()
+            
+            old_count = self.states[device_id].get("Skip_Yukio_Event_Retry_Count", 0)
+            self.states[device_id]["Skip_Yukio_Event_Retry_Count"] = 0
+            self._save_state(device_id)
+            
+            device_name = self._get_device_name(device_id)
+            print(f"[{device_name}] Yukio Retry counter reset: {old_count} → 0")
     
     def check_stop_support(self, device_id: str, stop_flag: str) -> bool:
         """Check if a task should be stopped based on device state"""
-        flag_mapping = {
-            "json_EasyMode": "EasyMode",
-            "json_HardMode": "HardMode",
-            "json_SideMode": "SideMode",
-            "json_SubStory": "SubStory",
-            "json_Character_Slots_Purchased": "Character_Slots_Purchased",
-            "json_Recive_GiftBox": "Recive_GiftBox",
-            "json_Skip_Kon_Bonaza_Complete": "Skip_Kon_Bonaza_100Times",
-            "json_Kon_Bonaza": "Skip_Kon_Bonaza",
-            "json_Skip_Yukio_Event": "Skip_Yukio_Event",
-            "json_Sort_Characters_Lowest_Level": "Sort_Characters_Lowest_Level",
-            "json_Sort_Filter_Ascension": "Sort_Filter_Ascension",
-            "json_Sort_Multi_Select_Garbage_First": "Sort_Multi_Select_Garbage_First",
-            "json_Upgrade_Characters_Level": "Upgrade_Characters_Level"
-        }
         
-        # Special conditional checks
-        if stop_flag == "Skip_Yukio_Event_Retry_At_3":
-            state = self.get_state(device_id)
-            retry_count = state.get("Skip_Yukio_Event_Retry_Count", 0)
-            should_stop = retry_count >= 3
-            print(f"[{device_id}] StopSupport check: retry_count={retry_count}, should_stop={should_stop}")
-            return should_stop
+        # Ensure we have a lock for this device
+        if device_id not in self.locks:
+            self.locks[device_id] = Lock()
         
-        if stop_flag in flag_mapping:
-            state_key = flag_mapping[stop_flag]
-            state = self.get_state(device_id)
+        with self.locks[device_id]:
+            # Always get fresh state from file to avoid stale data
+            self._reload_state(device_id)
+            state = self.states.get(device_id, self._get_default_state())
             
-            # Special case for Skip_Kon_Bonaza
-            if stop_flag == "json_Skip_Kon_Bonaza_Complete":
-                return state.get(state_key, 0) >= 100
+            # Special conditional check for Yukio retry count
+            if stop_flag == "Skip_Yukio_Event_Retry_At_3":
+                retry_count = state.get("Skip_Yukio_Event_Retry_Count", 0)
+                should_stop = retry_count >= 3
+                device_name = self._get_device_name(device_id)
+                print(f"[{device_name}] StopSupport check: Yukio retry={retry_count}/3, blocking={'YES' if should_stop else 'NO'}")
+                return should_stop
             
-            return state.get(state_key, 0) == 1
-        
-        return False
+            # Handle other flag mappings
+            flag_mapping = {
+                "json_EasyMode": "EasyMode",
+                "json_HardMode": "HardMode",
+                "json_SideMode": "SideMode",
+                "json_SubStory": "SubStory",
+                "json_Character_Slots_Purchased": "Character_Slots_Purchased",
+                "json_Recive_GiftBox": "Recive_GiftBox",
+                "json_Skip_Kon_Bonaza_Complete": "Skip_Kon_Bonaza_100Times",
+                "json_Kon_Bonaza": "Skip_Kon_Bonaza",
+                "json_Skip_Yukio_Event": "Skip_Yukio_Event",
+                "json_Sort_Characters_Lowest_Level": "Sort_Characters_Lowest_Level",
+                "json_Sort_Filter_Ascension": "Sort_Filter_Ascension",
+                "json_Sort_Multi_Select_Garbage_First": "Sort_Multi_Select_Garbage_First",
+                "json_Upgrade_Characters_Level": "Upgrade_Characters_Level"
+            }
+            
+            if stop_flag in flag_mapping:
+                state_key = flag_mapping[stop_flag]
+                
+                # Special case for Skip_Kon_Bonaza
+                if stop_flag == "json_Skip_Kon_Bonaza_Complete":
+                    return state.get(state_key, 0) >= 100
+                
+                return state.get(state_key, 0) == 1
+            
+            return False
     
     def increment_counter(self, device_id: str, counter_name: str):
         """Increment a counter value (Fixed for RestartingCount)"""

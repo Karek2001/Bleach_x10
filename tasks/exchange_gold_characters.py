@@ -8,6 +8,7 @@ Exchange_Gold_Characters = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Click [Shop] [For Exchange Gold]",
@@ -17,6 +18,7 @@ Exchange_Gold_Characters = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Open Exchange Window [For Exchange Gold]",
@@ -26,6 +28,7 @@ Exchange_Gold_Characters = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Click Arrow To View List",
@@ -35,6 +38,7 @@ Exchange_Gold_Characters = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Click [Coin Exchange]",
@@ -44,6 +48,7 @@ Exchange_Gold_Characters = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 10.0,
+        "sleep": 3,
     },
     {
         "task_name": "Choose Characcter has 10 Remaining",
@@ -65,6 +70,7 @@ Exchange_Gold_Characters = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 10.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Close] After Confirming the Exchange",
@@ -74,6 +80,7 @@ Exchange_Gold_Characters = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 10.0,
+        "sleep": 3,
     },
         {
         "task_name": "Detect 3 Characters Are 9 Remaining",
@@ -100,5 +107,6 @@ Exchange_Gold_Characters = [
         "cooldown": 5.0,
         "json_Exchange_Gold_Characters":True,
         "Recive_GiftBox_Tasks": True,
+        "sleep": 3,
     },
 ]

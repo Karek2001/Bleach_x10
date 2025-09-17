@@ -10,6 +10,7 @@ Character_Slots_Purchase = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Shop]",
@@ -20,6 +21,7 @@ Character_Slots_Purchase = [
         "priority": 10,
         "cooldown": 5.0,
         "StopSupport":"json_Character_Slots_Purchased",
+        "sleep": 3,
     },
         {
         "task_name": "Click [ADS/ITEMS]",
@@ -30,6 +32,7 @@ Character_Slots_Purchase = [
         "priority": 10,
         "cooldown": 5.0,
         "StopSupport":"json_Character_Slots_Purchased",
+        "sleep": 3,
     },
             {
         "task_name": "Click [Purchase Character Slots]",
@@ -40,6 +43,7 @@ Character_Slots_Purchase = [
         "priority": 10,
         "cooldown": 5.0,
         "StopSupport":"json_Character_Slots_Purchased",
+        "sleep": 3,
     },
                 {
         "task_name": "Click [Click Spirit Orbs]",
@@ -50,6 +54,7 @@ Character_Slots_Purchase = [
         "priority": 10,
         "cooldown": 5.0,
         "StopSupport":"json_Character_Slots_Purchased",
+        "sleep": 3,
     },
 
                 {
@@ -62,6 +67,7 @@ Character_Slots_Purchase = [
         "cooldown": 5.0,
         "StopSupport":"json_Character_Slots_Purchased",
         "Increment_Character_Slots_Count": True,
+        "sleep": 3,
 
     },
 
@@ -75,5 +81,6 @@ Character_Slots_Purchase = [
         "cooldown": 5.0,
         "Exchange_Gold_Characters_Tasks": True,
         "ConditionalRun": ["Character_Slots_Purchased"],
+        "sleep": 3,
     },
 ]

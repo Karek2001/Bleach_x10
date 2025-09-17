@@ -20,6 +20,7 @@ GUILD_TUTORIAL_TASKS = [
         "isLogical": False,
         "priority": 20,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [OK]",
@@ -67,6 +68,7 @@ Guild_Rejoin = [
         "isLogical": False,
         "priority": 10,  # Higher priority to refresh guild list
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Guild TOP]",

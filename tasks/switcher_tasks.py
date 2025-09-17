@@ -92,6 +92,7 @@ Switcher_Tasks = [
         "search_array": ["708,149","#0d12b5","708,161","#e60012","587,269","#ffffff","700,274","#ffffff","584,296","#ffffff"],
         "isLogical": False,
         "SellAccsesurry": True,
+        "sleep": 3,
     },
 
 

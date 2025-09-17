@@ -12,7 +12,8 @@ HardStory_Tasks = [
         "KeepChecking": 5.0,
         "json_EasyMode": True,
         "json_HardMode": True,
-        "json_SideMode": True
+        "json_SideMode": True,
+        "sleep": 3,
     },
     {
         "task_name": "Active Hard Mode If It Doesn't Activited",
@@ -21,6 +22,7 @@ HardStory_Tasks = [
         "search_array": ["921,42","#0a36e5","47,15","#010101","24,49","#e50012","81,32","#fefefe"],
         "isLogical": False,
         "priority": 20,
+        "sleep": 3,
     },
     {
         "task_name": "Hard Mode Activited Let Swipe!",
@@ -32,6 +34,7 @@ HardStory_Tasks = [
         "shared_detection": True,
         "priority": 20,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Let's Start With Part-1 HARD!",

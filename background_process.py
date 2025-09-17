@@ -153,23 +153,33 @@ class ProcessMonitor:
     
     def should_skip_task(self, device_id: str, task: dict) -> bool:
         """Check if a task should be skipped based on StopSupport flag or ConditionalRun"""
-        # Check StopSupport flag
+        
+        # FIRST: Check StopSupport flag (should prevent task from running)
         stop_support = task.get("StopSupport")
         if stop_support:
-            if device_state_manager.check_stop_support(device_id, stop_support):
+            should_stop = device_state_manager.check_stop_support(device_id, stop_support)
+            if should_stop:
+                # Special debug logging for Yukio retry tasks
+                if "Yukio" in task.get("task_name", "") and "Retry" in task.get("task_name", ""):
+                    state = device_state_manager.get_state(device_id)
+                    retry_count = state.get("Skip_Yukio_Event_Retry_Count", 0)
+                    print(f"[{device_id}] BLOCKING Retry task - count already at {retry_count}/3")
                 return True
         
-        # Check ConditionalRun - skip task if conditions are NOT met
+        # SECOND: Check ConditionalRun - skip task if conditions are NOT met
         conditional_run = task.get("ConditionalRun")
         if conditional_run and isinstance(conditional_run, list):
             device_state = device_state_manager.get_state(device_id)
             
-            # Check if all specified keys are set to 1
             for key in conditional_run:
-                # Special handling for Stop/Support conditions
+                # Special handling for Skip_Yukio_Event_Retry_At_3
                 if key == "Skip_Yukio_Event_Retry_At_3":
-                    if not device_state_manager.check_stop_support(device_id, key):
-                        return True  # Skip task if retry count < 3
+                    retry_count = device_state.get("Skip_Yukio_Event_Retry_Count", 0)
+                    if retry_count < 3:
+                        # Special debug for Home button task
+                        if "Home" in task.get("task_name", ""):
+                            print(f"[{device_id}] Home button blocked - retry count {retry_count}/3")
+                        return True  # Skip task, condition not met
                 else:
                     value = device_state.get(key, 0)
                     if value != 1:
@@ -334,7 +344,7 @@ class OptimizedBackgroundMonitor:
         }
     
     async def execute_tap_with_offset(self, device_id: str, location_str: str, task: dict):
-        """Execute tap with optional pixel offset adjustments"""
+        """Execute tap with optional pixel offset adjustments and delayed click support"""
         if location_str == "0,0":
             return
             
@@ -352,6 +362,15 @@ class OptimizedBackgroundMonitor:
         
         adjusted_location = f"{x},{y}"
         await execute_tap(device_id, adjusted_location)
+        
+        # Handle delayed click functionality
+        delayed_click_location = task.get("delayed_click_location")
+        delayed_click_delay = task.get("delayed_click_delay", 2.0)
+        
+        if delayed_click_location:
+            print(f"[{device_id}] Executing delayed click at {delayed_click_location} after {delayed_click_delay}s")
+            await asyncio.sleep(delayed_click_delay)
+            await execute_tap(device_id, delayed_click_location)
 
     def get_prioritized_tasks(self, device_id: str) -> List[dict]:
         """Return tasks already sorted by priority from get_active_tasks, with KeepChecking filtering"""
@@ -446,14 +465,25 @@ class OptimizedBackgroundMonitor:
         if task.get("Increment_Character_Slots_Count", False):
             device_state_manager.increment_character_slots_count(device_id)
         
-        # Handle Yukio Event Retry Counter
-        if task.get("Increment_Yukio_Retry", False):
-            retry_count = device_state_manager.increment_yukio_retry(device_id)
-            print(f"[{device_id}] Yukio Event Retry: {retry_count}/3")
-            
-            if retry_count >= 3:
-                print(f"[{device_id}] Yukio Event 3 retries complete - ready for Home button")
+        # IMPORTANT: For increment flags, we need to process them BEFORE task execution
+        # to ensure proper blocking on the next check
         
+        # Handle Yukio Event Retry Counter BEFORE other processing
+        if task.get("Increment_Yukio_Retry", False):
+            # Get current count before incrementing
+            state = device_state_manager.get_state(device_id)
+            current_count = state.get("Skip_Yukio_Event_Retry_Count", 0)
+            
+            # Increment the counter
+            new_count = device_state_manager.increment_yukio_retry(device_id)
+            print(f"[{device_id}] Yukio Retry: {current_count} → {new_count}/3")
+            
+            if new_count >= 3:
+                print(f"[{device_id}] ✓ Yukio 3 retries complete - Next check will show Home button")
+                # Force a state reload for all devices to ensure they see the updated count
+                device_state_manager._save_state(device_id)
+        
+        # Handle reset BEFORE other flags
         if task.get("Reset_Yukio_Retry", False):
             device_state_manager.reset_yukio_retry(device_id)
             print(f"[{device_id}] Yukio Event Retry counter reset")
@@ -580,19 +610,35 @@ class OptimizedBackgroundMonitor:
                 if task_name in self.frame_processed_tasks[device_id]:
                     continue
                 
+                # IMPORTANT: Check if task should still be skipped BEFORE execution
+                if self.process_monitor.should_skip_task(device_id, task):
+                    print(f"[{device_id}] Task blocked by flags: {task_name}")
+                    continue
+                
                 print(f"[{device_id}] {task_name}")
                 
                 self.no_action_timers[device_id] = time.time()
                 self.frame_processed_tasks[device_id].add(task_name)
                 
+                # Process increment flags BEFORE click execution
+                if task.get("Increment_Yukio_Retry", False):
+                    new_count = device_state_manager.increment_yukio_retry(device_id)
+                    # If we just hit 3, don't execute the click
+                    if new_count >= 3:
+                        print(f"[{device_id}] Yukio retry limit reached - skipping click")
+                        continue
+                
+                # Track action for restart detection
                 should_restart = self.process_monitor.track_action(device_id, task_name)
                 if should_restart:
                     await self.process_monitor.kill_and_restart_game(device_id)
                     return logical_triggered
                 
+                # Handle other task flags
                 await self.handle_task_flags(device_id, task)
                 
-                if "[Multi:" not in task_name and "[Executed" not in task_name:
+                # Execute the click if not a detection-only task
+                if task.get("click_location_str") != "0,0" and "[Multi:" not in task_name and "[Executed" not in task_name:
                     await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
                 
                 # Handle KeepChecking flag
@@ -621,19 +667,35 @@ class OptimizedBackgroundMonitor:
                 task_name = task['task_name']
                 
                 if task_name not in self.frame_processed_tasks[device_id]:
+                    # IMPORTANT: Check if task should still be skipped BEFORE execution
+                    if self.process_monitor.should_skip_task(device_id, task):
+                        print(f"[{device_id}] Task blocked by flags: {task_name}")
+                        continue
+                    
                     print(f"[{device_id}] {task_name}")
                     
                     self.no_action_timers[device_id] = time.time()
                     self.frame_processed_tasks[device_id].add(task_name)
                     
+                    # Process increment flags BEFORE click execution
+                    if task.get("Increment_Yukio_Retry", False):
+                        new_count = device_state_manager.increment_yukio_retry(device_id)
+                        # If we just hit 3, don't execute the click
+                        if new_count >= 3:
+                            print(f"[{device_id}] Yukio retry limit reached - skipping click")
+                            continue
+                    
+                    # Track action for restart detection
                     should_restart = self.process_monitor.track_action(device_id, task_name)
                     if should_restart:
                         await self.process_monitor.kill_and_restart_game(device_id)
                         return logical_triggered
                     
+                    # Handle other task flags
                     await self.handle_task_flags(device_id, task)
                     
-                    if "[Executed" not in task_name:
+                    # Execute the click if not a detection-only task
+                    if task.get("click_location_str") != "0,0" and "[Executed" not in task_name:
                         await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
                     
                     # Handle KeepChecking flag

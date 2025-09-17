@@ -11,6 +11,7 @@ Skip_Kon_Bonaza = [
     "shared_detection": True,
     "priority": 10,
     "cooldown": 5.0,
+        "sleep": 3,
 },
 
 
@@ -24,6 +25,7 @@ Skip_Kon_Bonaza = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Powerup Quests]",
@@ -33,6 +35,7 @@ Skip_Kon_Bonaza = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Click [Kon Bonaza]",
@@ -53,6 +56,7 @@ Skip_Kon_Bonaza = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
            {
         "task_name": "Start a Match That First Time Played [Kon Bonaza]",
@@ -62,6 +66,7 @@ Skip_Kon_Bonaza = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                {
         "task_name": "Start a Match That 10x Skip Tickets [Kon Bonaza]",
@@ -71,6 +76,7 @@ Skip_Kon_Bonaza = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                    {
         "task_name": "Click [Set Tickets] [Kon Bonaza]",
@@ -80,6 +86,7 @@ Skip_Kon_Bonaza = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                    {
         "task_name": "Increase The Tickets Until IT Reachs 10x [Kon Bonaza]",
@@ -89,6 +96,7 @@ Skip_Kon_Bonaza = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                        {
         "task_name": "After Finishing Match Click [Retry]",
@@ -100,6 +108,7 @@ Skip_Kon_Bonaza = [
         "cooldown": 5.0,
         "Increment_Kon_Bonaza": True,
         "StopSupport":"json_Kon_Bonaza",
+        "sleep": 3,
         
 
     },
@@ -111,6 +120,7 @@ Skip_Kon_Bonaza = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
 
                            {
@@ -123,6 +133,7 @@ Skip_Kon_Bonaza = [
         "cooldown": 5.0,
         "ConditionalRun": ["Skip_Kon_Bonaza"],
         "Recive_GiftBox_Tasks": True,
+        "sleep": 3,
 
     },
 

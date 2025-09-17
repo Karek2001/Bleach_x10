@@ -40,6 +40,7 @@ SubStories = [
         "search_array": ["375,122","#191925","436,122","#191925","421,105","#1616f1","451,113","#02023c","95,72","#ff506e"],
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
 
     {
@@ -49,6 +50,7 @@ SubStories = [
         "search_array": ["113,70","#ffff00","136,82","#750000","113,78","#ffffff","25,20","#ffffff"],
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Sub-Stories]",
@@ -57,6 +59,7 @@ SubStories = [
         "search_array": ["679,180","#ffffff","736,202","#ffffff","794,201","#9c1212","791,204","#9c1212"],
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
 
     {
@@ -138,6 +141,7 @@ SubStories = [
         "click_location_str": "751,507",
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Currently Story Detect All Maps Are Cleared! [Sub Stories]",
@@ -147,6 +151,7 @@ SubStories = [
         "priority": 1,
         "CheckSubStoriesAllCleared": True,
         "cooldown": 5.0,
+        "sleep": 3,
     },
        {
         "task_name": "Currently Story Detect All Maps Are Cleared! [Story Only Last Map] [Sub Stories]",
@@ -156,6 +161,7 @@ SubStories = [
         "priority": 1,
         "CheckSubStoriesAllCleared": True,
         "cooldown": 5.0,
+        "sleep": 3,
     },
    {
         "task_name": "Click [Close] For Prize",
@@ -164,6 +170,7 @@ SubStories = [
         "click_location_str": "488,487",
         "priority": 30,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Detect Many Clear Sub-Stories Part",
@@ -183,5 +190,6 @@ SubStories = [
         "cooldown": 5.0,
         "json_SubStory":True,
         "Character_Slots_Purchase_Tasks": True,
+        "sleep": 3,
     },
 ]

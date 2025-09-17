@@ -360,7 +360,7 @@ async def find_all_templates_smart(screenshot: np.ndarray,
 
 async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict], 
                                      screenshot: Optional[np.ndarray] = None) -> List[dict]:
-    """Enhanced batch checking with OCR support"""
+    """Enhanced batch checking with proper task filtering"""
     if screenshot is not None:
         img_gpu = screenshot
     else:
@@ -369,13 +369,25 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
     if img_gpu is None:
         return []
     
-    # Separate tasks by detection type
+    # Filter tasks BEFORE processing them
+    filtered_tasks = []
+    for task in tasks:
+        # Apply StopSupport and ConditionalRun filtering here too
+        from background_process import monitor
+        if not monitor.process_monitor.should_skip_task(device_id, task):
+            filtered_tasks.append(task)
+        else:
+            # Debug logging for skipped Yukio tasks
+            if "Yukio" in task.get("task_name", ""):
+                print(f"[{device_id}] Pre-filtered out: {task.get('task_name')}")
+    
+    # Now process only the filtered tasks
     pixel_tasks = []
     template_tasks = []
     ocr_tasks = []
     shared_detection_tasks = []
     
-    for task in tasks:
+    for task in filtered_tasks:  # Use filtered_tasks instead of tasks
         task_type = task.get("type", "pixel")
         
         if task_type == "pixel":
@@ -415,14 +427,46 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
             task_cooldown = task.get("cooldown", 2.0)
             if task_tracker.can_execute_task(device_id, task["task_name"], task_cooldown):
                 # Check for swipe functionality in pixel tasks
-                if task.get("swipe_command") and task.get("multi_click"):
-                    print(f"[SWIPE] {task['task_name']}: Executing swipe command")
-                    print(f"[SWIPE] Command: {task['swipe_command']}")
-                    await run_adb_command(task["swipe_command"], device_id)
+                swipe_command = task.get("swipe_command")
+                min_matches_for_swipe = task.get("min_matches_for_swipe")
+                multi_click = task.get("multi_click")
+                
+                # Check for swipe_count functionality (new feature)
+                swipe_count = task.get("swipe_count")
+                if swipe_command and swipe_count:
+                    print(f"[SWIPE] {task['task_name']}: Executing swipe command {swipe_count} times")
+                    print(f"[SWIPE] Command: {swipe_command}")
+                    for i in range(swipe_count):
+                        await run_adb_command(swipe_command, device_id)
+                        if i < swipe_count - 1:  # Don't sleep after the last swipe
+                            await asyncio.sleep(2.0)  # 2 second delay between swipes
                     task_copy = task.copy()
-                    task_copy["task_name"] = f"{task['task_name']} [Swipe executed]"
+                    task_copy["task_name"] = f"{task['task_name']} [Swipe {swipe_count}x executed]"
                     matched_tasks.append(task_copy)
                     task_tracker.record_execution(device_id, task["task_name"])
+                elif swipe_command and (multi_click or min_matches_for_swipe):
+                    # For min_matches_for_swipe, we assume all pixels matched = 1 match
+                    if min_matches_for_swipe and min_matches_for_swipe <= 1:
+                        print(f"[SWIPE] {task['task_name']}: Pixel match meets swipe threshold ({min_matches_for_swipe})")
+                        print(f"[SWIPE] Command: {swipe_command}")
+                        await run_adb_command(swipe_command, device_id)
+                        task_copy = task.copy()
+                        task_copy["task_name"] = f"{task['task_name']} [Swipe executed]"
+                        matched_tasks.append(task_copy)
+                        task_tracker.record_execution(device_id, task["task_name"])
+                    elif multi_click:
+                        print(f"[SWIPE] {task['task_name']}: Executing swipe command")
+                        print(f"[SWIPE] Command: {swipe_command}")
+                        await run_adb_command(swipe_command, device_id)
+                        task_copy = task.copy()
+                        task_copy["task_name"] = f"{task['task_name']} [Swipe executed]"
+                        matched_tasks.append(task_copy)
+                        task_tracker.record_execution(device_id, task["task_name"])
+                    else:
+                        # min_matches_for_swipe > 1, but we only have 1 pixel match
+                        matched_tasks.append(task)
+                        if task.get("click_location_str") == "0,0":
+                            task_tracker.record_execution(device_id, task["task_name"])
                 else:
                     matched_tasks.append(task)
                     # IMPORTANT: Record execution immediately for detection-only tasks
@@ -554,7 +598,19 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 min_matches_for_swipe = task.get("min_matches_for_swipe")
                 swipe_command = task.get("swipe_command")
                 
-                if min_matches_for_swipe and swipe_command and len(positions) >= min_matches_for_swipe:
+                # Check for swipe_count functionality (new feature)
+                swipe_count = task.get("swipe_count")
+                if swipe_command and swipe_count:
+                    print(f"[SWIPE] {task_name}: Executing swipe command {swipe_count} times")
+                    print(f"[SWIPE] Command: {swipe_command}")
+                    for i in range(swipe_count):
+                        await run_adb_command(swipe_command, device_id)
+                        if i < swipe_count - 1:  # Don't sleep after the last swipe
+                            await asyncio.sleep(2.0)  # 2 second delay between swipes
+                    task_copy = task.copy()
+                    task_copy["task_name"] = f"{task_name} [Swipe {swipe_count}x executed]"
+                    matched_tasks.append(task_copy)
+                elif min_matches_for_swipe and swipe_command and len(positions) >= min_matches_for_swipe:
                     print(f"[SWIPE] {task_name}: {len(positions)} matches >= {min_matches_for_swipe}, executing swipe")
                     print(f"[SWIPE] Command: {swipe_command}")
                     await run_adb_command(swipe_command, device_id)
@@ -577,7 +633,20 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 min_matches_for_swipe = task.get("min_matches_for_swipe")
                 swipe_command = task.get("swipe_command")
                 
-                if min_matches_for_swipe and swipe_command:
+                # Check for swipe_count functionality (new feature)
+                swipe_count = task.get("swipe_count")
+                if swipe_command and swipe_count:
+                    print(f"[SWIPE] {task_name}: Executing swipe command {swipe_count} times")
+                    print(f"[SWIPE] Command: {swipe_command}")
+                    for i in range(swipe_count):
+                        await run_adb_command(swipe_command, device_id)
+                        if i < swipe_count - 1:  # Don't sleep after the last swipe
+                            await asyncio.sleep(2.0)  # 2 second delay between swipes
+                    task_copy = task.copy()
+                    task_copy["task_name"] = f"{task_name} [Swipe {swipe_count}x executed]"
+                    matched_tasks.append(task_copy)
+                    task_tracker.record_execution(device_id, task_name)
+                elif min_matches_for_swipe and swipe_command:
                     # Detection-only mode - check if swipe threshold is met
                     if len(positions) >= min_matches_for_swipe:
                         print(f"[SWIPE] {task_name}: {len(positions)} matches >= {min_matches_for_swipe}, executing swipe")
@@ -619,6 +688,28 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 task_copy = task.copy()
                 if task.get("use_match_position", False):
                     task_copy["click_location_str"] = f"{match_pos[0]},{match_pos[1]}"
+                
+                # Check for delayed click functionality
+                delayed_click_location = task.get("delayed_click_location")
+                delayed_click_delay = task.get("delayed_click_delay", 2.0)
+                
+                if delayed_click_location:
+                    task_copy["delayed_click_location"] = delayed_click_location
+                    task_copy["delayed_click_delay"] = delayed_click_delay
+                
+                # Check for swipe_count functionality (new feature for templates)
+                swipe_count = task.get("swipe_count")
+                swipe_command = task.get("swipe_command")
+                
+                if swipe_command and swipe_count:
+                    print(f"[TEMPLATE SWIPE] {task_name}: Executing swipe command {swipe_count} times")
+                    print(f"[TEMPLATE SWIPE] Command: {swipe_command}")
+                    for i in range(swipe_count):
+                        await run_adb_command(swipe_command, device_id)
+                        if i < swipe_count - 1:  # Don't sleep after the last swipe
+                            await asyncio.sleep(2.0)  # 2 second delay between swipes
+                    task_copy["task_name"] = f"{task_name} [Template Swipe {swipe_count}x executed]"
+                
                 matched_tasks.append(task_copy)
                 task_tracker.record_execution(device_id, task_name)
                 match_found = True

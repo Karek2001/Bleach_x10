@@ -9,6 +9,7 @@ Recive_Giftbox_Check = [
         "priority": 25,
         "cooldown": 5.0,
         "Recive_GiftBox_Tasks": True,
+        "sleep": 3,
     },
         {
         "task_name": "From [Soul Tickets] To [Characters]",
@@ -19,6 +20,7 @@ Recive_Giftbox_Check = [
         "priority": 25,
         "cooldown": 5.0,
         "Recive_GiftBox_Tasks": True,
+        "sleep": 3,
     },
         {
         "task_name": "From [Characters] To [Friend Points]",
@@ -29,6 +31,7 @@ Recive_Giftbox_Check = [
         "priority": 25,
         "cooldown": 5.0,
         "Recive_GiftBox_Tasks": True,
+        "sleep": 3,
     },
 
             {
@@ -43,6 +46,7 @@ Recive_Giftbox_Check = [
         "json_Recive_GiftBox":True,
         "Skip_Yukio_Event_Tasks": True,
  "Reset_Yukio_Retry": True,
+        "sleep": 3,
     },
             {
         "task_name": "All Gifts Are Recived No More To Recive But Kon Event Isn't Finished Yet",
@@ -55,6 +59,7 @@ Recive_Giftbox_Check = [
         "StopSupport": "json_Kon_Bonaza",
         # HERE RETURN TO KON IF IT DOESN't TRUE
         "Skip_Kon_Bonaza_Tasks": True,
+        "sleep": 3,
     },
 
 ]

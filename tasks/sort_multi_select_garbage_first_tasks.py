@@ -7,6 +7,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Choose [AnyCharacter] [Sort Multi-Select Garbage]",
@@ -16,6 +17,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Power Up][Sort Multi-Select Garbage]",
@@ -25,6 +27,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Soul Tree] [Sort Multi-Select Garbage]",
@@ -34,6 +37,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Level] [Sort Multi-Select Garbage]",
@@ -43,6 +47,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Ascension] [Sort Multi-Select Garbage]",
@@ -52,6 +57,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Click [Confirm][Sort Multi-Select Garbage]",
@@ -61,6 +67,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                         {
         "task_name": "Click [Multi Select] [Sort Multi-Select Garbage]",
@@ -70,6 +77,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                         {
         "task_name": "Change [Level 1 => Level 4] [Sort Multi-Select Garbage]",
@@ -79,6 +87,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                         {
         "task_name": "Change [ Lvl1 => ALL] [Sort Multi-Select Garbage]",
@@ -88,6 +97,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                         {
         "task_name": "Click [] [Sort Multi-Select Garbage]",
@@ -97,6 +107,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                         {
         "task_name": "Swipe All Tasks Are ON [Lvl4 ~ ALL ~ ALL] [Sort Multi-Select Garbage]",
@@ -109,6 +120,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 0.1,
+        "sleep": 3,
     },
                         {
         "task_name": "Change [Only Raid Character => ALL Characters] [Sort Multi-Select Garbage]",
@@ -118,6 +130,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                         {
         "task_name": "Click [Select] For Confirming The Filter [Sort Multi-Select Garbage]",
@@ -129,6 +142,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "cooldown": 5.0,
         "json_Sort_Multi_Select_Garbage_First": True,
         "Upgrade_Characters_Level_Tasks": True,
+        "sleep": 3,
     },
 
 ]

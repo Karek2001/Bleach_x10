@@ -8,6 +8,7 @@ SideStory = [
         "priority": 1,
         "cooldown": 5.0,
         "BackToStory": True,
+        "sleep": 3,
     },
         {
         "task_name": "Side Mode Is Already Acvitied",
@@ -18,5 +19,6 @@ SideStory = [
         "priority": 2,
         "cooldown": 5.0,
         "BackToStory": True,
+        "sleep": 3,
     },
 ] 

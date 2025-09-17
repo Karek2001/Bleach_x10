@@ -34,6 +34,7 @@ Sell_Characters = [
         "isLogical": False,
         "priority": 15,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Multi Select]",
@@ -43,6 +44,7 @@ Sell_Characters = [
         "isLogical": False,
         "priority": 20,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [All]",
@@ -75,6 +77,7 @@ Sell_Characters = [
         "isLogical": False,
         "priority": 35,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Sell]",
@@ -84,6 +87,7 @@ Sell_Characters = [
         "isLogical": False,
         "priority": 40,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     
     # Confirmation steps

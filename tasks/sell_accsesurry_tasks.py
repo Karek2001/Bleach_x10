@@ -11,6 +11,7 @@ Sell_Accessury = [
         "isLogical": False,
         "priority": 15,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Multi Select]",
@@ -20,6 +21,7 @@ Sell_Accessury = [
         "isLogical": False,
         "priority": 20,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [3 Stars]",
@@ -29,6 +31,7 @@ Sell_Accessury = [
         "isLogical": False,
         "priority": 30,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Select 50 Characters]",
@@ -38,6 +41,7 @@ Sell_Accessury = [
         "isLogical": False,
         "priority": 35,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Sell]",
@@ -47,6 +51,7 @@ Sell_Accessury = [
         "isLogical": False,
         "priority": 40,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     
     # Confirmation steps
@@ -81,5 +86,6 @@ Sell_Accessury = [
         "priority": 51,
         "cooldown": 5.0,
         "BackToRestartingTasks": True,
+        "sleep": 3,
     },
 ]

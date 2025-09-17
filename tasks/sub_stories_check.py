@@ -19,7 +19,8 @@ SubStories_check = [
         "click_location_str": "400,483",
         "priority": 20,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
                 {
         "task_name": "From Page 2 To Page 3 [5 Pages ONLY WORKS]",
@@ -28,7 +29,8 @@ SubStories_check = [
         "click_location_str": "481,482",
         "priority": 21,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
                     {
         "task_name": "From Page 3 To Page 4 [5 Pages ONLY WORKS]",
@@ -37,7 +39,8 @@ SubStories_check = [
         "click_location_str": "562,484",
         "priority": 22,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
                         {
         "task_name": "From Page 4 To Page 5 [5 Pages ONLY WORKS]",
@@ -46,7 +49,8 @@ SubStories_check = [
         "click_location_str": "643,483",
         "priority": 23,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
                         {
         "task_name": "Last Page No Pages Left [5 Pages ONLY WORKS]",
@@ -68,7 +72,8 @@ SubStories_check = [
         "click_location_str": "441,483",
         "priority": 20,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
                 {
         "task_name": "From Page 2 To Page 3 [4 Pages ONLY WORKS]",
@@ -77,7 +82,8 @@ SubStories_check = [
         "click_location_str": "521,483",
         "priority": 21,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
                     {
         "task_name": "From Page 3 To Page 4 [4 Pages ONLY WORKS]",
@@ -86,7 +92,8 @@ SubStories_check = [
         "click_location_str": "602,485",
         "priority": 22,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
                         {
         "task_name": "Last Page No Pages Left [4 Pages ONLY WORKS]",
@@ -96,7 +103,8 @@ SubStories_check = [
         "priority": 25,
         "KeepChecking": 5.0,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
     # Works Only in 2 Pages
             {
@@ -106,7 +114,8 @@ SubStories_check = [
         "click_location_str": "521,482",
         "priority": 20,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
                         {
         "task_name": "Last Page No Pages Left [2 Pages ONLY WORKS]",
@@ -116,7 +125,8 @@ SubStories_check = [
         "priority": 25,
         "KeepChecking": 5.0,
         "cooldown": 5.0,
-        "Sub-Stores": True
+        "Sub-Stores": True,
+        "sleep": 3,
     },
 
 
@@ -127,6 +137,7 @@ SubStories_check = [
         "click_location_str": "483,500",
         "priority": 30,
         "cooldown": 5.0,
+        "sleep": 3,
     },
        {
         "task_name": "Currently Story Detect All Maps Are Cleared! [Story Only Last Map] [Sub Stories]",
@@ -135,5 +146,6 @@ SubStories_check = [
         "click_location_str": "483,500",
         "priority": 30,
         "cooldown": 5.0,
+        "sleep": 3,
     },
 ]

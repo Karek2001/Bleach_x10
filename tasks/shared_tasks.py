@@ -48,6 +48,7 @@ Shared_Tasks = [
         "shared_detection": True,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     
     # HIGH PRIORITY - UI Elements/Popups (Priority 5-10)
@@ -120,6 +121,7 @@ Shared_Tasks = [
         "isLogical": False,
         "priority": 5,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Start Quest]",
@@ -130,6 +132,7 @@ Shared_Tasks = [
         "priority": 5,
         "cooldown": 5.0,
         "StopSupport": "json_Character_Slots_Purchased",
+        "sleep": 3,
     },
 
      {
@@ -139,6 +142,7 @@ Shared_Tasks = [
         "search_array": ["833,35","#ff0000","819,54","#ffffff","834,74","#ff0000"],
         "isLogical": False,
         "priority": 20,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Next Quest]",
@@ -147,6 +151,7 @@ Shared_Tasks = [
         "search_array": ["713,512","#ffffff","760,507","#ffffff","698,496","#1e46f2"],
         "isLogical": False,
         "priority": 5,
+        "sleep": 3,
     },
     {
         "task_name": "New Record Quest Obtained",
@@ -155,6 +160,7 @@ Shared_Tasks = [
         "search_array": ["170,273","#fefefe","810,187","#ff0000","798,209","#ffffff"],
         "isLogical": False,
         "priority": 20,
+        "sleep": 3,
     },
         {
         "task_name": "New Record Quest Obtained",
@@ -163,6 +169,7 @@ Shared_Tasks = [
         "search_array": ["183,77","#ffffff","398,503","#ffffff","567,508","#ffffff","339,428","#1f9bf4"],
         "isLogical": False,
         "priority": 20,
+        "sleep": 3,
     },
         # Social/Cancel Actions - Lower Priority
     {
@@ -172,6 +179,7 @@ Shared_Tasks = [
         "search_array": ["720,121","#0d12b5","713,134","#e60012","489,175","#ffffff","565,174","#ffffff"],
         "isLogical": False,
         "priority": 50,
+        "sleep": 3,
     },
 
     # Map Already Clear But Trying to Re Read
@@ -182,6 +190,7 @@ Shared_Tasks = [
         "search_array": ["249,153","#0d12b5","259,163","#e60012","535,262","#ffffff","612,263","#ffffff","542,258","#ffffff"],
         "isLogical": False,
         "priority": 20,
+        "sleep": 3,
     },
         {
         "task_name": "Sinkaemon Event Unlocked Click [Close]",
@@ -190,5 +199,6 @@ Shared_Tasks = [
         "search_array": ["318,49","#191919","384,50","#191919","454,46","#191919","652,49","#191919","738,45","#0d12b5","727,58","#e60012"],
         "isLogical": False,
         "priority": 20,
+        "sleep": 3,
     },
 ]

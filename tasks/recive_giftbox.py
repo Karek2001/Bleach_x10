@@ -10,6 +10,7 @@ Recive_GiftBox = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     
     {
@@ -20,6 +21,7 @@ Recive_GiftBox = [
         "isLogical": False,
         "priority": 15,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     
     {
@@ -30,6 +32,7 @@ Recive_GiftBox = [
         "isLogical": False,
         "priority": 20,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     
     # Confirm Receipt
@@ -41,6 +44,7 @@ Recive_GiftBox = [
         "isLogical": False,
         "priority": 25,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Menu Collect All Gifts Click [Close] [For Single Gift]",
@@ -50,6 +54,7 @@ Recive_GiftBox = [
         "isLogical": False,
         "priority": 25,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "All Gifts Recived From Currently Section Let's Switch To Check",
@@ -71,6 +76,7 @@ Recive_GiftBox = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Tickets Are Fully. Let's Spend The 1000 Tickets In Kon Event",
@@ -81,6 +87,7 @@ Recive_GiftBox = [
         "priority": 1,
         "cooldown": 5.0,
         "Skip_Kon_Bonaza_Tasks": True,
+        "sleep": 3,
     },
 
 

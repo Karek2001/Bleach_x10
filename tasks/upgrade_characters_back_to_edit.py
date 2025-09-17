@@ -18,5 +18,6 @@ Upgrade_Characters_Back_To_Edit = [
         "priority": 1,
         "cooldown": 5.0,
         "Upgrade_Characters_Level_Tasks": True,
+        "sleep": 3,
     },
 ]

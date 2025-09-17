@@ -7,6 +7,7 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                         {
         "task_name": "Leave Character Info [Navigate To Yukio Event]",
@@ -16,7 +17,9 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
+
                         {
         "task_name": "Leave [Edit] Window [Navigate To Yukio Event]",
         "type": "pixel",
@@ -25,6 +28,17 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
+    },
+                            {
+        "task_name": "Leave [Edit] 2 Window [Navigate To Yukio Event]",
+        "type": "pixel",
+        "click_location_str": "29,25",
+        "search_array": ["23,21","#ffffff","74,24","#ffffff","32,47","#e60012"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Open [Solo] Menu For Yukio Event",
@@ -34,6 +48,7 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click [Powerup Quests]",
@@ -43,6 +58,7 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
         {
         "task_name": "Click [Yukio Event]",
@@ -63,6 +79,7 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
            {
         "task_name": "Start a Match That First Time Played [Yukio Event]",
@@ -72,6 +89,7 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                {
         "task_name": "Start a Match That 10x Skip Tickets [Yukio Event]",
@@ -81,6 +99,7 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                    {
         "task_name": "Click [Set Tickets] [Yukio Event]",
@@ -90,6 +109,7 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                    {
         "task_name": "Increase The Tickets Until IT Reachs 10x [Yukio Event]",
@@ -99,6 +119,7 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 10,
         "cooldown": 5.0,
+        "sleep": 3,
     },
                            {
         "task_name": "Click Title For Speed Up Completing [Yukio Event]",
@@ -108,6 +129,7 @@ Skip_Yukio_Event_Tasks = [
         "isLogical": False,
         "priority": 20,
         "cooldown": 5.0,
+        "sleep": 3,
     },
 
                                {
@@ -125,13 +147,14 @@ Skip_Yukio_Event_Tasks = [
                            {
         "task_name": "Click [Home] After Finishing 3 Matches",
         "type": "pixel",
-        "click_location_str": "388,513",
-        "search_array": ["357,506","#ffffff","368,507","#ffffff","450,505","#0939e0"],
+        "click_location_str": "391,509",
+        "search_array": ["357,508","#ffffff","408,509","#ffffff","451,509","#1d56f9"],
         "isLogical": False,
-        "priority": 20,
+        "priority": 1,
         "cooldown": 8.0,
         "ConditionalRun": ["Skip_Yukio_Event_Retry_At_3"],
         "Sort_Characters_Lowest_Level_Tasks": True,
+        "sleep": 1,
     },
 
 
