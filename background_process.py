@@ -30,6 +30,7 @@ from tasks import (
     Recive_GiftBox,
     Recive_Giftbox_Check,
     Skip_Kon_Bonaza,
+    Kon_Bonaza_1Match_Tasks,
     Skip_Yukio_Event_Tasks,
     Sort_Characters_Lowest_Level_Tasks,
     Sort_Filter_Ascension_Tasks,
@@ -207,6 +208,7 @@ class ProcessMonitor:
             "recive_giftbox": Recive_GiftBox,
             "recive_giftbox_check": Recive_Giftbox_Check,
             "skip_kon_bonaza": Skip_Kon_Bonaza,
+            "kon_bonaza_1match_tasks": Kon_Bonaza_1Match_Tasks,
             "skip_yukio_event": Skip_Yukio_Event_Tasks,
             "sort_characters_lowest_level": Sort_Characters_Lowest_Level_Tasks,
             "sort_filter_ascension": Sort_Filter_Ascension_Tasks,
@@ -247,6 +249,7 @@ class ProcessMonitor:
             "recive_giftbox",
             "recive_giftbox_check",
             "skip_kon_bonaza",
+            "kon_bonaza_1match_tasks",
             "skip_yukio_event",
             "sort_characters_lowest_level",
             "sort_filter_ascension", 
@@ -540,6 +543,7 @@ class OptimizedBackgroundMonitor:
             "Recive_GiftBox_Tasks": ("recive_giftbox", "→ Receive Gift Box"),
             "Recive_GiftBox_Check_Tasks": ("recive_giftbox_check", "→ Receive Gift Box Check"),
             "Skip_Kon_Bonaza_Tasks": ("skip_kon_bonaza", "→ Skip Kon Bonanza"),
+            "Kon_Bonaza_1Match_Tasks": ("kon_bonaza_1match_tasks", "→ Kon Bonaza 1 Match Tasks"),
             "Skip_Yukio_Event_Tasks": ("skip_yukio_event", "→ Skip Yukio Event"),
             "Sort_Characters_Lowest_Level_Tasks": ("sort_characters_lowest_level", "→ Sort Characters Lowest Level"),
             "Sort_Filter_Ascension_Tasks": ("sort_filter_ascension", "→ Sort Filter Ascension"),
@@ -782,7 +786,8 @@ class OptimizedBackgroundMonitor:
                     "recive_giftbox_check", 
                     "sort_filter_ascension",
                     "sort_multi_select_garbage_first",
-                    "skip_yukio_event"
+                    "skip_yukio_event",
+                    "kon_bonaza_1match_tasks"
                 ]
                 current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
                 if current_task_set not in helper_task_sets:

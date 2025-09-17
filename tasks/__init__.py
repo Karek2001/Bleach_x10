@@ -16,6 +16,7 @@ from .exchange_gold_characters import Exchange_Gold_Characters
 from .recive_giftbox import Recive_GiftBox
 from .recive_giftbox_check import Recive_Giftbox_Check
 from .skip_kon_bonaza import Skip_Kon_Bonaza
+from .Kon_Bonaza_1Match_Tasks import Kon_Bonaza_1Match_Tasks
 from .skip_yukio_event_tasks import Skip_Yukio_Event_Tasks
 from .sort_characters_lowest_level_tasks import Sort_Characters_Lowest_Level_Tasks
 from .sort_filter_ascension_tasks import Sort_Filter_Ascension_Tasks
@@ -41,6 +42,7 @@ __all__ = [
     'Recive_GiftBox',
     'Recive_Giftbox_Check',
     'Skip_Kon_Bonaza',
+    'Kon_Bonaza_1Match_Tasks',
     'Skip_Yukio_Event_Tasks',
     'Sort_Characters_Lowest_Level_Tasks',
     'Sort_Filter_Ascension_Tasks',

@@ -276,4 +276,77 @@ Upgrade_Characters_Level = [
         "Upgrade_Characters_Back_To_Edit_Tasks": True,
         "sleep": 3,
     },
+
+
+    # This Steps For Case That we don't have medals/matrials to upgradde anything
+            # Both Level and Ascension are not clickable
+          {
+        "task_name": "Click [Soul Tree] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "120,210",
+        "search_array": ["336,243","#90909c","590,244","#545460","850,239","#545460"],
+        "isLogical": False,
+        "priority": 10,
+        "cooldown": 6.0,
+        "sleep": 3,
+    },
+
+# Edge Case When [Soul Tree] is unlocked but level is not but Ascension is clickable
+          {
+        "task_name": "Click [Soul Tree] [Edge Case] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "121,206",
+        "search_array": ["326,236","#90909c","593,242","#545460","849,237","#90909c","433,210","#ffffff","545,214","#ffffff"],
+        "isLogical": False,
+        "priority": 10,
+        "cooldown": 6.0,
+        "sleep": 3,
+    },
+# Edge Case When [Soul Tree] is unlocked but level is not and Ascension
+          {
+        "task_name": "Leave Character Choose [Cancel] [Edge Case] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "311,491",
+        "search_array": ["119,210","#00ff00","594,246","#545460","852,248","#545460","433,209","#ffffff","691,209","#ffffff"],
+        "isLogical": False,
+        "priority": 10,
+        "cooldown": 6.0,
+        "sleep": 3,
+        "Upgrade_Characters_Back_To_Edit_Tasks": True,
+    },
+
+    # After Clicking [Soul Tree] It turns out unlocked
+            {
+        "task_name": "Click [Level] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "378,209",
+        "search_array": ["119,210","#00ff00","590,243","#90909c","849,241","#545460"],
+        "isLogical": False,
+        "priority": 15,
+        "cooldown": 6.0,
+        "sleep": 3,
+    },
+            {
+        "task_name": "Click [Confirm] For [No matrials Case] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "654,495",
+        "search_array": ["120,211","#00ff00","378,211","#00ff00","849,240","#545460","691,210","#ffffff"],
+        "isLogical": False,
+        "priority": 20,
+        "cooldown": 6.0,
+        "sleep": 3,
+    },
+
+                {
+        "task_name": "No Matrial Detected! Let's Play 1Match Kon Bonaza Event [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "540,332",
+        "search_array": ["306,330","#ffffff","362,336","#ffffff","415,332","#ffffff","650,336","#ffffff","704,327","#0a3ae1"],
+        "isLogical": False,
+        "priority": 20,
+        "cooldown": 6.0,
+        "Kon_Bonaza_1Match_Tasks": True,
+        "sleep": 3,
+    },
+
 ]
