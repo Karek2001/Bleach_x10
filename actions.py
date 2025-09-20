@@ -370,8 +370,9 @@ class OCRManager:
             digit_ratio = sum(1 for c in text if c.isdigit()) / len(text)
             confidence *= digit_ratio
         
-        # Penalize for unexpected characters
-        unexpected_chars = sum(1 for c in text if c not in '0123456789,. :ID')
+        # Penalize for unexpected characters (allow dashes for ID format)
+        allowed_chars = '0123456789,. :ID-' if is_id else '0123456789,. :ID'
+        unexpected_chars = sum(1 for c in text if c not in allowed_chars)
         confidence *= (1.0 - unexpected_chars * 0.1)
         
         return max(0, min(1, confidence))
@@ -403,24 +404,39 @@ class OCRManager:
             text = text.replace("'", ',')  # apostrophe misread as comma
         
         if is_id:
-            # Clean ID format
+            # Clean ID format - handle both "ID: XX XXX XXX" and "ID:123-12-3123-123"
             text = text.upper()
-            # Extract just the numbers after "ID:"
-            if "ID" in text:
-                parts = text.split("ID")
-                if len(parts) > 1:
-                    numbers = ''.join(filter(lambda x: x.isdigit() or x == ' ', parts[1]))
-                    # Ensure proper spacing (3 groups of numbers)
-                    numbers = numbers.replace(' ', '')
-                    if len(numbers) == 8:  # Format: XX XXX XXX
-                        formatted = f"{numbers[:2]} {numbers[2:5]} {numbers[5:]}"
+            
+            # Look for ID pattern and extract everything after "ID:"
+            import re
+            id_match = re.search(r'ID[:\s]+([0-9\-\s]+)', text)
+            if id_match:
+                id_part = id_match.group(1).strip()
+                # Keep original formatting with dashes if present
+                if '-' in id_part:
+                    # Format like "ID:123-12-3123-123"
+                    return f"ID:{id_part}"
+                else:
+                    # Format like "ID: 88 534 886" 
+                    numbers = ''.join(filter(lambda x: x.isdigit(), id_part))
+                    if len(numbers) >= 6:
+                        # Try to format nicely
+                        if len(numbers) == 8:  # Format: XX XXX XXX
+                            formatted = f"{numbers[:2]} {numbers[2:5]} {numbers[5:]}"
+                        elif len(numbers) == 9:  # Format: XXX XXX XXX
+                            formatted = f"{numbers[:3]} {numbers[3:6]} {numbers[6:]}"
+                        else:
+                            formatted = numbers
                         return f"ID: {formatted}"
-                    elif len(numbers) == 9:  # Format: XXX XXX XXX
-                        formatted = f"{numbers[:3]} {numbers[3:6]} {numbers[6:]}"
-                        return f"ID: {formatted}"
-            # Fallback: just extract numbers
-            numbers = ''.join(filter(lambda x: x.isdigit() or x == ' ', text))
-            return f"ID: {numbers.strip()}"
+                    else:
+                        return f"ID: {id_part}"
+            
+            # Fallback: look for any ID-like pattern
+            id_fallback = re.search(r'(ID[:\s]*[0-9\-\s]+)', text)
+            if id_fallback:
+                return id_fallback.group(1).strip()
+                
+            return text.strip()
         else:
             # Clean number format (with commas)
             # Extract only digits and commas
@@ -905,38 +921,71 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
             # Use enhanced number extraction for number/ID detection
             extracted_text = await ocr_manager.extract_numbers_enhanced(img_gpu, roi, is_id=is_id)
             
+            # Always create task_copy for potential processing
+            task_copy = task.copy()
+            center_x = roi[0] + roi[2] // 2
+            center_y = roi[1] + roi[3] // 2
+            
             if extracted_text:
-                task_copy = task.copy()
-                center_x = roi[0] + roi[2] // 2
-                center_y = roi[1] + roi[3] // 2
                 
                 # Special handling for orb value extraction
                 if task.get("extract_orb_value", False):
                     try:
                         # Apply smart pattern correction first
                         corrected_text = ocr_manager._fix_comma_misreads(extracted_text)
-                        # Keep as formatted string with commas
-                        if corrected_text and corrected_text.strip():
+                        # Only accept values that contain comma (properly formatted currency)
+                        if corrected_text and corrected_text.strip() and ',' in corrected_text:
                             # Import here to avoid circular import
                             from device_state_manager import device_state_manager
                             device_state_manager.update_state(device_id, "Orbs", corrected_text)
-                            task_copy["task_name"] = f"{task['task_name']} [Orbs: {extracted_text} → {corrected_text} saved to JSON]"
+                            task_copy["task_name"] = f"{task['task_name']} [✅ Orbs: {extracted_text} → {corrected_text} saved to JSON]"
+                            matched_tasks.append(task_copy)
+                            task_tracker.record_execution(device_id, task["task_name"])
                         else:
-                            task_copy["task_name"] = f"{task['task_name']} [No orbs detected]"
+                            # Reject values without comma - keep searching
+                            if task.get("search_for_orb_pattern", True):  # Default to keep searching
+                                display_text = corrected_text if corrected_text else extracted_text
+                                task_copy["task_name"] = f"{task['task_name']} [🔍 Searching for comma-formatted orbs... ('{display_text}' rejected)]"
+                                matched_tasks.append(task_copy)
+                                # Don't record execution to keep searching
+                                continue
+                            else:
+                                task_copy["task_name"] = f"{task['task_name']} [No valid orbs detected: '{corrected_text}']"
+                                matched_tasks.append(task_copy)
+                                task_tracker.record_execution(device_id, task["task_name"])
                     except Exception as e:
                         task_copy["task_name"] = f"{task['task_name']} [Error extracting orbs: {e}]"
+                        matched_tasks.append(task_copy)
+                        task_tracker.record_execution(device_id, task["task_name"])
                 # Special handling for account ID value extraction
                 elif task.get("extract_account_id_value", False):
                     try:
-                        if extracted_text and extracted_text.strip():
+                        # Check if this text contains an ID pattern
+                        if extracted_text and "ID" in extracted_text.upper():
                             # Import here to avoid circular import
                             from device_state_manager import device_state_manager
                             device_state_manager.update_state(device_id, "AccountID", extracted_text.strip())
-                            task_copy["task_name"] = f"{task['task_name']} [Account ID: {extracted_text} → Saved to JSON]"
+                            task_copy["task_name"] = f"{task['task_name']} [✅ Account ID Found: {extracted_text} → Saved to JSON]"
+                            # Mark as successful so NextTaskSet_Tasks can trigger
+                            task_copy["id_extraction_successful"] = True
+                            matched_tasks.append(task_copy)
+                            task_tracker.record_execution(device_id, task["task_name"])
                         else:
-                            task_copy["task_name"] = f"{task['task_name']} [No account ID detected]"
+                            # Keep searching - don't record execution to allow continuous searching
+                            if task.get("search_for_id_pattern", False):
+                                display_text = extracted_text[:20] if extracted_text else "nothing"
+                                task_copy["task_name"] = f"{task['task_name']} [🔍 Searching for ID pattern... ('{display_text}' found)]"
+                                matched_tasks.append(task_copy)
+                                # Don't record execution to keep searching
+                                continue
+                            else:
+                                task_copy["task_name"] = f"{task['task_name']} [No account ID detected: '{extracted_text}']"
+                                matched_tasks.append(task_copy)
+                                task_tracker.record_execution(device_id, task["task_name"])
                     except Exception as e:
                         task_copy["task_name"] = f"{task['task_name']} [Error extracting account ID: {e}]"
+                        matched_tasks.append(task_copy)
+                        task_tracker.record_execution(device_id, task["task_name"])
                 else:
                     # Handle position setting for enhanced extraction
                     if task.get("use_match_position", False):
@@ -947,6 +996,23 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 
                 matched_tasks.append(task_copy)
                 task_tracker.record_execution(device_id, task["task_name"])
+            else:
+                # Handle case when no text is extracted (empty OCR result)
+                if task.get("search_for_id_pattern", False) and task.get("extract_account_id_value", False):
+                    # Keep searching for ID pattern even when OCR returns nothing
+                    task_copy["task_name"] = f"{task['task_name']} [🔍 Searching for ID pattern... (no text found)]"
+                    matched_tasks.append(task_copy)
+                    # Don't record execution to keep searching
+                elif task.get("extract_orb_value", False):
+                    # Keep searching for orb pattern even when OCR returns nothing
+                    task_copy["task_name"] = f"{task['task_name']} [🔍 Searching for comma-formatted orbs... (no text found)]"
+                    matched_tasks.append(task_copy)
+                    # Don't record execution to keep searching
+                else:
+                    # For other tasks, treat as normal failure
+                    task_copy["task_name"] = f"{task['task_name']} [No text detected]"
+                    matched_tasks.append(task_copy)
+                    task_tracker.record_execution(device_id, task["task_name"])
         else:
             # Original OCR text search functionality
             ocr_text = task.get("ocr_text", "")

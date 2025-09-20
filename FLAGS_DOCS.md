@@ -393,9 +393,13 @@ Enable comprehensive analysis mode
 Extract orb count value and save to device JSON
 - **Type**: Boolean flag
 - **Usage**: Automatically extracts and corrects numeric value from OCR and saves to "Orbs" field
-- **Requirements**: Use with `"is_id": false` for number format
-- **Action**: Converts "211240" → corrects to "21,124" → saves "21,124" to JSON "Orbs" field
+- **Requirements**: 
+  - Use with `"is_id": false` for number format
+  - **Must contain comma**: Only accepts values with comma formatting (e.g., "21,124")
+  - Rejects values without commas (e.g., "21124") and continues searching
+- **Action**: Converts "211240" → corrects to "21,124" → validates comma → saves to JSON
 - **Format**: Saves as string with comma formatting (e.g., "21,124")
+- **Validation**: Keeps searching until comma-formatted value is found
 - **Example**: Used in orb count extraction tasks
 
 ### `extract_account_id_value`

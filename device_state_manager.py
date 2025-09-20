@@ -450,12 +450,14 @@ class DeviceStateManager:
             return "main_screenshot"
         
         # Screenshot complete, check Extract Orb Count
-        if state.get("Orbs", "0") == "0":
+        if state.get("Orbs", "0") in ["0", ""]:
             return "extract_orb_counts"
         
         # Orb extraction complete, check Extract Account ID
-        # (This will be determined when account ID system is implemented)
-        # For now, proceed to Kon Bonaza after orb extraction
+        if state.get("AccountID", "") == "":
+            return "extract_account_id"
+        
+        # Account ID extraction complete, proceed to Kon Bonaza
         if state.get("Skip_Kon_Bonaza_100Times", 0) < 100:
             return "skip_kon_bonaza"
         
