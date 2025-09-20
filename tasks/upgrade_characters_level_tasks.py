@@ -1,5 +1,22 @@
 Upgrade_Characters_Level = [
 
+    
+    # END OF Upgrade Characters Level Tasks 
+                    {
+        "task_name": "Upgrade Character Completed, Let's Recive The Orbs From Box! [Upgrade Characters Level END]",
+        "type": "pixel",
+        "click_location_str": "24,21",
+        "search_array": ["75,24","#ffffff","106,25","#ffffff","534,328","#ffffff","636,325","#ffffff","768,327","#ffffff","476,173","#191925","855,429","#191925","567,117","#ffffff"],
+        "isLogical": False,
+        "priority": 1,
+        "cooldown": 6.0,
+        "sleep": 3,
+        "json_Upgrade_Characters_Level": True,
+        "Recive_Giftbox_Orbs_Tasks": True,
+
+    },
+
+
     # Needs To Return back to edit (KON) is Base
     {
         "task_name": "Click [Cancel] And Back To Edit [Kon Base] [Upgrade Characters Level]",
@@ -281,7 +298,7 @@ Upgrade_Characters_Level = [
     # This Steps For Case That we don't have medals/matrials to upgradde anything
             # Both Level and Ascension are not clickable
           {
-        "task_name": "Click [Soul Tree] [Upgrade Characters Level]",
+        "task_name": "Click [Soul Tree] [Edge Case 1] [Upgrade Characters Level]",
         "type": "pixel",
         "click_location_str": "120,210",
         "search_array": ["336,243","#90909c","590,244","#545460","850,239","#545460"],
@@ -291,6 +308,40 @@ Upgrade_Characters_Level = [
         "sleep": 3,
     },
 
+        # This Steps For Case That we don't have Kon Level 4 And we half upgraded it
+            # Both Soul Tree and Ascension are not clickable
+          {
+        "task_name": "Click [Soul Tree] [Edge Case 2] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "120,210",
+        "search_array": ["337,238","#90909c","595,241","#545460","852,243","#90909c"],
+        "isLogical": False,
+        "priority": 10,
+        "cooldown": 6.0,
+        "sleep": 3,
+    },
+
+          {
+        "task_name": "Click [Ascension] [Edge Case 2] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "636,210",
+        "search_array": ["119,211","#00ff00","590,240","#545460","433,210","#ffffff","545,214","#ffffff","850,236","#90909c"],
+        "isLogical": False,
+        "priority": 10,
+        "cooldown": 6.0,
+        "sleep": 3,
+    },
+
+              {
+        "task_name": "Click [Level] [Edge Case 2] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "379,211",
+        "search_array": ["120,211","#00ff00","636,211","#00ff00","585,242","#90909c"],
+        "isLogical": False,
+        "priority": 10,
+        "cooldown": 6.0,
+        "sleep": 3,
+    },
 # Edge Case When [Soul Tree] is unlocked but level is not but Ascension is clickable
           {
         "task_name": "Click [Soul Tree] [Edge Case] [Upgrade Characters Level]",
@@ -348,5 +399,6 @@ Upgrade_Characters_Level = [
         "Kon_Bonaza_1Match_Tasks": True,
         "sleep": 3,
     },
+
 
 ]

@@ -45,7 +45,7 @@ class DeviceStateManager:
         return {
             "AccountID": "",
             "UserName": "Player",
-            "Orbs": 0,
+            "Orbs": "0",
             "isLinked": 0,
             "Email": "",
             "Password": "",
@@ -66,6 +66,7 @@ class DeviceStateManager:
             "Sort_Filter_Ascension": 0,
             "Sort_Multi_Select_Garbage_First": 0,
             "Upgrade_Characters_Level": 0,
+            "Recive_Giftbox_Orbs": 0,
             "RestartingCount": 0,
             "LastUpdated": datetime.now().isoformat(),
             "CurrentTaskSet": "restarting",
@@ -164,7 +165,8 @@ class DeviceStateManager:
             "json_Sort_Characters_Lowest_Level": "Sort_Characters_Lowest_Level",
             "json_Sort_Filter_Ascension": "Sort_Filter_Ascension",
             "json_Sort_Multi_Select_Garbage_First": "Sort_Multi_Select_Garbage_First",
-            "json_Upgrade_Characters_Level": "Upgrade_Characters_Level"
+            "json_Upgrade_Characters_Level": "Upgrade_Characters_Level",
+            "json_Recive_Giftbox_Orbs": "Recive_Giftbox_Orbs"
         }
         
         if flag_name in flag_mapping:
@@ -316,7 +318,8 @@ class DeviceStateManager:
                 "json_Sort_Characters_Lowest_Level": "Sort_Characters_Lowest_Level",
                 "json_Sort_Filter_Ascension": "Sort_Filter_Ascension",
                 "json_Sort_Multi_Select_Garbage_First": "Sort_Multi_Select_Garbage_First",
-                "json_Upgrade_Characters_Level": "Upgrade_Characters_Level"
+                "json_Upgrade_Characters_Level": "Upgrade_Characters_Level",
+                "json_Recive_Giftbox_Orbs": "Recive_Giftbox_Orbs"
             }
             
             if stop_flag in flag_mapping:
@@ -438,13 +441,23 @@ class DeviceStateManager:
         if state.get("Upgrade_Characters_Level", 0) == 0:
             return "upgrade_characters_level"
         
-        # Upgrade Characters complete, check Kon Bonaza
+        # Upgrade Characters complete, check Recive Giftbox Orbs
+        if state.get("Recive_Giftbox_Orbs", 0) == 0:
+            return "recive_giftbox_orbs"
+        
+        # Recive Giftbox Orbs complete, check Main Screenshot
+        if state.get("ScreenShot_MainMenu", 0) == 0:
+            return "main_screenshot"
+        
+        # Screenshot complete, check Extract Orb Count
+        if state.get("Orbs", "0") == "0":
+            return "extract_orb_counts"
+        
+        # Orb extraction complete, check Extract Account ID
+        # (This will be determined when account ID system is implemented)
+        # For now, proceed to Kon Bonaza after orb extraction
         if state.get("Skip_Kon_Bonaza_100Times", 0) < 100:
             return "skip_kon_bonaza"
-        
-        # All tasks complete, take screenshot and restart
-        if state.get("ScreenShot_MainMenu", 0) == 0:
-            return "screenshot_mainmenu"
         
         # Everything complete
         return "main"  # Default fallback
@@ -491,6 +504,8 @@ class DeviceStateManager:
             modes.append("Gift✓")
         if state.get("Skip_Yukio_Event", 0) == 1:
             modes.append("Yukio✓")
+        if state.get("Recive_Giftbox_Orbs", 0) == 1:
+            modes.append("GiftOrbs✓")
         
         kon_bonaza = state.get("Skip_Kon_Bonaza_100Times", 0)
         if kon_bonaza > 0:

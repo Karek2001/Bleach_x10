@@ -15,6 +15,8 @@ from .character_slots_purchase import Character_Slots_Purchase
 from .exchange_gold_characters import Exchange_Gold_Characters
 from .recive_giftbox import Recive_GiftBox
 from .recive_giftbox_check import Recive_Giftbox_Check
+from .recive_giftbox_orbs import Recive_Giftbox_Orbs
+from .recive_giftbox_orbs_check import Recive_Giftbox_Orbs_Check
 from .skip_kon_bonaza import Skip_Kon_Bonaza
 from .Kon_Bonaza_1Match_Tasks import Kon_Bonaza_1Match_Tasks
 from .skip_yukio_event_tasks import Skip_Yukio_Event_Tasks
@@ -23,6 +25,9 @@ from .sort_filter_ascension_tasks import Sort_Filter_Ascension_Tasks
 from .sort_multi_select_garbage_first_tasks import Sort_Multi_Select_Garbage_First_Tasks
 from .upgrade_characters_level_tasks import Upgrade_Characters_Level
 from .upgrade_characters_back_to_edit import Upgrade_Characters_Back_To_Edit
+from .main_screenshot_tasks import Main_Screenshot_Tasks
+from .extract_orb_counts import Extract_Orb_Counts_Tasks
+from .extract_account_id import Extract_Account_ID_Tasks
 
 __all__ = [
     'StoryMode_Tasks',
@@ -41,6 +46,8 @@ __all__ = [
     'Exchange_Gold_Characters',
     'Recive_GiftBox',
     'Recive_Giftbox_Check',
+    'Recive_Giftbox_Orbs',
+    'Recive_Giftbox_Orbs_Check',
     'Skip_Kon_Bonaza',
     'Kon_Bonaza_1Match_Tasks',
     'Skip_Yukio_Event_Tasks',
@@ -48,5 +55,8 @@ __all__ = [
     'Sort_Filter_Ascension_Tasks',
     'Sort_Multi_Select_Garbage_First_Tasks',
     'Upgrade_Characters_Level',
-    'Upgrade_Characters_Back_To_Edit'
+    'Upgrade_Characters_Back_To_Edit',
+    'Main_Screenshot_Tasks',
+    'Extract_Orb_Counts_Tasks',
+    'Extract_Account_ID_Tasks'
 ]

@@ -38,6 +38,15 @@ Text to search for using OCR
 - **Format**: Comma-separated list of texts
 - **Example**: `"skip,next,continue"`
 
+### `is_id`
+Specifies the format for enhanced OCR number extraction
+- **Type**: Boolean
+- **Values**: 
+  - `true` - Extract ID format (e.g., "ID: 88 534 886")
+  - `false` - Extract regular numbers (e.g., "21,124")
+- **Usage**: Used with enhanced OCR tasks for optimized number detection
+- **Example**: `"is_id": false` for currency amounts
+
 ### `pixel-values`
 Used with `type: "Pixel-OneOrMoreMatched"` - Multiple pixel pairs to check
 - **Format**: Array of coordinate-color pairs where any matching pair triggers the task
@@ -158,6 +167,11 @@ Sets Exchange_Gold_Characters to complete (1)
 Sets Recive_GiftBox to complete (1)
 - **Type**: Boolean flag
 - **Sets**: `Recive_GiftBox = 1` in device state
+
+### `json_Recive_Giftbox_Orbs`
+Sets Recive_Giftbox_Orbs to complete (1) when task is triggered
+- **Type**: Boolean flag
+- **Sets**: `Recive_Giftbox_Orbs = 1` in device state
 
 ### `json_ScreenShot_MainMenu`
 Sets ScreenShot_MainMenu to complete (1)
@@ -325,6 +339,20 @@ Switch to upgrade characters back to edit tasks
 - **Type**: Boolean flag
 - **Target**: `Upgrade_Characters_Back_To_Edit`
 
+### `Extract_Orb_Count_Tasks`
+Switch to extract orb count tasks
+- **Type**: Boolean flag
+- **Target**: `Extract_Orb_Counts_Tasks`
+- **Usage**: Triggered after main screenshot completion
+- **Purpose**: Extracts orb values using enhanced OCR
+
+### `Extract_Account_ID_Tasks`
+Switch to extract account ID tasks
+- **Type**: Boolean flag
+- **Target**: `Extract_Account_ID_Tasks`
+- **Usage**: Triggered after orb count extraction completion
+- **Purpose**: Extracts player account ID information
+
 ---
 
 ## Conditional Execution Flags
@@ -361,6 +389,32 @@ Enable comprehensive analysis mode
 - **Type**: Boolean flag
 - **Usage**: Performs deeper analysis of detected elements
 
+### `extract_orb_value`
+Extract orb count value and save to device JSON
+- **Type**: Boolean flag
+- **Usage**: Automatically extracts and corrects numeric value from OCR and saves to "Orbs" field
+- **Requirements**: Use with `"is_id": false` for number format
+- **Action**: Converts "211240" → corrects to "21,124" → saves "21,124" to JSON "Orbs" field
+- **Format**: Saves as string with comma formatting (e.g., "21,124")
+- **Example**: Used in orb count extraction tasks
+
+### `extract_account_id_value`
+Extract account ID value and save to device JSON
+- **Type**: Boolean flag
+- **Usage**: Automatically extracts ID text from OCR and saves to "AccountID" field
+- **Requirements**: Use with `"is_id": true` for ID format
+- **Action**: Extracts "ID: 88 534 886" → saves "ID: 88 534 886" to JSON "AccountID" field
+- **Example**: Used in account ID extraction tasks
+
+### `save_screenshot_with_username`
+Take screenshot and save with username from device state
+- **Type**: Boolean flag
+- **Usage**: Captures current screen and saves to stock_images folder
+- **Filename**: Uses "UserName" from device JSON (e.g., "Player.png")
+- **Folder**: Creates/uses "stock_images" directory in project root
+- **Trigger**: Only when pixel detection task is matched
+- **Example**: Used in main menu screenshot tasks
+
 ---
 
 ## Task Naming Convention
@@ -377,8 +431,9 @@ Descriptive name for the task
 
 ---
 
-## Example Task Definition
+## Example Task Definitions
 
+### Basic Pixel Task
 ```python
 {
     "task_name": "Click [Next Quest]",
@@ -394,6 +449,45 @@ Descriptive name for the task
     "ConditionalRun": ["EasyMode", "HardMode"],
     "BackToMain": True,
     "sleep": 2.0
+}
+```
+
+### Enhanced OCR Task (Regular Numbers)
+```python
+{
+    "task_name": "Extract Orb Count",
+    "type": "ocr",
+    "roi": [711, 6, 75, 27],
+    "is_id": false,
+    "extract_orb_value": true,
+    "cooldown": 5.0,
+    "Extract_Account_ID_Tasks": true
+}
+```
+
+### Enhanced OCR Task (ID Format)
+```python
+{
+    "task_name": "Extract Player ID",
+    "type": "ocr",
+    "roi": [100, 300, 300, 50],
+    "is_id": true,
+    "cooldown": 2.0,
+    "use_match_position": false
+}
+```
+
+### Screenshot Task with Username
+```python
+{
+    "task_name": "Take Main Menu Screenshot",
+    "type": "pixel",
+    "click_location_str": "0,0",
+    "search_array": ["960,540", "#000000"],
+    "save_screenshot_with_username": true,
+    "json_ScreenShot_MainMenu": true,
+    "Extract_Orb_Count_Tasks": true,
+    "cooldown": 1.0
 }
 ```
 

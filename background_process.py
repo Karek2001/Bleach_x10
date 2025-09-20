@@ -29,6 +29,8 @@ from tasks import (
     Exchange_Gold_Characters,
     Recive_GiftBox,
     Recive_Giftbox_Check,
+    Recive_Giftbox_Orbs,
+    Recive_Giftbox_Orbs_Check,
     Skip_Kon_Bonaza,
     Kon_Bonaza_1Match_Tasks,
     Skip_Yukio_Event_Tasks,
@@ -36,7 +38,10 @@ from tasks import (
     Sort_Filter_Ascension_Tasks,
     Sort_Multi_Select_Garbage_First_Tasks,
     Upgrade_Characters_Level,
-    Upgrade_Characters_Back_To_Edit
+    Upgrade_Characters_Back_To_Edit,
+    Main_Screenshot_Tasks,
+    Extract_Orb_Counts_Tasks,
+    Extract_Account_ID_Tasks
 )
 
 # Bleach game package name
@@ -207,6 +212,8 @@ class ProcessMonitor:
             "exchange_gold_characters": Exchange_Gold_Characters,
             "recive_giftbox": Recive_GiftBox,
             "recive_giftbox_check": Recive_Giftbox_Check,
+            "recive_giftbox_orbs": Recive_Giftbox_Orbs,
+            "recive_giftbox_orbs_check": Recive_Giftbox_Orbs_Check,
             "skip_kon_bonaza": Skip_Kon_Bonaza,
             "kon_bonaza_1match_tasks": Kon_Bonaza_1Match_Tasks,
             "skip_yukio_event": Skip_Yukio_Event_Tasks,
@@ -214,7 +221,10 @@ class ProcessMonitor:
             "sort_filter_ascension": Sort_Filter_Ascension_Tasks,
             "sort_multi_select_garbage_first": Sort_Multi_Select_Garbage_First_Tasks,
             "upgrade_characters_level": Upgrade_Characters_Level,
-            "upgrade_characters_back_to_edit": Upgrade_Characters_Back_To_Edit
+            "upgrade_characters_back_to_edit": Upgrade_Characters_Back_To_Edit,
+            "main_screenshot": Main_Screenshot_Tasks,
+            "extract_orb_counts": Extract_Orb_Counts_Tasks,
+            "extract_account_id": Extract_Account_ID_Tasks
         }
         
         # Debug: Log which task set is active and how many tasks it contains
@@ -248,6 +258,8 @@ class ProcessMonitor:
             "exchange_gold_characters",
             "recive_giftbox",
             "recive_giftbox_check",
+            "recive_giftbox_orbs",
+            "recive_giftbox_orbs_check",
             "skip_kon_bonaza",
             "kon_bonaza_1match_tasks",
             "skip_yukio_event",
@@ -255,7 +267,10 @@ class ProcessMonitor:
             "sort_filter_ascension", 
             "sort_multi_select_garbage_first",
             "upgrade_characters_level",
-            "upgrade_characters_back_to_edit"
+            "upgrade_characters_back_to_edit",
+            "main_screenshot",
+            "extract_orb_counts",
+            "extract_account_id"
         ]
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
@@ -277,6 +292,8 @@ class ProcessMonitor:
                 "character_slots_purchase": "Character Slots Purchase",
                 "exchange_gold_characters": "Exchange Gold Characters",
                 "recive_giftbox": "Receive Gift Box",
+                "recive_giftbox_orbs": "Receive Gift Box Orbs",
+                "recive_giftbox_orbs_check": "Receive Gift Box Orbs Check",
                 "skip_kon_bonaza": "Skip Kon Bonanza",
                 "skip_yukio_event": "Skip Yukio Event",
                 "upgrade_characters_level": "Upgrade Characters Level",
@@ -453,7 +470,7 @@ class OptimizedBackgroundMonitor:
             "json_Exchange_Gold_Characters", "json_Recive_GiftBox", "json_ScreenShot_MainMenu",
             "json_Skip_Yukio_Event", "json_Sort_Characters_Lowest_Level",
             "json_Sort_Filter_Ascension", "json_Sort_Multi_Select_Garbage_First",
-            "json_Upgrade_Characters_Level"
+            "json_Upgrade_Characters_Level", "json_Recive_Giftbox_Orbs"
         ]
         
         for flag in json_flags:
@@ -508,7 +525,7 @@ class OptimizedBackgroundMonitor:
             
             if condition_met and task.get("ScreenShot_MainMenu_Tasks"):
                 print(f"[{device_id}] Kon Bonanza complete → Screenshot Main Menu")
-                self.process_monitor.set_active_tasks(device_id, "screenshot_mainmenu")
+                self.process_monitor.set_active_tasks(device_id, "main_screenshot")
                 return
         
         # Legacy handling for backward compatibility
@@ -542,6 +559,7 @@ class OptimizedBackgroundMonitor:
             "Exchange_Gold_Characters_Tasks": ("exchange_gold_characters", "→ Exchange Gold Characters"),
             "Recive_GiftBox_Tasks": ("recive_giftbox", "→ Receive Gift Box"),
             "Recive_GiftBox_Check_Tasks": ("recive_giftbox_check", "→ Receive Gift Box Check"),
+            "Recive_Giftbox_Orbs_Check_Tasks": ("recive_giftbox_orbs_check", "→ Receive Gift Box Orbs Check"),
             "Skip_Kon_Bonaza_Tasks": ("skip_kon_bonaza", "→ Skip Kon Bonanza"),
             "Kon_Bonaza_1Match_Tasks": ("kon_bonaza_1match_tasks", "→ Kon Bonaza 1 Match Tasks"),
             "Skip_Yukio_Event_Tasks": ("skip_yukio_event", "→ Skip Yukio Event"),
@@ -550,8 +568,19 @@ class OptimizedBackgroundMonitor:
             "Sort_Multi_Select_Garbage_First_Tasks": ("sort_multi_select_garbage_first", "→ Sort Multi Select Garbage First"),
             "Upgrade_Characters_Level_Tasks": ("upgrade_characters_level", "→ Upgrade Characters Level"),
             "Upgrade_Characters_Back_To_Edit_Tasks": ("upgrade_characters_back_to_edit", "→ Upgrade Characters Back To Edit"),
-            "ScreenShot_MainMenu_Tasks": ("screenshot_mainmenu", "→ Screenshot Main Menu")
+            "Recive_Giftbox_Orbs_Tasks": ("recive_giftbox_orbs", "→ Receive Gift Box Orbs"),
+            "NextTaskSet_Tasks": ("next_task_progression", "→ Next Task Set"),
+            "ScreenShot_MainMenu_Tasks": ("main_screenshot", "→ Screenshot Main Menu"),
+            "Extract_Orb_Count_Tasks": ("extract_orb_counts", "→ Extract Orb Count"),
+            "Extract_Account_ID_Tasks": ("extract_account_id", "→ Extract Account ID")
         }
+        
+        # Handle NextTaskSet_Tasks flag - triggers progression to next task set
+        if task.get("NextTaskSet_Tasks", False):
+            recommended_mode = device_state_manager.get_next_task_set_after_restarting(device_id)
+            print(f"[{device_id}] Task completed → Progression to {recommended_mode}")
+            self.process_monitor.set_active_tasks(device_id, recommended_mode)
+            return
         
         # Enhanced BackToStory handling with new progression logic
         if task.get("BackToStory", False):
@@ -783,7 +812,8 @@ class OptimizedBackgroundMonitor:
                 helper_task_sets = [
                     "restarting",
                     "upgrade_characters_back_to_edit",
-                    "recive_giftbox_check", 
+                    "recive_giftbox_check",
+                    "recive_giftbox_orbs_check", 
                     "sort_filter_ascension",
                     "sort_multi_select_garbage_first",
                     "skip_yukio_event",

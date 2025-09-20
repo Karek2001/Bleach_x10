@@ -144,19 +144,376 @@ template_cache = TemplateCache()
 
 # --- OCR Functions ---
 class OCRManager:
-    """Manages OCR operations with caching and optimization"""
+    """Enhanced OCR Manager optimized for game UI number extraction"""
     
     def __init__(self):
-        self.ocr_cache: Dict[str, Dict] = {}  # Cache OCR results
-        self.cache_duration = 0.5  # OCR cache duration in seconds
+        self.ocr_cache: Dict[str, Dict] = {}
+        self.cache_duration = 0.5
         
+        # Initialize multiple EasyOCR readers if available
+        if EASYOCR_AVAILABLE:
+            self.ocr_reader = easyocr.Reader(['en'], gpu=True)
+            # Additional reader for pure numbers
+            try:
+                self.ocr_reader_digits = easyocr.Reader(['en'], gpu=True, recog_network='digit')
+            except:
+                self.ocr_reader_digits = self.ocr_reader
+    
+    async def extract_numbers_enhanced(self, screenshot: np.ndarray, 
+                                      roi: Tuple[int, int, int, int],
+                                      is_id: bool = False) -> str:
+        """
+        Enhanced number extraction with multiple preprocessing passes.
+        is_id: True if extracting IDs (expects spaces), False for regular numbers (commas)
+        """
+        x, y, w, h = roi
+        roi_img = screenshot[y:y+h, x:x+w]
+        
+        if roi_img.size == 0:
+            return ""
+        
+        # Try multiple preprocessing strategies
+        results = []
+        
+        # Strategy 1: Upscale + Sharp contrast
+        preprocessed_1 = self._preprocess_for_numbers(roi_img, scale=3, invert=False)
+        result_1 = await self._ocr_pass(preprocessed_1, digits_only=not is_id)
+        if result_1:
+            results.append((result_1, self._calculate_confidence(result_1, is_id)))
+        
+        # Strategy 2: Inverted colors
+        preprocessed_2 = self._preprocess_for_numbers(roi_img, scale=3, invert=True)
+        result_2 = await self._ocr_pass(preprocessed_2, digits_only=not is_id)
+        if result_2:
+            results.append((result_2, self._calculate_confidence(result_2, is_id)))
+        
+        # Strategy 3: Adaptive threshold
+        preprocessed_3 = self._preprocess_adaptive(roi_img)
+        result_3 = await self._ocr_pass(preprocessed_3, digits_only=not is_id)
+        if result_3:
+            results.append((result_3, self._calculate_confidence(result_3, is_id)))
+        
+        # Strategy 4: Color isolation (for colored text)
+        preprocessed_4 = self._preprocess_color_isolation(roi_img)
+        result_4 = await self._ocr_pass(preprocessed_4, digits_only=not is_id)
+        if result_4:
+            results.append((result_4, self._calculate_confidence(result_4, is_id)))
+        
+        # Strategy 5: Enhanced comma detection (for numbers only)
+        if not is_id:
+            preprocessed_5 = self._preprocess_for_commas(roi_img)
+            result_5 = await self._ocr_pass(preprocessed_5, digits_only=True)
+            if result_5:
+                results.append((result_5, self._calculate_confidence(result_5, is_id)))
+        
+        # Select best result based on confidence
+        if results:
+            best_result = max(results, key=lambda x: x[1])
+            return self._post_process_numbers(best_result[0], is_id)
+        
+        return ""
+    
+    def _preprocess_for_numbers(self, img: np.ndarray, scale: int = 2, invert: bool = False) -> np.ndarray:
+        """Advanced preprocessing optimized for game UI numbers"""
+        # Convert to grayscale
+        if len(img.shape) == 3:
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img.copy()
+        
+        # Upscale for better OCR accuracy
+        if scale > 1:
+            gray = cv2.resize(gray, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+        
+        # Denoise
+        gray = cv2.bilateralFilter(gray, 9, 75, 75)
+        
+        # Enhance contrast using CLAHE
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+        gray = clahe.apply(gray)
+        
+        # Sharpen
+        kernel = np.array([[-1,-1,-1],
+                          [-1, 9,-1],
+                          [-1,-1,-1]])
+        gray = cv2.filter2D(gray, -1, kernel)
+        
+        # Binary threshold
+        if invert:
+            _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        else:
+            _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        # Morphological operations to clean up
+        kernel = np.ones((2,2), np.uint8)
+        thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+        thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+        
+        return thresh
+    
+    def _preprocess_for_commas(self, img: np.ndarray) -> np.ndarray:
+        """Special preprocessing to enhance comma detection in numbers"""
+        # Convert to grayscale
+        if len(img.shape) == 3:
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img.copy()
+        
+        # Heavy upscaling for comma detection
+        gray = cv2.resize(gray, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
+        
+        # Gaussian blur to merge nearby elements
+        gray = cv2.GaussianBlur(gray, (3, 3), 0)
+        
+        # Enhance contrast specifically for punctuation
+        clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(4,4))
+        gray = clahe.apply(gray)
+        
+        # Custom threshold that preserves small details like commas
+        _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        # Morphological closing to connect broken characters
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2, 2))
+        thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+        
+        return thresh
+    
+    def _preprocess_adaptive(self, img: np.ndarray) -> np.ndarray:
+        """Adaptive threshold preprocessing"""
+        if len(img.shape) == 3:
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img.copy()
+        
+        # Upscale
+        gray = cv2.resize(gray, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+        
+        # Adaptive threshold
+        thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                     cv2.THRESH_BINARY, 11, 2)
+        
+        return thresh
+    
+    def _preprocess_color_isolation(self, img: np.ndarray) -> np.ndarray:
+        """Isolate specific color ranges (useful for colored game text)"""
+        if len(img.shape) != 3:
+            return img
+        
+        # Convert to HSV
+        hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+        
+        # Try to isolate bright/light colors (common for game UI)
+        lower_bound = np.array([0, 0, 100])
+        upper_bound = np.array([180, 100, 255])
+        mask = cv2.inRange(hsv, lower_bound, upper_bound)
+        
+        # Upscale
+        mask = cv2.resize(mask, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+        
+        return mask
+    
+    async def _ocr_pass(self, img: np.ndarray, digits_only: bool = False) -> str:
+        """Perform OCR with specified configuration"""
+        detected_text = ""
+        
+        try:
+            if EASYOCR_AVAILABLE:
+                # Use EasyOCR
+                if digits_only and hasattr(self, 'ocr_reader_digits'):
+                    results = self.ocr_reader_digits.readtext(img, 
+                                                             allowlist='0123456789,. ',
+                                                             detail=1)
+                else:
+                    allowlist = '0123456789,. :ID' if not digits_only else '0123456789,. '
+                    results = self.ocr_reader.readtext(img, 
+                                                      allowlist=allowlist,
+                                                      detail=1)
+                
+                # Combine results
+                texts = []
+                for (bbox, text, confidence) in results:
+                    if confidence > 0.3:  # Lower threshold for multiple passes
+                        texts.append(text)
+                detected_text = ' '.join(texts)
+                
+            elif TESSERACT_AVAILABLE:
+                # Tesseract with digit-specific config
+                if digits_only:
+                    custom_config = r'--oem 3 --psm 7 -c tessedit_char_whitelist=0123456789, '
+                else:
+                    custom_config = r'--oem 3 --psm 7 -c tessedit_char_whitelist=0123456789,:ID '
+                
+                detected_text = pytesseract.image_to_string(img, config=custom_config)
+                
+        except Exception as e:
+            print(f"OCR pass error: {e}")
+        
+        return detected_text.strip()
+    
+    def _calculate_confidence(self, text: str, is_id: bool) -> float:
+        """Calculate confidence score for extracted text"""
+        if not text:
+            return 0.0
+        
+        confidence = 1.0
+        
+        # Check for expected format
+        if is_id:
+            # ID format: should have "ID:" and numbers with spaces
+            if "ID" not in text and "id" not in text:
+                confidence *= 0.5
+            # Should have spaces between number groups
+            if ' ' not in text:
+                confidence *= 0.7
+        else:
+            # Number format: should have digits and possibly commas
+            digit_ratio = sum(1 for c in text if c.isdigit()) / len(text)
+            confidence *= digit_ratio
+        
+        # Penalize for unexpected characters
+        unexpected_chars = sum(1 for c in text if c not in '0123456789,. :ID')
+        confidence *= (1.0 - unexpected_chars * 0.1)
+        
+        return max(0, min(1, confidence))
+    
+    def _post_process_numbers(self, text: str, is_id: bool) -> str:
+        """Clean up and format extracted numbers"""
+        if not text:
+            return ""
+        
+        # Remove common OCR artifacts
+        text = text.replace('|', '1')
+        text = text.replace('l', '1')
+        text = text.replace('O', '0')
+        text = text.replace('o', '0')
+        text = text.replace('S', '5')
+        text = text.replace('Z', '2')
+        text = text.replace('B', '8')
+        text = text.replace('G', '6')
+        text = text.replace('§', '5')
+        text = text.replace('¢', 'c')
+        
+        # Additional comma-specific fixes for numbers like "21,124"
+        if not is_id:
+            # Fix cases where comma is read as other characters
+            text = text.replace('.', ',')  # period misread as comma
+            text = text.replace(';', ',')  # semicolon misread as comma
+            text = text.replace(':', ',')  # colon misread as comma
+            text = text.replace('`', ',')  # backtick misread as comma
+            text = text.replace("'", ',')  # apostrophe misread as comma
+        
+        if is_id:
+            # Clean ID format
+            text = text.upper()
+            # Extract just the numbers after "ID:"
+            if "ID" in text:
+                parts = text.split("ID")
+                if len(parts) > 1:
+                    numbers = ''.join(filter(lambda x: x.isdigit() or x == ' ', parts[1]))
+                    # Ensure proper spacing (3 groups of numbers)
+                    numbers = numbers.replace(' ', '')
+                    if len(numbers) == 8:  # Format: XX XXX XXX
+                        formatted = f"{numbers[:2]} {numbers[2:5]} {numbers[5:]}"
+                        return f"ID: {formatted}"
+                    elif len(numbers) == 9:  # Format: XXX XXX XXX
+                        formatted = f"{numbers[:3]} {numbers[3:6]} {numbers[6:]}"
+                        return f"ID: {formatted}"
+            # Fallback: just extract numbers
+            numbers = ''.join(filter(lambda x: x.isdigit() or x == ' ', text))
+            return f"ID: {numbers.strip()}"
+        else:
+            # Clean number format (with commas)
+            # Extract only digits and commas
+            numbers = ''.join(filter(lambda x: x.isdigit() or x == ',', text))
+            
+            # Smart comma detection and correction
+            numbers = self._fix_comma_misreads(numbers)
+            
+            # Fix comma placement if needed
+            if ',' not in numbers and len(numbers) > 3:
+                # Add commas for thousands
+                reversed_num = numbers[::-1]
+                formatted = ','.join([reversed_num[i:i+3] for i in range(0, len(reversed_num), 3)])
+                numbers = formatted[::-1]
+            
+            return numbers
+    
+    def _fix_comma_misreads(self, numbers: str) -> str:
+        """Fix common comma misreads in number strings"""
+        if not numbers or ',' in numbers:
+            # Already has commas or empty
+            return numbers
+        
+        # Pattern detection for common misreads
+        # Case 1: "211240" should be "21,124" (comma read as 0)
+        # Look for patterns where a number ends with 0 in wrong place
+        if len(numbers) == 6 and numbers.endswith('0'):
+            # Try pattern: XX,XXX (like 21,124 → 211240)
+            if numbers[2] == '0' and numbers[-1] == '0':
+                # Remove the misread zero and add comma
+                fixed = numbers[:2] + ',' + numbers[3:-1]
+                return fixed
+        
+        # Case 2: "21124" should be "21,124" (comma completely missing)
+        if len(numbers) == 5:
+            # Standard thousands format: XX,XXX
+            return numbers[:2] + ',' + numbers[2:]
+        
+        # Case 3: Other patterns based on typical number lengths
+        if len(numbers) == 6 and not numbers.endswith('0'):
+            # Could be XXX,XXX format
+            return numbers[:3] + ',' + numbers[3:]
+        elif len(numbers) == 7:
+            # Could be X,XXX,XXX format
+            return numbers[:1] + ',' + numbers[1:4] + ',' + numbers[4:]
+        
+        return numbers
+    
     async def extract_text_from_region(self, screenshot: np.ndarray, 
                                       roi: Tuple[int, int, int, int],
                                       use_easyocr: bool = True) -> List[Tuple[str, Tuple[int, int]]]:
-        """
-        Extract text from a specific region of the screenshot.
-        Returns list of (text, center_position) tuples.
-        """
+        """Enhanced version with number optimization"""
+        x, y, w, h = roi
+        roi_img = screenshot[y:y+h, x:x+w]
+        
+        if roi_img.size == 0:
+            return []
+        
+        # Check if this looks like a number region
+        is_number_region = self._is_likely_number_region(roi_img)
+        
+        if is_number_region:
+            # Use enhanced number extraction
+            extracted = await self.extract_numbers_enhanced(screenshot, roi, is_id=False)
+            if extracted:
+                center_x = x + w // 2
+                center_y = y + h // 2
+                return [(extracted, (center_x, center_y))]
+        
+        # Fall back to original implementation for text
+        return await self._original_extract_text(screenshot, roi, use_easyocr)
+    
+    def _is_likely_number_region(self, img: np.ndarray) -> bool:
+        """Heuristic to detect if region likely contains numbers"""
+        # Convert to grayscale
+        if len(img.shape) == 3:
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img
+        
+        # Check if text is likely present (high contrast areas)
+        _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+        white_pixels = np.sum(binary == 255)
+        total_pixels = binary.size
+        
+        # If 10-90% white pixels, likely contains text
+        ratio = white_pixels / total_pixels
+        return 0.1 < ratio < 0.9
+    
+    async def _original_extract_text(self, screenshot: np.ndarray, 
+                                    roi: Tuple[int, int, int, int],
+                                    use_easyocr: bool = True) -> List[Tuple[str, Tuple[int, int]]]:
+        """Original extract_text_from_region implementation"""
         x, y, w, h = roi
         roi_img = screenshot[y:y+h, x:x+w]
         
@@ -468,7 +825,15 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                         if task.get("click_location_str") == "0,0":
                             task_tracker.record_execution(device_id, task["task_name"])
                 else:
-                    matched_tasks.append(task)
+                    # Check for special screenshot saving functionality
+                    if task.get("save_screenshot_with_username", False):
+                        await save_screenshot_with_username(device_id, img_gpu)
+                        task_copy = task.copy()
+                        task_copy["task_name"] = f"{task['task_name']} [Screenshot saved with username]"
+                        matched_tasks.append(task_copy)
+                    else:
+                        matched_tasks.append(task)
+                    
                     # IMPORTANT: Record execution immediately for detection-only tasks
                     if task.get("click_location_str") == "0,0":
                         task_tracker.record_execution(device_id, task["task_name"])
@@ -526,13 +891,6 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
     
     # Process OCR tasks
     for task in ocr_tasks:
-        ocr_text = task.get("ocr_text", "")
-        if not ocr_text:
-            continue
-        
-        # Parse search texts (comma-separated)
-        search_texts = [text.strip().lower() for text in ocr_text.split(",")]
-        
         roi = task.get("roi", [0, 0, img_gpu.shape[1], img_gpu.shape[0]])
         
         # Check if we can execute this task
@@ -540,26 +898,84 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
         if not task_tracker.can_execute_task(device_id, task["task_name"], task_cooldown):
             continue
         
-        # Find text in region
-        result = await ocr_manager.find_text_in_region(img_gpu, search_texts, roi)
+        # Check if this is an enhanced number extraction task
+        is_id = task.get("is_id")
         
-        if result:
-            matched_text, position = result
-            task_copy = task.copy()
+        if is_id is not None:  # Support both True and False when explicitly set
+            # Use enhanced number extraction for number/ID detection
+            extracted_text = await ocr_manager.extract_numbers_enhanced(img_gpu, roi, is_id=is_id)
             
-            # Handle position setting
-            if task.get("use_match_position", False):
-                # Only for single word/number searches (no comma)
-                if "," not in ocr_text:
-                    task_copy["click_location_str"] = f"{position[0]},{position[1]}"
-                    task_copy["task_name"] = f"{task['task_name']} [OCR: '{matched_text}' at {position}]"
+            if extracted_text:
+                task_copy = task.copy()
+                center_x = roi[0] + roi[2] // 2
+                center_y = roi[1] + roi[3] // 2
+                
+                # Special handling for orb value extraction
+                if task.get("extract_orb_value", False):
+                    try:
+                        # Apply smart pattern correction first
+                        corrected_text = ocr_manager._fix_comma_misreads(extracted_text)
+                        # Keep as formatted string with commas
+                        if corrected_text and corrected_text.strip():
+                            # Import here to avoid circular import
+                            from device_state_manager import device_state_manager
+                            device_state_manager.update_state(device_id, "Orbs", corrected_text)
+                            task_copy["task_name"] = f"{task['task_name']} [Orbs: {extracted_text} → {corrected_text} saved to JSON]"
+                        else:
+                            task_copy["task_name"] = f"{task['task_name']} [No orbs detected]"
+                    except Exception as e:
+                        task_copy["task_name"] = f"{task['task_name']} [Error extracting orbs: {e}]"
+                # Special handling for account ID value extraction
+                elif task.get("extract_account_id_value", False):
+                    try:
+                        if extracted_text and extracted_text.strip():
+                            # Import here to avoid circular import
+                            from device_state_manager import device_state_manager
+                            device_state_manager.update_state(device_id, "AccountID", extracted_text.strip())
+                            task_copy["task_name"] = f"{task['task_name']} [Account ID: {extracted_text} → Saved to JSON]"
+                        else:
+                            task_copy["task_name"] = f"{task['task_name']} [No account ID detected]"
+                    except Exception as e:
+                        task_copy["task_name"] = f"{task['task_name']} [Error extracting account ID: {e}]"
                 else:
-                    task_copy["task_name"] = f"{task['task_name']} [OCR: '{matched_text}' found]"
-            else:
-                task_copy["task_name"] = f"{task['task_name']} [OCR: '{matched_text}']"
+                    # Handle position setting for enhanced extraction
+                    if task.get("use_match_position", False):
+                        task_copy["click_location_str"] = f"{center_x},{center_y}"
+                        task_copy["task_name"] = f"{task['task_name']} [Enhanced OCR: '{extracted_text}' at ({center_x},{center_y})]"
+                    else:
+                        task_copy["task_name"] = f"{task['task_name']} [Enhanced OCR: '{extracted_text}']"
+                
+                matched_tasks.append(task_copy)
+                task_tracker.record_execution(device_id, task["task_name"])
+        else:
+            # Original OCR text search functionality
+            ocr_text = task.get("ocr_text", "")
+            if not ocr_text:
+                continue
             
-            matched_tasks.append(task_copy)
-            task_tracker.record_execution(device_id, task["task_name"])
+            # Parse search texts (comma-separated)
+            search_texts = [text.strip().lower() for text in ocr_text.split(",")]
+            
+            # Find text in region
+            result = await ocr_manager.find_text_in_region(img_gpu, search_texts, roi)
+            
+            if result:
+                matched_text, position = result
+                task_copy = task.copy()
+                
+                # Handle position setting
+                if task.get("use_match_position", False):
+                    # Only for single word/number searches (no comma)
+                    if "," not in ocr_text:
+                        task_copy["click_location_str"] = f"{position[0]},{position[1]}"
+                        task_copy["task_name"] = f"{task['task_name']} [OCR: '{matched_text}' at {position}]"
+                    else:
+                        task_copy["task_name"] = f"{task['task_name']} [OCR: '{matched_text}' found]"
+                else:
+                    task_copy["task_name"] = f"{task['task_name']} [OCR: '{matched_text}']"
+                
+                matched_tasks.append(task_copy)
+                task_tracker.record_execution(device_id, task["task_name"])
     
     # Process shared detection templates
     if shared_detection_tasks:
@@ -781,6 +1197,33 @@ async def find_template_in_region(screenshot: np.ndarray, template_path: str,
         if settings.SPAM_LOGS:
             print(f"Template matching error: {e}")
         return None
+
+async def save_screenshot_with_username(device_id: str, screenshot: np.ndarray):
+    """Save screenshot with username from device state"""
+    try:
+        # Import here to avoid circular import
+        from device_state_manager import device_state_manager
+        
+        # Get username from device state
+        state = device_state_manager.get_state(device_id)
+        username = state.get("UserName", "Unknown")
+        
+        # Create stock_images directory if it doesn't exist
+        stock_images_dir = "stock_images"
+        os.makedirs(stock_images_dir, exist_ok=True)
+        
+        # Convert numpy array to PIL Image
+        pil_image = Image.fromarray(screenshot.astype('uint8'), 'RGB')
+        
+        # Save with username as filename
+        filename = f"{username}.png"
+        filepath = os.path.join(stock_images_dir, filename)
+        
+        pil_image.save(filepath)
+        print(f"[{device_id}] Screenshot saved as: {filepath}")
+        
+    except Exception as e:
+        print(f"[{device_id}] Error saving screenshot: {e}")
 
 # Configure default cooldowns
 task_tracker.set_task_cooldown("Click [Skip]", 3.0)
