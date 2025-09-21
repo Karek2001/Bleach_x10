@@ -67,6 +67,11 @@ class DeviceStateManager:
             "Sort_Multi_Select_Garbage_First": 0,
             "Upgrade_Characters_Level": 0,
             "Recive_Giftbox_Orbs": 0,
+            "Login1_Prepare_Link": 0,
+            "Account_Linked": 0,
+            "Login2_Email_Done": 0,
+            "Login2_Password_Done": 0,
+            "Login2_Cloudflare_Done": 0,
             "RestartingCount": 0,
             "LastUpdated": datetime.now().isoformat(),
             "CurrentTaskSet": "restarting",
@@ -166,7 +171,12 @@ class DeviceStateManager:
             "json_Sort_Filter_Ascension": "Sort_Filter_Ascension",
             "json_Sort_Multi_Select_Garbage_First": "Sort_Multi_Select_Garbage_First",
             "json_Upgrade_Characters_Level": "Upgrade_Characters_Level",
-            "json_Recive_Giftbox_Orbs": "Recive_Giftbox_Orbs"
+            "json_Recive_Giftbox_Orbs": "Recive_Giftbox_Orbs",
+            "json_Login1_Prepare_Link": "Login1_Prepare_Link",
+            "json_Account_Linked": "Account_Linked",
+            "json_Login2_Email_Done": "Login2_Email_Done",
+            "json_Login2_Password_Done": "Login2_Password_Done",
+            "json_Login2_Cloudflare_Done": "Login2_Cloudflare_Done"
         }
         
         if flag_name in flag_mapping:
@@ -457,7 +467,11 @@ class DeviceStateManager:
         if state.get("AccountID", "") == "":
             return "extract_account_id"
         
-        # Account ID extraction complete, proceed to Kon Bonaza
+        # Account ID extraction complete, check Login1 Prepare for Link
+        if state.get("Login1_Prepare_Link", 0) == 0:
+            return "login1_prepare_for_link"
+        
+        # Login preparation complete, proceed to Kon Bonaza
         if state.get("Skip_Kon_Bonaza_100Times", 0) < 100:
             return "skip_kon_bonaza"
         

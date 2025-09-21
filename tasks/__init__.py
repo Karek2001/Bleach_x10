@@ -28,6 +28,9 @@ from .upgrade_characters_back_to_edit import Upgrade_Characters_Back_To_Edit
 from .main_screenshot_tasks import Main_Screenshot_Tasks
 from .extract_orb_counts import Extract_Orb_Counts_Tasks
 from .extract_account_id import Extract_Account_ID_Tasks
+from .login1_prepare_for_link_tasks import Login1_Prepare_For_Link_Tasks
+from .login2_klab_login_tasks import Login2_Klab_Login_Tasks
+from .login3_wait_for_2fa import Login3_Wait_For_2FA_Tasks
 
 __all__ = [
     'StoryMode_Tasks',
@@ -58,5 +61,8 @@ __all__ = [
     'Upgrade_Characters_Back_To_Edit',
     'Main_Screenshot_Tasks',
     'Extract_Orb_Counts_Tasks',
-    'Extract_Account_ID_Tasks'
+    'Extract_Account_ID_Tasks',
+    'Login1_Prepare_For_Link_Tasks',
+    'Login2_Klab_Login_Tasks',
+    'Login3_Wait_For_2FA_Tasks'
 ]

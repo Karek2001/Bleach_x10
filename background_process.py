@@ -10,7 +10,7 @@ from suppress_warnings import suppress_libpng_warning, suppress_stdout_stderr
 suppress_libpng_warning()
 
 import settings
-from actions import batch_check_pixels_enhanced, execute_tap, screenshot_manager, run_adb_command, task_tracker
+from actions import batch_check_pixels_enhanced, execute_tap, screenshot_manager, run_adb_command, task_tracker, execute_text_input
 from device_state_manager import device_state_manager
 from tasks import (
     StoryMode_Tasks, 
@@ -41,7 +41,10 @@ from tasks import (
     Upgrade_Characters_Back_To_Edit,
     Main_Screenshot_Tasks,
     Extract_Orb_Counts_Tasks,
-    Extract_Account_ID_Tasks
+    Extract_Account_ID_Tasks,
+    Login1_Prepare_For_Link_Tasks,
+    Login2_Klab_Login_Tasks,
+    Login3_Wait_For_2FA_Tasks
 )
 
 # Bleach game package name
@@ -158,9 +161,16 @@ class ProcessMonitor:
         return False
     
     def should_skip_task(self, device_id: str, task: dict) -> bool:
-        """Check if a task should be skipped based on StopSupport flag or ConditionalRun"""
+        """Check if a task should be skipped based on StopSupport, RequireSupport flag or ConditionalRun"""
         
-        # FIRST: Check StopSupport flag (should prevent task from running)
+        # FIRST: Check RequireSupport flag (task needs something to be true)
+        require_support = task.get("RequireSupport")
+        if require_support:
+            should_require = device_state_manager.check_stop_support(device_id, require_support)
+            if not should_require:  # If requirement is NOT met, skip task
+                return True
+        
+        # SECOND: Check StopSupport flag (should prevent task from running)
         stop_support = task.get("StopSupport")
         if stop_support:
             should_stop = device_state_manager.check_stop_support(device_id, stop_support)
@@ -172,7 +182,7 @@ class ProcessMonitor:
                     print(f"[{device_id}] BLOCKING Retry task - count already at {retry_count}/3")
                 return True
         
-        # SECOND: Check ConditionalRun - skip task if conditions are NOT met
+        # THIRD: Check ConditionalRun - skip task if conditions are NOT met
         conditional_run = task.get("ConditionalRun")
         if conditional_run and isinstance(conditional_run, list):
             device_state = device_state_manager.get_state(device_id)
@@ -224,7 +234,10 @@ class ProcessMonitor:
             "upgrade_characters_back_to_edit": Upgrade_Characters_Back_To_Edit,
             "main_screenshot": Main_Screenshot_Tasks,
             "extract_orb_counts": Extract_Orb_Counts_Tasks,
-            "extract_account_id": Extract_Account_ID_Tasks
+            "extract_account_id": Extract_Account_ID_Tasks,
+            "login1_prepare_for_link": Login1_Prepare_For_Link_Tasks,
+            "login2_klab_login": Login2_Klab_Login_Tasks,
+            "login3_wait_for_2fa": Login3_Wait_For_2FA_Tasks
         }
         
         # Debug: Log which task set is active and how many tasks it contains
@@ -270,7 +283,10 @@ class ProcessMonitor:
             "upgrade_characters_back_to_edit",
             "main_screenshot",
             "extract_orb_counts",
-            "extract_account_id"
+            "extract_account_id",
+            "login1_prepare_for_link",
+            "login2_klab_login", 
+            "login3_wait_for_2fa"
         ]
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
@@ -391,6 +407,30 @@ class OptimizedBackgroundMonitor:
             print(f"[{device_id}] Executing delayed click at {delayed_click_location} after {delayed_click_delay}s")
             await asyncio.sleep(delayed_click_delay)
             await execute_tap(device_id, delayed_click_location)
+
+    async def handle_text_input_flags(self, device_id: str, task: dict):
+        """Handle Enter_Email and Enter_Password flags after clicking"""
+        # Check for Enter_Email flag
+        if task.get("Enter_Email", False):
+            await asyncio.sleep(2.0)  # 2 second delay before typing
+            device_state = device_state_manager.get_state(device_id)
+            email = device_state.get("Email", "")
+            if email:
+                print(f"[{device_id}] Entering email: {email}")
+                await execute_text_input(device_id, email)
+            else:
+                print(f"[{device_id}] Warning: No email found in device state")
+        
+        # Check for Enter_Password flag  
+        if task.get("Enter_Password", False):
+            await asyncio.sleep(2.0)  # 2 second delay before typing
+            device_state = device_state_manager.get_state(device_id)
+            password = device_state.get("Password", "")
+            if password:
+                print(f"[{device_id}] Entering password: {'*' * len(password)}")  # Hide password in logs
+                await execute_text_input(device_id, password)
+            else:
+                print(f"[{device_id}] Warning: No password found in device state")
 
     def get_prioritized_tasks(self, device_id: str) -> List[dict]:
         """Return tasks already sorted by priority from get_active_tasks, with KeepChecking filtering"""
@@ -572,7 +612,11 @@ class OptimizedBackgroundMonitor:
             "NextTaskSet_Tasks": ("next_task_progression", "→ Next Task Set"),
             "ScreenShot_MainMenu_Tasks": ("main_screenshot", "→ Screenshot Main Menu"),
             "Extract_Orb_Count_Tasks": ("extract_orb_counts", "→ Extract Orb Count"),
-            "Extract_Account_ID_Tasks": ("extract_account_id", "→ Extract Account ID")
+            "Extract_Account_ID_Tasks": ("extract_account_id", "→ Extract Account ID"),
+            "Login1_Prepare_For_Link_Tasks": ("login1_prepare_for_link", "→ Prepare for Link"),
+            "Login2_Klab_Login_Tasks": ("login2_klab_login", "→ KLAB Login"),
+            "Login3_Wait_For_2FA_Tasks": ("login3_wait_for_2fa", "→ Wait for 2FA"),
+            "BackToMain_Tasks": ("main", "→ Main")
         }
         
         # Handle NextTaskSet_Tasks flag - triggers progression to next task set
@@ -673,6 +717,9 @@ class OptimizedBackgroundMonitor:
                 # Execute the click if not a detection-only task
                 if task.get("click_location_str") != "0,0" and "[Multi:" not in task_name and "[Executed" not in task_name:
                     await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
+                    
+                    # Handle text input flags after clicking
+                    await self.handle_text_input_flags(device_id, task)
                 
                 # Handle KeepChecking flag
                 if "KeepChecking" in task:
@@ -730,6 +777,9 @@ class OptimizedBackgroundMonitor:
                     # Execute the click if not a detection-only task
                     if task.get("click_location_str") != "0,0" and "[Executed" not in task_name:
                         await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
+                        
+                        # Handle text input flags after clicking
+                        await self.handle_text_input_flags(device_id, task)
                     
                     # Handle KeepChecking flag
                     if "KeepChecking" in task:
@@ -817,7 +867,9 @@ class OptimizedBackgroundMonitor:
                     "sort_filter_ascension",
                     "sort_multi_select_garbage_first",
                     "skip_yukio_event",
-                    "kon_bonaza_1match_tasks"
+                    "kon_bonaza_1match_tasks",
+                    "login2_klab_login",
+                    "login3_wait_for_2fa"
                 ]
                 current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
                 if current_task_set not in helper_task_sets:

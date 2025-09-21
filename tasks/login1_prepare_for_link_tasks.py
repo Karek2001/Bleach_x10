@@ -1,0 +1,69 @@
+# login1_prepare_for_link_tasks.py - Prepare for Account Linking
+"""
+Main login tasks that prepare the account for linking process.
+This is the first step in the login sequence.
+"""
+
+Login1_Prepare_For_Link_Tasks = [
+
+        {
+        "task_name": "Click [Settings] [Prepare for Link]",
+        "type": "pixel", 
+        "click_location_str": "925,26",
+        "search_array": ["932,32","#b4b4c9","901,485","#978e74","387,479","#e1773a"],
+        "priority": 2,
+        "cooldown": 5.0,
+        "sleep": 5.0
+    },
+        {
+        "task_name": "Click [Data Link] [Prepare for Link]",
+        "type": "pixel", 
+        "click_location_str": "740,157",
+        "search_array": ["637,155","#fff000","699,154","#ffffff","774,154","#ffffff","656,154","#1c75a5"],
+        "priority": 2,
+        "cooldown": 5.0,
+        "sleep": 4.0
+    },
+            {
+        "task_name": "Open [Klab ID] For Login [Prepare for Link]",
+        "type": "pixel", 
+        "click_location_str": "628,160",
+        "search_array": ["249,41","#0d12b5","261,55","#e60012","422,42","#191919","529,43","#191919","254,138","#ffffff","362,149","#ffffff","456,149","#ffffff"],
+        "priority": 2,
+        "cooldown": 5.0,
+        "sleep": 5.0
+    },
+            {
+        "task_name": "Skip Brave Info [Welcoming] [Prepare for Link]",
+        "type": "pixel", 
+        "click_location_str": "43,411",
+        "search_array": ["923,490","#9d2a94","795,72","#ff2000","647,319","#51cf66"],
+        "priority": 2,
+        "cooldown": 5.0,
+        "sleep": 2.0
+    },
+            {
+        "task_name": "Swipe 1 Time [Prepare for Link]",
+        "type": "pixel", 
+        "click_location_str": "0,0",
+        "search_array": ["419,278","#e95293","487,279","#e95293","399,275","#ffffff"],
+        "shared_detection": True,
+        "min_matches_for_swipe": 1,
+        "swipe_command": "shell input swipe 443 400 443 140 900",
+        "priority": 2,
+        "cooldown": 5.0,
+        "sleep": 10.0,
+        "Login2_Klab_Login_Tasks": True,
+    },
+
+    # {
+    #     "task_name": "Complete Link Preparation [Prepare for Link]",
+    #     "type": "pixel",
+    #     "click_location_str": "0,0",  # Detection only
+    #     "search_array": ["400,300","#FF9800","500,300","#FF9800"],  # KLAB login screen detected
+    #     "priority": 10,
+    #     "cooldown": 3.0,
+    #     "json_Login1_Prepare_Link": True,  # Mark completion
+    #     "NextTaskSet_Tasks": True  # Progress to next task set
+    # }
+]

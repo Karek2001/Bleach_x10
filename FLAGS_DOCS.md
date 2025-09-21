@@ -164,14 +164,26 @@ Sets Exchange_Gold_Characters to complete (1)
 - **Sets**: `Exchange_Gold_Characters = 1` in device state
 
 ### `json_Recive_GiftBox`
-Sets Recive_GiftBox to complete (1)
+Mark gift box collection as complete
 - **Type**: Boolean flag
-- **Sets**: `Recive_GiftBox = 1` in device state
+- **Usage**: Sets `Recive_GiftBox = 1` in device state
 
 ### `json_Recive_Giftbox_Orbs`
-Sets Recive_Giftbox_Orbs to complete (1) when task is triggered
+Mark gift box orbs collection as complete
 - **Type**: Boolean flag
-- **Sets**: `Recive_Giftbox_Orbs = 1` in device state
+- **Usage**: Sets `Recive_Giftbox_Orbs = 1` in device state
+
+### `json_Login1_Prepare_Link`
+Mark login preparation as complete
+- **Type**: Boolean flag
+- **Usage**: Sets `Login1_Prepare_Link = 1` in device state
+- **Purpose**: Indicates account linking preparation is complete
+
+### `json_Account_Linked`
+Mark account as successfully linked
+- **Type**: Boolean flag
+- **Usage**: Sets `Account_Linked = 1` in device state
+- **Purpose**: Indicates KLAB account linking is complete
 
 ### `json_ScreenShot_MainMenu`
 Sets ScreenShot_MainMenu to complete (1)
@@ -353,6 +365,51 @@ Switch to extract account ID tasks
 - **Usage**: Triggered after orb count extraction completion
 - **Purpose**: Extracts player account ID information
 
+### `Login1_Prepare_For_Link_Tasks`
+Switch to login preparation tasks
+- **Type**: Boolean flag
+- **Target**: `login1_prepare_for_link`
+- **Usage**: Triggered when ready to start account linking
+- **Purpose**: Prepares account for KLAB linking process
+
+### `Login2_Klab_Login_Tasks`
+Switch to KLAB login helper tasks
+- **Type**: Boolean flag
+- **Target**: `login2_klab_login`
+- **Usage**: Triggered from login1_prepare_for_link_tasks
+- **Purpose**: Handles KLAB account login process
+
+### `Login3_Wait_For_2FA_Tasks`
+Switch to 2FA wait helper tasks
+- **Type**: Boolean flag
+- **Target**: `login3_wait_for_2fa`
+- **Usage**: Triggered from login2_klab_login_tasks after login attempt
+- **Purpose**: Waits for and handles 2FA authentication
+
+### `BackToMain_Tasks`
+Return to main task set
+- **Type**: Boolean flag
+- **Target**: `main`
+- **Usage**: Used in helper tasks to return to main flow
+- **Purpose**: Exits helper task flow and returns to main tasks
+
+### `Enter_Email`
+Automatically type email from device JSON after clicking
+- **Type**: Boolean flag
+- **Usage**: After executing click, waits 2 seconds then types email
+- **Source**: Uses `Email` field from device JSON state
+- **Method**: Uses ADB text input with special character support
+- **Example**: `"Enter_Email": true` types email after clicking text field
+
+### `Enter_Password`
+Automatically type password from device JSON after clicking
+- **Type**: Boolean flag
+- **Usage**: After executing click, waits 2 seconds then types password
+- **Source**: Uses `Password` field from device JSON state
+- **Method**: Uses ADB text input with special character support
+- **Security**: Password is masked in logs (shown as asterisks)
+- **Example**: `"Enter_Password": true` types password after clicking text field
+
 ---
 
 ## Conditional Execution Flags
@@ -362,6 +419,13 @@ Skip task if specified state flag is true
 - **Type**: String (flag name)
 - **Example**: `"json_SideMode"` skips if SideMode = 1
 - **Usage**: Prevents task from running after certain progress
+
+### `RequireSupport`
+Only run task if specified state flag is true
+- **Type**: String (flag name)
+- **Example**: `"json_Login2_Email_Done"` only runs if email is complete
+- **Usage**: Creates sequential task dependencies within same task set
+- **Logic**: If requirement is NOT met, task is skipped
 
 ### `ConditionalRun`
 Only run task if ALL specified conditions are met
@@ -418,6 +482,17 @@ Take screenshot and save with username from device state
 - **Folder**: Creates/uses "stock_images" directory in project root
 - **Trigger**: Only when pixel detection task is matched
 - **Example**: Used in main menu screenshot tasks
+
+### `type_text`
+Types text from device JSON into input fields
+- **Type**: String with template placeholders
+- **Usage**: Types specified text after clicking
+- **Placeholders**: 
+  - `{{Email}}` - Uses device's Email field
+  - `{{Password}}` - Uses device's Password field
+  - `{{UserName}}` - Uses device's UserName field
+- **Example**: `"type_text": "{{Email}}"` types the email address
+- **Requirement**: Must be used with pixel tasks that click input fields
 
 ---
 
@@ -492,6 +567,42 @@ Descriptive name for the task
     "json_ScreenShot_MainMenu": true,
     "Extract_Orb_Count_Tasks": true,
     "cooldown": 1.0
+}
+```
+
+### Login Flow Tasks
+```python
+# Main Task - Login Preparation
+{
+    "task_name": "Detect Link Account Button [Prepare for Link]",
+    "type": "pixel",
+    "click_location_str": "960,640",
+    "search_array": ["900,600","#4CAF50","1020,600","#4CAF50"],
+    "Login2_Klab_Login_Tasks": true,  # Trigger helper
+    "json_Login1_Prepare_Link": true,
+    "NextTaskSet_Tasks": true
+}
+
+# Helper Task - KLAB Login
+{
+    "task_name": "Click [Email TextBox] [KLAB Login]",
+    "type": "template",
+    "template_path": "templates/Login/Email.png",
+    "confidence": 0.90,
+    "use_match_position": true,
+    "Enter_Email": true,  # Auto-type email after click
+    "cooldown": 99.0,
+    "sleep": 3
+}
+
+# Helper Task - 2FA Wait
+{
+    "task_name": "Detect Login Success [Wait for 2FA]",
+    "type": "pixel",
+    "click_location_str": "0,0",
+    "search_array": ["400,200","#00C853"],
+    "BackToMain_Tasks": true,  # Return to main
+    "json_Account_Linked": true
 }
 ```
 

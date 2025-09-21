@@ -11,13 +11,13 @@ Extract_Account_ID_Tasks = [
     {
         "task_name": "Search for Account ID",
         "type": "ocr",
-        "roi": [0, 0, 1920, 1080],  # Search entire screen
+        "roi": [453, 7, 137, 54],
         "use_match_position": False,
-        "click_location_str": "0,0",  # No click, just search
+        "click_location_str": "30,33",
         "is_id": True,
-        "cooldown": 5.0,  # Reduced cooldown for faster retries
+        "cooldown": 5.0,
         "search_for_id_pattern": True,  # Special flag to keep searching for ID
         "extract_account_id_value": True,  # Extract and save to JSON
-        "NextTaskSet_Tasks": True  # Continue to next task set when found
+        "Login1_Prepare_For_Link_Tasks": True 
     }
 ]

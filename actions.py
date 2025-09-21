@@ -1226,6 +1226,37 @@ async def execute_tap(device_id: str, location_str: str):
     coords = location_str.replace(',', ' ')
     await run_adb_command(f"shell input tap {coords}", device_id)
 
+async def execute_text_input(device_id: str, text: str):
+    """Execute text input command with proper special character handling"""
+    if not text:
+        return
+    
+    # Escape special characters for ADB shell
+    # Use base64 encoding for complex passwords with special characters
+    import base64
+    import shlex
+    
+    try:
+        # Method 1: Try direct input with proper escaping
+        escaped_text = shlex.quote(text)
+        await run_adb_command(f"shell input text {escaped_text}", device_id)
+    except Exception as e:
+        print(f"[TEXT_INPUT] Direct method failed, trying base64 method: {e}")
+        try:
+            # Method 2: Base64 encoding method for complex characters
+            encoded_text = base64.b64encode(text.encode('utf-8')).decode('ascii')
+            await run_adb_command(f"shell 'echo {encoded_text} | base64 -d | input text'", device_id)
+        except Exception as e2:
+            print(f"[TEXT_INPUT] Base64 method failed: {e2}")
+            # Method 3: Character by character input as fallback
+            for char in text:
+                if char.isalnum() or char in ' .-_@':
+                    await run_adb_command(f"shell input text '{char}'", device_id)
+                else:
+                    # Use keycode for special characters if available
+                    await run_adb_command(f"shell input text '{shlex.quote(char)}'", device_id)
+                await asyncio.sleep(0.05)  # Small delay between characters
+
 async def execute_swipe(device_id: str, x1: int, y1: int, x2: int, y2: int, duration: int):
     """Execute swipe command asynchronously"""
     await run_adb_command(f"shell input swipe {x1} {y1} {x2} {y2} {duration}", device_id)
