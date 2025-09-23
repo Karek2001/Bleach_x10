@@ -5,7 +5,19 @@ This is the first step in the login sequence.
 """
 
 Login1_Prepare_For_Link_Tasks = [
+                    {
+        "task_name": "Detect Account Already Linked! [Confirm Link]",
+        "type": "pixel",
+        "click_location_str": "480,497",
+        "search_array": ["716,43","#0d12b5","700,55","#e60012","547,158","#ffffff","661,161","#ffffff","704,160","#ffffff","714,158","#dc0d0d"],
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 2.0,
 
+
+        "json_isLinked": True,
+        "sync_to_airtable": True,
+    },
         {
         "task_name": "Click [Settings] [Prepare for Link]",
         "type": "pixel", 
@@ -54,16 +66,7 @@ Login1_Prepare_For_Link_Tasks = [
         "cooldown": 5.0,
         "sleep": 10.0,
         "Login2_Klab_Login_Tasks": True,
+        "sync_to_airtable": True,
     },
 
-    # {
-    #     "task_name": "Complete Link Preparation [Prepare for Link]",
-    #     "type": "pixel",
-    #     "click_location_str": "0,0",  # Detection only
-    #     "search_array": ["400,300","#FF9800","500,300","#FF9800"],  # KLAB login screen detected
-    #     "priority": 10,
-    #     "cooldown": 3.0,
-    #     "json_Login1_Prepare_Link": True,  # Mark completion
-    #     "NextTaskSet_Tasks": True  # Progress to next task set
-    # }
 ]

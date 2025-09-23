@@ -606,6 +606,401 @@ class OCRManager:
         
         return None
 
+    async def extract_orbs_ultra_robust(self, screenshot: np.ndarray, device_id: str) -> str:
+        """
+        Ultra-robust orb extraction with multiple strategies and validation.
+        Guarantees correct format: XX,XXX (like 21,137)
+        """
+        # Define multiple ROI variations for better coverage (more conservative)
+        roi_variations = [
+            [725, 5, 53, 29],
+            [722, 6, 57, 24],
+            [724, 9, 57, 18],
+            [726, 10, 51, 16],
+        ]
+        
+        all_results = []
+        start_time = time.time()
+        max_extraction_time = 30.0  # 30 second timeout
+        
+        for roi_idx, roi in enumerate(roi_variations):
+            # Check timeout
+            if time.time() - start_time > max_extraction_time:
+                print(f"[{device_id}] ⏰ Extraction timeout after {max_extraction_time}s, using current results")
+                break
+                
+            x, y, w, h = roi
+            roi_img = screenshot[y:y+h, x:x+w]
+            
+            if roi_img.size == 0:
+                continue
+            
+            # Try 8 different preprocessing strategies per ROI
+            strategies = [
+                # Strategy 1: Standard with different scales
+                lambda img: self._preprocess_orb_v1(img, scale=2),
+                lambda img: self._preprocess_orb_v1(img, scale=3),
+                lambda img: self._preprocess_orb_v1(img, scale=4),
+                
+                # Strategy 2: Inverted
+                lambda img: self._preprocess_orb_v2(img, invert=True),
+                lambda img: self._preprocess_orb_v2(img, invert=False),
+                
+                # Strategy 3: Enhanced comma detection
+                lambda img: self._preprocess_orb_comma_enhanced(img),
+                
+                # Strategy 4: Morphological focus
+                lambda img: self._preprocess_orb_morphological(img),
+                
+                # Strategy 5: Edge detection based
+                lambda img: self._preprocess_orb_edge_based(img)
+            ]
+            
+            for strat_idx, strategy in enumerate(strategies):
+                try:
+                    preprocessed = strategy(roi_img)
+                    
+                    # Try both EasyOCR and Tesseract
+                    if EASYOCR_AVAILABLE:
+                        # EasyOCR with strict whitelist
+                        results = self.ocr_reader.readtext(preprocessed, 
+                                                          allowlist='0123456789,',
+                                                          detail=1)
+                        for (bbox, text, confidence) in results:
+                            if confidence > 0.3 and text:
+                                cleaned = self._validate_orb_format(text, device_id)
+                                if cleaned:
+                                    all_results.append({
+                                        'value': cleaned,
+                                        'confidence': confidence,
+                                        'method': f'easyocr_roi{roi_idx}_strat{strat_idx}'
+                                    })
+                                    
+                                    # Early success detection - if we have a high-confidence reasonable result
+                                    if confidence > 0.85 and len(all_results) >= 8 and self._is_reasonable_orb_value(cleaned):
+                                        early_consensus = self._get_orb_consensus_ultra(all_results, device_id)
+                                        if early_consensus != "0" and self._is_reasonable_orb_value(early_consensus):
+                                            print(f"[{device_id}] 🎯 Early consensus found: {early_consensus}")
+                                            return early_consensus
+                    
+                    if TESSERACT_AVAILABLE:
+                        # Tesseract with multiple PSM modes
+                        for psm in [7, 8, 11, 13]:
+                            config = f'--oem 3 --psm {psm} -c tessedit_char_whitelist=0123456789,'
+                            text = pytesseract.image_to_string(preprocessed, config=config).strip()
+                            if text:
+                                cleaned = self._validate_orb_format(text, device_id)
+                                if cleaned:
+                                    all_results.append({
+                                        'value': cleaned,
+                                        'confidence': 0.5,  # Default confidence for Tesseract
+                                        'method': f'tesseract_roi{roi_idx}_strat{strat_idx}_psm{psm}'
+                                    })
+                    
+                except Exception:
+                    continue
+        
+        # Intelligent consensus with validation
+        return self._get_orb_consensus_ultra(all_results, device_id)
+
+    def _preprocess_orb_v1(self, img: np.ndarray, scale: int = 3) -> np.ndarray:
+        """Standard preprocessing with scaling"""
+        if len(img.shape) == 3:
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img.copy()
+        
+        # Upscale
+        gray = cv2.resize(gray, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+        
+        # Denoise
+        gray = cv2.fastNlMeansDenoising(gray, None, 10, 7, 21)
+        
+        # CLAHE for contrast
+        clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
+        gray = clahe.apply(gray)
+        
+        # Binary threshold
+        _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        return thresh
+
+    def _preprocess_orb_v2(self, img: np.ndarray, invert: bool = False) -> np.ndarray:
+        """Preprocessing with optional inversion"""
+        if len(img.shape) == 3:
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img.copy()
+        
+        # Heavy upscaling
+        gray = cv2.resize(gray, None, fx=5, fy=5, interpolation=cv2.INTER_CUBIC)
+        
+        # Bilateral filter for edge preservation
+        gray = cv2.bilateralFilter(gray, 11, 75, 75)
+        
+        if invert:
+            gray = cv2.bitwise_not(gray)
+        
+        # Adaptive threshold
+        thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                      cv2.THRESH_BINARY, 15, 3)
+        
+        return thresh
+
+    def _preprocess_orb_comma_enhanced(self, img: np.ndarray) -> np.ndarray:
+        """Special preprocessing to enhance comma detection"""
+        if len(img.shape) == 3:
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img.copy()
+        
+        # Extreme upscaling for comma
+        gray = cv2.resize(gray, None, fx=6, fy=6, interpolation=cv2.INTER_LANCZOS4)
+        
+        # Unsharp masking to enhance edges
+        gaussian = cv2.GaussianBlur(gray, (0, 0), 2.0)
+        gray = cv2.addWeighted(gray, 1.5, gaussian, -0.5, 0)
+        
+        # Morphological gradient to highlight edges
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+        gradient = cv2.morphologyEx(gray, cv2.MORPH_GRADIENT, kernel)
+        
+        # Combine original with gradient
+        gray = cv2.addWeighted(gray, 0.7, gradient, 0.3, 0)
+        
+        # Final threshold
+        _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        return thresh
+
+    def _preprocess_orb_morphological(self, img: np.ndarray) -> np.ndarray:
+        """Morphological operations focused preprocessing"""
+        if len(img.shape) == 3:
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img.copy()
+        
+        # Moderate upscaling
+        gray = cv2.resize(gray, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
+        
+        # Top hat to extract light objects on dark background
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9))
+        tophat = cv2.morphologyEx(gray, cv2.MORPH_TOPHAT, kernel)
+        
+        # Add back to original
+        gray = cv2.add(gray, tophat)
+        
+        # Binary threshold
+        _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        # Clean up with morphology
+        kernel_clean = np.ones((2, 2), np.uint8)
+        thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel_clean)
+        
+        return thresh
+
+    def _preprocess_orb_edge_based(self, img: np.ndarray) -> np.ndarray:
+        """Edge detection based preprocessing"""
+        if len(img.shape) == 3:
+            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = img.copy()
+        
+        # Upscale
+        gray = cv2.resize(gray, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
+        
+        # Canny edge detection
+        edges = cv2.Canny(gray, 50, 150)
+        
+        # Dilate edges to connect broken parts
+        kernel = np.ones((3, 3), np.uint8)
+        edges = cv2.dilate(edges, kernel, iterations=1)
+        
+        return edges
+
+    def _validate_orb_format(self, text: str, device_id: str) -> str:
+        """
+        Validate and fix orb format to match XX,XXX pattern.
+        Returns None if format is invalid.
+        """
+        if not text:
+            return None
+        
+        # Clean the text
+        text = text.strip()
+        
+        # Remove any spaces
+        text = text.replace(' ', '')
+        
+        # Common OCR fixes
+        replacements = {
+            '.': ',',
+            ';': ',',
+            ':': ',',
+            '`': ',',
+            "'": ',',
+            'l': '1',
+            'I': '1',
+            'O': '0',
+            'o': '0',
+            'S': '5',
+            's': '5',
+            'Z': '2',
+            'z': '2',
+            'B': '8',
+            'G': '6'
+        }
+        
+        for old, new in replacements.items():
+            text = text.replace(old, new)
+        
+        # Check if it already has correct format (XX,XXX)
+        if ',' in text:
+            parts = text.split(',')
+            if len(parts) == 2:
+                before_comma = parts[0]
+                after_comma = parts[1]
+                
+                # Validate format: 1-3 digits before comma, exactly 3 after
+                if before_comma.isdigit() and after_comma.isdigit():
+                    if 1 <= len(before_comma) <= 3 and len(after_comma) == 3:
+                        return f"{before_comma},{after_comma}"
+                    elif len(after_comma) > 3:
+                        # Truncate extra digits
+                        return f"{before_comma},{after_comma[:3]}"
+        
+        # Try to fix missing comma
+        digits = ''.join(c for c in text if c.isdigit())
+        
+        # Be more restrictive - only allow reasonable orb counts
+        if len(digits) == 5:  # XX,XXX format
+            candidate = f"{digits[:2]},{digits[2:]}"
+            if self._is_reasonable_orb_value(candidate):
+                return candidate
+        elif len(digits) == 4:  # X,XXX format  
+            candidate = f"{digits[0]},{digits[1:]}"
+            if self._is_reasonable_orb_value(candidate):
+                return candidate
+        elif len(digits) == 6:  # XXX,XXX format - be very careful
+            candidate = f"{digits[:3]},{digits[3:]}"
+            # Only allow if the first part is reasonable (under 100)
+            if int(digits[:3]) <= 99 and self._is_reasonable_orb_value(candidate):
+                return candidate
+        
+        return None
+
+    def _is_reasonable_orb_value(self, orb_str: str) -> bool:
+        """Check if orb value is within reasonable bounds"""
+        try:
+            if ',' not in orb_str:
+                return False
+            
+            parts = orb_str.split(',')
+            if len(parts) != 2:
+                return False
+                
+            before_comma = int(parts[0])
+            after_comma = int(parts[1])
+            
+            # Reasonable bounds for orb values
+            # Before comma: 1-99 (not 200+ which is clearly wrong)
+            # After comma: 000-999
+            if not (1 <= before_comma <= 99):
+                return False
+            if not (0 <= after_comma <= 999):
+                return False
+            
+            total_value = before_comma * 1000 + after_comma
+            # Total orbs should be reasonable (1,000 to 99,999)
+            if not (1000 <= total_value <= 99999):
+                return False
+                
+            return True
+        except:
+            return False
+
+    def _get_orb_consensus_ultra(self, all_results: list, device_id: str) -> str:
+        """
+        Ultra-robust consensus algorithm.
+        """
+        if not all_results:
+            print(f"[{device_id}] No valid OCR results")
+            return "0"
+        
+        # Count frequency of each value
+        value_counts = {}
+        for result in all_results:
+            value = result['value']
+            if value not in value_counts:
+                value_counts[value] = {'count': 0, 'total_confidence': 0}
+            value_counts[value]['count'] += 1
+            value_counts[value]['total_confidence'] += result['confidence']
+        
+        # Score each unique value with improved logic
+        scored_values = []
+        for value, stats in value_counts.items():
+            score = 0
+            avg_confidence = stats['total_confidence'] / stats['count']
+            
+            # Strict reasonableness check first
+            if not self._is_reasonable_orb_value(value):
+                print(f"[{device_id}] ❌ Rejecting unreasonable value: {value}")
+                continue
+            
+            # Confidence score (more important now)
+            score += avg_confidence * 100
+            
+            # Frequency bonus (but less important)
+            score += stats['count'] * 20
+            
+            # Format validation bonus
+            if ',' in value:
+                parts = value.split(',')
+                if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit():
+                    if len(parts[1]) == 3:  # Exactly 3 digits after comma
+                        score += 30
+                    if 1 <= len(parts[0]) <= 2:  # 1-2 digits before comma (typical)
+                        score += 40
+                    elif len(parts[0]) == 3:  # 3 digits before comma (less common)
+                        score += 20
+            
+            # Penalize values that seem too different from typical ranges
+            try:
+                numeric_value = int(value.replace(',', ''))
+                # Typical orb range bonus
+                if 5000 <= numeric_value <= 50000:  # Most common range
+                    score += 25
+                elif 1000 <= numeric_value <= 99999:  # Acceptable range
+                    score += 10
+            except:
+                score -= 100
+            
+            scored_values.append({
+                'value': value,
+                'score': score,
+                'count': stats['count'],
+                'avg_confidence': stats['total_confidence'] / stats['count']
+            })
+        
+        # Sort by score
+        scored_values.sort(key=lambda x: x['score'], reverse=True)
+        
+        # Log results
+        print(f"[{device_id}] OCR Consensus Analysis:")
+        print(f"[{device_id}] Total attempts: {len(all_results)}")
+        print(f"[{device_id}] Unique values: {len(scored_values)}")
+        for sv in scored_values[:5]:  # Show top 5
+            print(f"[{device_id}]   '{sv['value']}' - Score: {sv['score']:.1f}, Count: {sv['count']}, Avg Conf: {sv['avg_confidence']:.2f}")
+        
+        # Return the best scoring value
+        if scored_values and scored_values[0]['score'] > 30:
+            best = scored_values[0]['value']
+            print(f"[{device_id}] ✅ Final orb value: {best}")
+            return best
+        
+        print(f"[{device_id}] ⚠️ No reliable consensus, using fallback")
+        return "0"
+
 # Global OCR manager
 ocr_manager = OCRManager()
 
@@ -759,6 +1154,7 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
     template_tasks = []
     ocr_tasks = []
     shared_detection_tasks = []
+    ultra_robust_orb_tasks = []
     
     for task in filtered_tasks:  # Use filtered_tasks instead of tasks
         task_type = task.get("type", "pixel")
@@ -767,6 +1163,8 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
             pixel_tasks.append(task)
         elif task_type == "ocr":
             ocr_tasks.append(task)
+        elif task_type == "ultra_robust_orb":
+            ultra_robust_orb_tasks.append(task)
         elif task_type == "template":
             if task.get("shared_detection", False):
                 shared_detection_tasks.append(task)
@@ -905,6 +1303,58 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
             if task_tracker.can_execute_task(device_id, task["task_name"], task_cooldown):
                 matched_tasks.append(task)
     
+    # Process ultra robust orb extraction tasks
+    for task in ultra_robust_orb_tasks:
+        task_cooldown = task.get("cooldown", 60.0)
+        if not task_tracker.can_execute_task(device_id, task["task_name"], task_cooldown):
+            continue
+        
+        print(f"[{device_id}] 🚀 Starting ultra-robust orb extraction...")
+        
+        # Apply pre-delay
+        pre_delay = task.get("pre_delay", 0)
+        if pre_delay > 0:
+            print(f"[{device_id}] ⏳ Waiting {pre_delay}s for screen stabilization...")
+            await asyncio.sleep(pre_delay)
+        
+        # Use the new ultra-robust extraction
+        start_time = time.time()
+        extracted_orb = await ocr_manager.extract_orbs_ultra_robust(img_gpu, device_id)
+        extraction_time = time.time() - start_time
+        print(f"[{device_id}] ⏱️ Extraction completed in {extraction_time:.2f}s")
+        
+        # Always record execution to prevent infinite retries
+        task_tracker.record_execution(device_id, task["task_name"])
+        
+        if extracted_orb and extracted_orb != "0":
+            # Validate one more time before saving
+            if ',' in extracted_orb:
+                parts = extracted_orb.split(',')
+                if len(parts) == 2 and parts[0].isdigit() and parts[1].isdigit() and len(parts[1]) == 3:
+                    # Save to device state
+                    from device_state_manager import device_state_manager
+                    device_state_manager.update_state(device_id, "Orbs", extracted_orb)
+                    
+                    task_copy = task.copy()
+                    task_copy["task_name"] = f"{task['task_name']} [✅ Orbs: {extracted_orb} saved]"
+                    matched_tasks.append(task_copy)
+                    print(f"[{device_id}] ✅ Orb extraction successful: {extracted_orb}")
+                else:
+                    print(f"[{device_id}] ⚠️ Invalid format after extraction: {extracted_orb}")
+                    task_copy = task.copy()
+                    task_copy["task_name"] = f"{task['task_name']} [❌ Invalid format: {extracted_orb}]"
+                    matched_tasks.append(task_copy)
+            else:
+                print(f"[{device_id}] ⚠️ No comma in extracted value: {extracted_orb}")
+                task_copy = task.copy()
+                task_copy["task_name"] = f"{task['task_name']} [❌ No comma: {extracted_orb}]"
+                matched_tasks.append(task_copy)
+        else:
+            print(f"[{device_id}] ❌ Orb extraction failed - no valid result")
+            task_copy = task.copy()
+            task_copy["task_name"] = f"{task['task_name']} [❌ No result]"
+            matched_tasks.append(task_copy)
+    
     # Process OCR tasks
     for task in ocr_tasks:
         roi = task.get("roi", [0, 0, img_gpu.shape[1], img_gpu.shape[0]])
@@ -928,8 +1378,21 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
             
             if extracted_text:
                 
-                # Special handling for orb value extraction
-                if task.get("extract_orb_value", False):
+                # Store OCR result for orb consensus checking (for new multi-attempt system)
+                if task.get("temp_orb_storage", False) or task.get("orb_consensus_check", False):
+                    corrected_text = ocr_manager._fix_comma_misreads(extracted_text)
+                    task_copy["ocr_result"] = corrected_text
+                    task_copy["task_name"] = f"{task['task_name']} [OCR: '{extracted_text}' → '{corrected_text}']"
+                    matched_tasks.append(task_copy)
+                    task_tracker.record_execution(device_id, task["task_name"])
+                # Store OCR result for account ID consensus checking
+                elif task.get("temp_account_id_storage", False) or task.get("account_id_consensus_check", False):
+                    task_copy["ocr_result"] = extracted_text  # Keep original for ID (no comma fixing needed)
+                    task_copy["task_name"] = f"{task['task_name']} [OCR: '{extracted_text}']"
+                    matched_tasks.append(task_copy)
+                    task_tracker.record_execution(device_id, task["task_name"])
+                # Special handling for orb value extraction (legacy single-attempt)
+                elif task.get("extract_orb_value", False):
                     try:
                         # Apply smart pattern correction first
                         corrected_text = ocr_manager._fix_comma_misreads(extracted_text)
@@ -998,7 +1461,19 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
                 task_tracker.record_execution(device_id, task["task_name"])
             else:
                 # Handle case when no text is extracted (empty OCR result)
-                if task.get("search_for_id_pattern", False) and task.get("extract_account_id_value", False):
+                if task.get("temp_orb_storage", False) or task.get("orb_consensus_check", False):
+                    # Store empty result for orb consensus checking
+                    task_copy["ocr_result"] = ""
+                    task_copy["task_name"] = f"{task['task_name']} [OCR: no text detected]"
+                    matched_tasks.append(task_copy)
+                    task_tracker.record_execution(device_id, task["task_name"])
+                elif task.get("temp_account_id_storage", False) or task.get("account_id_consensus_check", False):
+                    # Store empty result for account ID consensus checking
+                    task_copy["ocr_result"] = ""
+                    task_copy["task_name"] = f"{task['task_name']} [OCR: no Account ID detected]"
+                    matched_tasks.append(task_copy)
+                    task_tracker.record_execution(device_id, task["task_name"])
+                elif task.get("search_for_id_pattern", False) and task.get("extract_account_id_value", False):
                     # Keep searching for ID pattern even when OCR returns nothing
                     task_copy["task_name"] = f"{task['task_name']} [🔍 Searching for ID pattern... (no text found)]"
                     matched_tasks.append(task_copy)
@@ -1296,7 +1771,7 @@ async def find_template_in_region(screenshot: np.ndarray, template_path: str,
         return None
 
 async def save_screenshot_with_username(device_id: str, screenshot: np.ndarray):
-    """Save screenshot with username from device state"""
+    """Save screenshot with username from device state, including device numbering and cropping"""
     try:
         # Import here to avoid circular import
         from device_state_manager import device_state_manager
@@ -1305,6 +1780,29 @@ async def save_screenshot_with_username(device_id: str, screenshot: np.ndarray):
         state = device_state_manager.get_state(device_id)
         username = state.get("UserName", "Unknown")
         
+        # Get the correct device name using device_state_manager mapping
+        device_name = device_state_manager._get_device_name(device_id)
+        
+        # Extract device number from device name (e.g., "DEVICE10" -> "10")
+        device_number = "Unknown"
+        if device_name.startswith("DEVICE"):
+            try:
+                device_number = device_name[6:]  # Remove "DEVICE" prefix
+                if not device_number.isdigit():
+                    device_number = "Unknown"
+            except:
+                device_number = "Unknown"
+        
+        # If username is "Unknown" or empty, also check if we have any AccountID
+        if username in ["Unknown", "", None]:
+            account_id = state.get("AccountID", "")
+            if account_id and "ID:" in account_id:
+                # Extract just the ID numbers for better naming
+                id_numbers = account_id.replace("ID:", "").strip().replace(" ", "")[:6]  # Take first 6 chars
+                username = f"ID{id_numbers}"
+            else:
+                username = "Player"
+        
         # Create stock_images directory if it doesn't exist
         stock_images_dir = "stock_images"
         os.makedirs(stock_images_dir, exist_ok=True)
@@ -1312,12 +1810,19 @@ async def save_screenshot_with_username(device_id: str, screenshot: np.ndarray):
         # Convert numpy array to PIL Image
         pil_image = Image.fromarray(screenshot.astype('uint8'), 'RGB')
         
-        # Save with username as filename
-        filename = f"{username}.png"
+        # Crop the image to roi [160, 0, 779, 540]
+        # PIL crop format is (left, top, right, bottom)
+        crop_box = (160, 0, 160 + 779, 540)  # (left, top, right, bottom)
+        cropped_image = pil_image.crop(crop_box)
+        
+        # Save with device number and username as filename
+        filename = f"{device_number}_{username}.png"
         filepath = os.path.join(stock_images_dir, filename)
         
-        pil_image.save(filepath)
+        cropped_image.save(filepath)
         print(f"[{device_id}] Screenshot saved as: {filepath}")
+        print(f"[{device_id}] Mapping: {device_id} -> {device_name} -> {device_number}_{username}")
+        print(f"[{device_id}] Cropped to roi [160, 0, 779, 540]")
         
     except Exception as e:
         print(f"[{device_id}] Error saving screenshot: {e}")

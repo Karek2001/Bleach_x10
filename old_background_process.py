@@ -12,8 +12,6 @@ suppress_libpng_warning()
 import settings
 from actions import batch_check_pixels_enhanced, execute_tap, screenshot_manager, run_adb_command, task_tracker, execute_text_input
 from device_state_manager import device_state_manager
-from airtable_helper import airtable_helper
-from airtable_sync import sync_device_to_airtable
 from tasks import (
     StoryMode_Tasks, 
     Restarting_Tasks, 
@@ -46,9 +44,7 @@ from tasks import (
     Extract_Account_ID_Tasks,
     Login1_Prepare_For_Link_Tasks,
     Login2_Klab_Login_Tasks,
-    Login3_Wait_For_2FA_Tasks,
-    Login4_Confirm_Link_Tasks,
-    Endgame_Tasks
+    Login3_Wait_For_2FA_Tasks
 )
 
 # Bleach game package name
@@ -64,208 +60,6 @@ class ProcessMonitor:
         self.check_interval = 10
         self.last_check_times = {}
         self.active_task_set = {}
-        self.initial_setup_complete = {}
-        self.last_action_time = {}
-        self.action_count = {}
-        self.last_action_name = {}
-        
-    async def is_bleach_running(self, device_id: str) -> bool:
-        """Check if Bleach Brave Souls process is running on the device"""
-        try:
-            command = f"shell pidof {BLEACH_PACKAGE_NAME}"
-            result = await run_adb_command(command, device_id)
-            return bool(result.strip())
-        except Exception as e:
-            print(f"[{device_id}] Error checking process")
-            return False
-    
-    async def launch_bleach(self, device_id: str):
-        """Launch Bleach Brave Souls game"""
-        try:
-            print(f"[{device_id}] Launching game...")
-            command = f"shell monkey -p {BLEACH_PACKAGE_NAME} -c android.intent.category.LAUNCHER 1"
-            await run_adb_command(command, device_id)
-            await asyncio.sleep(3)
-        except Exception as e:
-            print(f"[{device_id}] Error launching game")
-    
-    async def kill_and_restart_game(self, device_id: str):
-        """Kill and restart the game with force stop"""
-        try:
-            print(f"[{device_id}] Restarting game...")
-            await run_adb_command(f"shell am force-stop {BLEACH_PACKAGE_NAME}", device_id)
-            await asyncio.sleep(2)
-            await self.launch_bleach(device_id)
-            
-            # Increment restarting count in device state
-            device_state_manager.increment_counter(device_id, "RestartingCount")
-            
-            # Set to restarting tasks initially
-            self.set_active_tasks(device_id, "restarting")
-            self.reset_action_tracking(device_id)
-        except Exception as e:
-            print(f"[{device_id}] Error restarting game")
-    
-    def reset_action_tracking(self, device_id: str):
-        """Reset action tracking for a device"""
-        self.last_action_time[device_id] = time.time()
-        self.action_count[device_id] = {}
-        self.last_action_name[device_id] = None
-    
-    def track_action(self, device_id: str, action_name: str) -> bool:
-        """Track action and check for repetition. Returns True if should restart"""
-        current_time = time.time()
-        
-        if device_id not in self.last_action_time:
-            self.last_action_time[device_id] = current_time
-            self.action_count[device_id] = {}
-            self.last_action_name[device_id] = None
-        
-        # Check for 240 second inactivity
-        if current_time - self.last_action_time[device_id] > 240:
-            print(f"[{device_id}] No actions for 240s - restart needed")
-            return True
-        
-        self.last_action_time[device_id] = current_time
-        
-        # Track repetition
-        if action_name not in self.action_count[device_id]:
-            self.action_count[device_id][action_name] = 0
-        
-        if self.last_action_name[device_id] == action_name:
-            self.action_count[device_id][action_name] += 1
-            
-            max_repetitions = 5 if "template" in action_name.lower() else 13
-            
-            if self.action_count[device_id][action_name] >= max_repetitions:
-                print(f"[{device_id}] Task repeated {max_repetitions}x - restart needed")
-                return True
-        else:
-            self.action_count[device_id][action_name] = 1
-            self.last_action_name[device_id] = action_name
-        
-        # Update session stats
-        device_state_manager.update_session_stats(device_id, action_name)
-        
-        return False
-    
-    async def should_check_process(self, device_id: str) -> bool:
-        """Determine if it's time to check the process status"""
-        current_time = time.time()
-        
-        if device_id not in self.last_check_times:
-            self.last_check_times[device_id] = 0
-        
-        time_since_last_check = current_time - self.last_check_times[device_id]
-        
-        if time_since_last_check >= self.check_interval:
-            self.last_check_times[device_id] = current_time
-            return True
-        
-        return False
-    
-    def should_skip_task(self, device_id: str, task: dict) -> bool:
-        """Check if a task should be skipped based on StopSupport, RequireSupport flag or ConditionalRun"""
-        
-        # FIRST: Check RequireSupport flag (task needs something to be true)
-        require_support = task.get("RequireSupport")
-        if require_support:
-            should_require = device_state_manager.check_stop_support(device_id, require_support)
-            if not should_require:  # If requirement is NOT met, skip task
-                return True
-        
-        # SECOND: Check StopSupport flag (should prevent task from running)
-        stop_support = task.get("StopSupport")
-        if stop_support:
-            should_stop = device_state_manager.check_stop_support(device_id, stop_support)
-            if should_stop:
-                return True
-        
-        # THIRD: Check ConditionalRun - skip task if conditions are NOT met
-        conditional_run = task.get("ConditionalRun")
-        if conditional_run and isinstance(conditional_run, list):
-            device_state = device_state_manager.get_state(device_id)
-            
-            for key in conditional_run:
-                value = device_state.get(key, 0)
-                if value != 1:
-                    return True  # Skip task if any condition is not met
-        
-        return False
-        
-    def get_active_tasks(self, device_id: str) -> List[dict]:
-        """Get the currently active task set"""
-        task_set = self.active_task_set.get(device_id, "restarting")
-        
-        task_map = {
-            "main": StoryMode_Tasks,
-            "restarting": Restarting_Tasks,
-            "endgame": Endgame_Tasks,
-            "main_screenshot": Main_Screenshot_Tasks,
-            "extract_orb_counts": Extract_Orb_Counts_Tasks,
-            "extract_account_id": Extract_Account_ID_Tasks,
-            "login1_prepare_for_link": Login1_Prepare_For_Link_Tasks,
-            "login2_klab_login": Login2_Klab_Login_Tasks,
-            "login3_wait_for_2fa": Login3_Wait_For_2FA_Tasks,
-            "login4_confirm_link": Login4_Confirm_Link_Tasks
-        }
-        
-        # Get base tasks or default to restarting
-        base_tasks = task_map.get(task_set, Restarting_Tasks)
-        print(f"[{device_id}] Active task set: {task_set}, Base tasks: {len(base_tasks)}")
-        
-        # Filter out tasks that should be skipped
-        filtered_tasks = []
-        for task in base_tasks:
-            if not self.should_skip_task(device_id, task):
-                filtered_tasks.append(task)
-        
-        # Sort by priority (lower number = higher priority)
-        return sorted(filtered_tasks, key=lambda x: x.get('priority', 999))
-    
-    def set_active_tasks(self, device_id: str, task_set: str):
-        """Set the active task set for a device and update state"""
-        valid_sets = ["main", "restarting", "endgame", "main_screenshot", "extract_orb_counts", "extract_account_id", "login1_prepare_for_link", "login2_klab_login", "login3_wait_for_2fa", "login4_confirm_link"]
-        
-        if task_set in valid_sets:
-            self.active_task_set[device_id] = task_set
-            
-            # Update current task set in device state
-            device_state_manager.update_state(device_id, "CurrentTaskSet", task_set)
-            
-            task_names = {
-                "main": "Main",
-                "restarting": "Restarting", 
-                "endgame": "Endgame",
-                "main_screenshot": "Main Screenshot",
-                "extract_orb_counts": "Extract Orb Counts",
-                "extract_account_id": "Extract Account ID", 
-                "login1_prepare_for_link": "Prepare For Link",
-                "login2_klab_login": "KLAB Login", 
-                "login3_wait_for_2fa": "Wait For 2FA",
-                "login4_confirm_link": "Confirm Link"
-            }
-            print(f"[{device_id}] → {task_names.get(task_set, task_set)}")
-    
-    def is_initial_setup_needed(self, device_id: str) -> bool:
-        """Checks if the initial setup logic needs to run for a device."""
-        return not self.initial_setup_complete.get(device_id, False)
-    
-    def mark_initial_complete(self, device_id: str):
-        """Marks that the initial setup for a device is complete."""
-        self.initial_setup_complete[device_id] = True
-
-
-class BackgroundMonitor:
-    """Enhanced Background process monitoring with intelligent task management"""
-    
-    def __init__(self):
-        self.process_monitor = ProcessMonitor()
-        self.last_execution_times = {}
-        self.max_restart_attempts = 3
-        self.is_running = False
-        self.account_id_attempts = {}  # Store account ID extraction attempts per device
-        self.orb_multi_attempts = {}  # Store multiple orb attempts for consensus
         self.initial_setup_complete = {}
         self.last_action_time = {}
         self.action_count = {}
@@ -443,9 +237,7 @@ class BackgroundMonitor:
             "extract_account_id": Extract_Account_ID_Tasks,
             "login1_prepare_for_link": Login1_Prepare_For_Link_Tasks,
             "login2_klab_login": Login2_Klab_Login_Tasks,
-            "login3_wait_for_2fa": Login3_Wait_For_2FA_Tasks,
-            "login4_confirm_link": Login4_Confirm_Link_Tasks,
-            "endgame": Endgame_Tasks
+            "login3_wait_for_2fa": Login3_Wait_For_2FA_Tasks
         }
         
         # Debug: Log which task set is active and how many tasks it contains
@@ -494,9 +286,7 @@ class BackgroundMonitor:
             "extract_account_id",
             "login1_prepare_for_link",
             "login2_klab_login", 
-            "login3_wait_for_2fa",
-            "login4_confirm_link",
-            "endgame"
+            "login3_wait_for_2fa"
         ]
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
@@ -619,34 +409,8 @@ class OptimizedBackgroundMonitor:
             await execute_tap(device_id, delayed_click_location)
 
     async def handle_text_input_flags(self, device_id: str, task: dict):
-        """Handle Enter_Email, Enter_Password, and Get_2fa flags after clicking"""
-        
-        # Check for Get_2fa flag (new functionality)
-        if task.get("Get_2fa", False):
-            print(f"[{device_id}] 2FA code requested - waiting 60 seconds for email to arrive...")
-            await asyncio.sleep(60.0)  # Wait 60 seconds for email to arrive
-            
-            # Get email from device state
-            device_state = device_state_manager.get_state(device_id)
-            email = device_state.get("Email", "")
-            
-            if not email:
-                print(f"[{device_id}] ⚠️ Warning: No email found in device state for 2FA retrieval")
-                return
-            
-            print(f"[{device_id}] Retrieving 2FA code for email: {email}")
-            
-            # Get 2FA code from Airtable
-            twofa_code = await airtable_helper.get_2fa_code(email)
-            
-            if twofa_code:
-                print(f"[{device_id}] Entering 2FA code: {twofa_code}")
-                await execute_text_input(device_id, twofa_code)
-                print(f"[{device_id}] ✅ 2FA code entered successfully")
-            else:
-                print(f"[{device_id}] ❌ Error: Could not retrieve 2FA code from Airtable")
-        
-        # Check for Enter_Email flag (existing functionality)
+        """Handle Enter_Email and Enter_Password flags after clicking"""
+        # Check for Enter_Email flag
         if task.get("Enter_Email", False):
             await asyncio.sleep(2.0)  # 2 second delay before typing
             device_state = device_state_manager.get_state(device_id)
@@ -657,7 +421,7 @@ class OptimizedBackgroundMonitor:
             else:
                 print(f"[{device_id}] Warning: No email found in device state")
         
-        # Check for Enter_Password flag (existing functionality)
+        # Check for Enter_Password flag  
         if task.get("Enter_Password", False):
             await asyncio.sleep(2.0)  # 2 second delay before typing
             device_state = device_state_manager.get_state(device_id)
@@ -746,8 +510,7 @@ class OptimizedBackgroundMonitor:
             "json_Exchange_Gold_Characters", "json_Recive_GiftBox", "json_ScreenShot_MainMenu",
             "json_Skip_Yukio_Event", "json_Sort_Characters_Lowest_Level",
             "json_Sort_Filter_Ascension", "json_Sort_Multi_Select_Garbage_First",
-            "json_Upgrade_Characters_Level", "json_Recive_Giftbox_Orbs",
-            "json_isLinked"  # Missing flag for account linking status
+            "json_Upgrade_Characters_Level", "json_Recive_Giftbox_Orbs"
         ]
         
         for flag in json_flags:
@@ -779,130 +542,6 @@ class OptimizedBackgroundMonitor:
                 print(f"[{device_id}] ✓ Yukio 3 retries complete - Next check will show Home button")
                 # Force a state reload for all devices to ensure they see the updated count
                 device_state_manager._save_state(device_id)
-        
-        # Handle pre-delay for OCR accuracy
-        if task.get("pre_delay", 0) > 0:
-            pre_delay = task.get("pre_delay", 0)
-            print(f"[{device_id}] ⏳ Pre-delay: waiting {pre_delay}s for screen to stabilize...")
-            await asyncio.sleep(pre_delay)
-        
-        # Handle multi-attempt orb storage
-        if task.get("store_orb_attempt", False):
-            ocr_result = None
-            
-            # Try to get OCR result from task object first
-            if hasattr(task, 'ocr_result') and task.ocr_result and task.ocr_result.strip():
-                ocr_result = task.ocr_result.strip()
-                print(f"[{device_id}] 🔍 Got OCR from task.ocr_result: '{ocr_result}'")
-            
-            # Fallback: Extract OCR result from task name (Enhanced OCR: 'value')
-            elif 'Enhanced OCR:' in task.get('task_name', ''):
-                import re
-                task_name = task.get('task_name', '')
-                match = re.search(r"Enhanced OCR: '([^']+)'", task_name)
-                if match:
-                    ocr_result = match.group(1).strip()
-                    print(f"[{device_id}] 🔍 Extracted OCR from task name: '{ocr_result}'")
-            
-            if ocr_result:
-                attempt_num = task.get("orb_multi_attempt", 0)
-                print(f"[{device_id}] 🔄 Storing orb attempt {attempt_num}: '{ocr_result}'")
-                self.store_multi_orb_attempt(device_id, attempt_num, ocr_result)
-                
-                # Check if this is a next_task_only task - don't trigger task set completion
-                if task.get("next_task_only", False):
-                    print(f"[{device_id}] ⏭️ Next task only - continuing to next attempt...")
-                    return  # Don't process other completion logic
-            else:
-                print(f"[{device_id}] ⚠️ No valid OCR result found for orb attempt")
-                print(f"[{device_id}] 🔍 Task name: '{task.get('task_name', 'N/A')}'")
-                # Even if no OCR result, respect next_task_only to prevent early completion
-                if task.get("next_task_only", False):
-                    print(f"[{device_id}] ⏭️ Next task only (no OCR) - continuing anyway...")
-                    return
-            # Continue processing
-        
-        # Handle final orb consensus and extraction
-        if task.get("orb_final_consensus", False):
-            print(f"[{device_id}] 🎯 Final consensus check triggered")
-            
-            # Extract OCR result using same logic as above
-            ocr_result = None
-            if hasattr(task, 'ocr_result') and task.ocr_result and task.ocr_result.strip():
-                ocr_result = task.ocr_result.strip()
-            elif 'Enhanced OCR:' in task.get('task_name', ''):
-                import re
-                task_name = task.get('task_name', '')
-                match = re.search(r"Enhanced OCR: '([^']+)'", task_name)
-                if match:
-                    ocr_result = match.group(1).strip()
-            
-            if ocr_result:
-                # Store the final attempt
-                attempt_num = task.get("orb_multi_attempt", 0)
-                print(f"[{device_id}] 🔄 Storing final orb attempt {attempt_num}: '{ocr_result}'")
-                self.store_multi_orb_attempt(device_id, attempt_num, ocr_result)
-                
-                # Get best consensus value
-                best_orb = self.get_best_orb_consensus(device_id)
-                if best_orb:
-                    device_state_manager.update_state(device_id, "Orbs", best_orb)
-                    print(f"[{device_id}] ✅ Best orb consensus: '{best_orb}'")
-                else:
-                    print(f"[{device_id}] ❌ No reliable orb consensus found")
-            else:
-                print(f"[{device_id}] ⚠️ No OCR result for final consensus")
-            # Continue processing
-        
-        # Handle direct orb extraction (fallback - only for non-consensus tasks)
-        if task.get("extract_orb_value", False) and not task.get("orb_final_consensus", False):
-            if hasattr(task, 'ocr_result') and task.ocr_result:
-                try:
-                    cleaned_orb = self.robust_number_ocr_cleanup(device_id, task.ocr_result)
-                    device_state_manager.update_state(device_id, "Orbs", cleaned_orb)
-                    print(f"[{device_id}] ✅ Direct orb extraction: '{task.ocr_result}' → '{cleaned_orb}'")
-                except Exception as e:
-                    print(f"[{device_id}] ❌ Direct orb extraction failed: {e}")
-                    # Don't crash, just continue without updating
-            # Continue processing - don't return early
-        
-        # Handle direct account ID extraction (simplified)
-        if task.get("extract_account_id_value", False):
-            if hasattr(task, 'ocr_result') and task.ocr_result:
-                try:
-                    cleaned_account_id = self.robust_account_id_cleanup(device_id, task.ocr_result)
-                    device_state_manager.update_state(device_id, "AccountID", cleaned_account_id)
-                    print(f"[{device_id}] ✅ Account ID extracted: '{task.ocr_result}' → '{cleaned_account_id}'")
-                except Exception as e:
-                    print(f"[{device_id}] ❌ Account ID extraction failed: {e}")
-                    # Don't crash, just continue without updating
-            # Continue processing
-        
-        # Handle temporary account ID storage for consensus
-        if task.get("temp_account_id_storage", False):
-            attempt_num = task.get("account_id_extraction_attempt", 0)
-            if hasattr(task, 'ocr_result') and task.ocr_result:
-                self.store_account_id_attempt(device_id, attempt_num, task.ocr_result)
-            # Continue processing - don't return early
-        
-        # Handle account ID consensus check
-        if task.get("account_id_consensus_check", False):
-            attempt_num = task.get("account_id_extraction_attempt", 0)
-            if hasattr(task, 'ocr_result') and task.ocr_result:
-                self.store_account_id_attempt(device_id, attempt_num, task.ocr_result)
-                consensus_value = self.check_account_id_consensus(device_id)
-                if consensus_value:
-                    device_state_manager.update_state(device_id, "AccountID", consensus_value)
-                    print(f"[{device_id}] ✅ Account ID consensus reached: {consensus_value}")
-                else:
-                    print(f"[{device_id}] ❌ No Account ID consensus - extraction failed")
-                    return  # Don't trigger next task set if consensus failed
-            
-        # Handle Airtable sync flag
-        if task.get("sync_to_airtable", False):
-            print(f"[{device_id}] Airtable sync requested")
-            sync_device_to_airtable(device_id)
-            return
         
         # Handle reset BEFORE other flags
         if task.get("Reset_Yukio_Retry", False):
@@ -977,8 +616,6 @@ class OptimizedBackgroundMonitor:
             "Login1_Prepare_For_Link_Tasks": ("login1_prepare_for_link", "→ Prepare for Link"),
             "Login2_Klab_Login_Tasks": ("login2_klab_login", "→ KLAB Login"),
             "Login3_Wait_For_2FA_Tasks": ("login3_wait_for_2fa", "→ Wait for 2FA"),
-            "Login4_Confirm_Link_Tasks": ("login4_confirm_link", "→ Confirm Link"),
-            "Endgame_Tasks": ("endgame", "→ Endgame"),  # Missing flag for endgame switching
             "BackToMain_Tasks": ("main", "→ Main")
         }
         
@@ -1199,7 +836,7 @@ class OptimizedBackgroundMonitor:
                     await self.process_monitor.kill_and_restart_game(device_id)
                     self.no_action_timers[device_id] = time.time()
                 
-                if self.process_monitor.should_check_process(device_id):
+                if await self.process_monitor.should_check_process(device_id):
                     is_bleach_running = await self.process_monitor.is_bleach_running(device_id)
                     
                     if self.process_monitor.is_initial_setup_needed(device_id):
@@ -1232,8 +869,7 @@ class OptimizedBackgroundMonitor:
                     "skip_yukio_event",
                     "kon_bonaza_1match_tasks",
                     "login2_klab_login",
-                    "login3_wait_for_2fa",
-                    "login4_confirm_link"
+                    "login3_wait_for_2fa"
                 ]
                 current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
                 if current_task_set not in helper_task_sets:
@@ -1266,314 +902,9 @@ class OptimizedBackgroundMonitor:
                 traceback.print_exc()
                 await asyncio.sleep(1)
         
-        return True
+        return None
     
-    def robust_number_ocr_cleanup(self, device_id: str, ocr_result: str) -> str:
-        """
-        Robust OCR cleanup specifically for numbers - handles common OCR character errors
-        PRESERVES original comma positioning since screen numbers always have commas
-        """
-        try:
-            if not ocr_result or not isinstance(ocr_result, str):
-                return "0"
-            
-            # Clean the raw result
-            raw_orb = ocr_result.strip()
-            print(f"[{device_id}] 🔍 Raw OCR: '{raw_orb}'")
-            
-            # Handle specific known complete misreadings first
-            known_fixes = {
-                # Common "2X,1X4" → "2,1X4" pattern (missing digit in thousands)
-                "202,100": "20,210",
-                "203,100": "20,310", 
-                "204,100": "20,410",
-                "205,100": "20,510",
-                "206,100": "20,610",
-                "207,100": "20,710",
-                "208,100": "20,810",
-                "209,100": "20,910",
-                "21,100": "21,110",
-                "21,200": "21,120",
-                "21,300": "21,130",
-                "21,400": "21,140",
-                "21,500": "21,150",
-                
-                # Common "X,1XX" → "XX,1XX" pattern (missing leading digit)  
-                "2,153": "21,153",
-                "2,134": "21,134",
-                "2,145": "21,145",
-                "1,234": "11,234",
-                "1,567": "15,567",
-                "3,456": "34,456",
-                
-                # Common swapped digit patterns
-                "12,143": "21,134",
-                "13,124": "31,124",
-                "14,123": "41,123"
-            }
-            
-            if raw_orb in known_fixes:
-                result = known_fixes[raw_orb]
-                print(f"[{device_id}] 🔧 Applied known fix: {raw_orb} → {result}")
-                return result
-            
-            # Fix common character misreadings while preserving comma position
-            result = raw_orb
-            
-            # Character-by-character fixes (but preserve comma and structure)
-            char_fixes = {
-                'O': '0', 'o': '0',     # O/o -> 0
-                'l': '1', 'I': '1',     # l/I -> 1  
-                'S': '5', 's': '5',     # S/s -> 5
-                'g': '9',               # g -> 9
-                'G': '6',               # G -> 6
-                'B': '8', 'b': '8',     # B/b -> 8
-                'D': '0',               # D -> 0
-                'Z': '2', 'z': '2',     # Z/z -> 2
-                'A': '4',               # A -> 4
-                'T': '7',               # T -> 7
-                'E': '3',               # E -> 3
-            }
-            
-            for wrong_char, correct_char in char_fixes.items():
-                result = result.replace(wrong_char, correct_char)
-            
-            # Remove any spaces but keep comma structure
-            result = result.replace(' ', '')
-            
-            # If result doesn't look like a number with comma, return original
-            if not (',' in result and len(result.replace(',', '')) >= 3):
-                print(f"[{device_id}] ⚠️ Result doesn't look like number, keeping original")
-                result = raw_orb
-            
-            print(f"[{device_id}] 🎯 Final result: {raw_orb} → {result}")
-            return result
-            
-        except Exception as e:
-            print(f"[{device_id}] ❌ OCR cleanup error: {e}")
-            return ocr_result  # Return original if cleanup fails
-    
-    def store_multi_orb_attempt(self, device_id: str, attempt_num: int, ocr_result: str):
-        """Store multiple orb attempts for intelligent consensus"""
-        if device_id not in self.orb_multi_attempts:
-            self.orb_multi_attempts[device_id] = {}
-        
-        # Clean the result using robust cleanup
-        cleaned_result = self.robust_number_ocr_cleanup(device_id, ocr_result)
-        self.orb_multi_attempts[device_id][attempt_num] = {
-            'raw': ocr_result,
-            'cleaned': cleaned_result
-        }
-        print(f"[{device_id}] 📝 Orb attempt {attempt_num}: '{ocr_result}' → '{cleaned_result}'")
-    
-    def get_best_orb_consensus(self, device_id: str) -> str:
-        """Get the best orb value from multiple attempts using intelligent consensus"""
-        if device_id not in self.orb_multi_attempts:
-            return None
-        
-        attempts = self.orb_multi_attempts[device_id]
-        
-        # Enhanced validation and scoring system
-        scored_results = []
-        
-        for attempt_num, attempt_data in attempts.items():
-            raw = attempt_data['raw']
-            cleaned = attempt_data['cleaned']
-            
-            # Score each result based on quality indicators
-            score = 0
-            
-            # Basic format check (has comma and reasonable length)
-            if ',' in cleaned and len(cleaned.replace(',', '')) >= 3:
-                score += 10
-            
-            # Digit pattern validation (should be mostly digits and comma)
-            digit_ratio = len([c for c in cleaned if c.isdigit() or c == ',']) / max(len(cleaned), 1)
-            if digit_ratio >= 0.8:
-                score += 15
-                
-            # Length reasonableness (orb counts usually 4-7 characters including comma)
-            if 4 <= len(cleaned) <= 7:
-                score += 10
-                
-            # Comma position check (should be exactly 3 digits after comma)
-            if ',' in cleaned:
-                comma_pos = cleaned.find(',')
-                digits_after_comma = len(cleaned) - comma_pos - 1
-                # Comma should have exactly 3 digits after it (like 1,234 or 21,573)
-                if digits_after_comma == 3:
-                    score += 15
-                else:
-                    score -= 10  # Penalize wrong comma position
-            
-            # Penalize obviously wrong patterns
-            if len(cleaned.replace(',', '')) < 3:  # Too short
-                score -= 20
-            if len(cleaned.replace(',', '')) > 8:   # Too long  
-                score -= 15
-            if cleaned.count(',') > 1:  # Multiple commas
-                score -= 25
-            if cleaned.count(',') == 0:  # No comma at all
-                score -= 15
-            
-            # Special penalty for clearly wrong patterns
-            if cleaned in ["21,1345", "2,1573", "211,345"]:  # Known bad patterns
-                score -= 50
-                
-            scored_results.append({
-                'attempt': attempt_num,
-                'raw': raw,
-                'cleaned': cleaned,
-                'score': score
-            })
-        
-        # Sort by score (highest first)
-        scored_results.sort(key=lambda x: x['score'], reverse=True)
-        
-        print(f"[{device_id}] 🔍 Scored attempts:")
-        for result in scored_results:
-            print(f"[{device_id}]   #{result['attempt']}: '{result['raw']}' → '{result['cleaned']}' (score: {result['score']})")
-        
-        # Count frequency of top-scored results
-        value_counts = {}
-        valid_results = [r for r in scored_results if r['score'] > 0]
-        
-        for result in valid_results:
-            cleaned = result['cleaned']
-            value_counts[cleaned] = value_counts.get(cleaned, 0) + 1
-        
-        print(f"[{device_id}] 📊 Valid value frequencies: {value_counts}")
-        
-        if not value_counts:
-            print(f"[{device_id}] ⚠️ No valid results found")
-            del self.orb_multi_attempts[device_id]
-            return None
-        
-        # Smart consensus logic
-        best_value = None
-        
-        # If we have a clear winner (appears multiple times)
-        most_frequent = max(value_counts, key=value_counts.get)
-        frequency = value_counts[most_frequent]
-        
-        if frequency >= 2:
-            best_value = most_frequent
-            reason = f"appeared {frequency} times"
-        elif len(value_counts) == 1:
-            # Only one valid result
-            best_value = most_frequent
-            reason = "only valid result"
-        else:
-            # Multiple different results - pick highest scored one
-            best_scored = scored_results[0]
-            if best_scored['score'] >= 20:  # High confidence threshold
-                best_value = best_scored['cleaned']
-                reason = f"highest score ({best_scored['score']})"
-        
-        if best_value:
-            print(f"[{device_id}] 🎯 Consensus winner: '{best_value}' ({reason})")
-            del self.orb_multi_attempts[device_id]
-            return best_value
-        else:
-            print(f"[{device_id}] ❌ No reliable consensus found")
-            del self.orb_multi_attempts[device_id]
-            return None
-    
-    def robust_account_id_cleanup(self, device_id: str, ocr_result: str) -> str:
-        """
-        Robust Account ID cleanup - handles common OCR character errors
-        Account IDs are usually numeric strings (like "12345678901")
-        """
-        try:
-            if not ocr_result or not isinstance(ocr_result, str):
-                return ""
-            
-            # Clean the raw result
-            raw_id = ocr_result.strip()
-            print(f"[{device_id}] 🔍 Raw Account ID OCR: '{raw_id}'")
-            
-            # Fix common character misreadings for account IDs
-            result = raw_id
-            
-            # Character-by-character fixes
-            char_fixes = {
-                'O': '0', 'o': '0',     # O/o -> 0
-                'l': '1', 'I': '1',     # l/I -> 1  
-                'S': '5', 's': '5',     # S/s -> 5
-                'g': '9',               # g -> 9
-                'G': '6',               # G -> 6
-                'B': '8', 'b': '8',     # B/b -> 8
-                'D': '0',               # D -> 0
-                'Z': '2', 'z': '2',     # Z/z -> 2
-                'A': '4',               # A -> 4
-                'T': '7',               # T -> 7
-                'E': '3',               # E -> 3
-            }
-            
-            for wrong_char, correct_char in char_fixes.items():
-                result = result.replace(wrong_char, correct_char)
-            
-            # Remove any spaces and non-numeric characters except digits
-            result = ''.join(c for c in result if c.isdigit())
-            
-            # Account IDs should be numeric and reasonably long (usually 8-15 digits)
-            if len(result) < 5:
-                print(f"[{device_id}] ⚠️ Account ID too short, keeping original")
-                result = raw_id
-            elif len(result) > 20:
-                print(f"[{device_id}] ⚠️ Account ID too long, truncating")
-                result = result[:15]  # Keep first 15 digits
-            
-            print(f"[{device_id}] 🎯 Account ID result: {raw_id} → {result}")
-            return result
-            
-        except Exception as e:
-            print(f"[{device_id}] ❌ Account ID cleanup error: {e}")
-            return ocr_result  # Return original if cleanup fails
-    
-    def store_account_id_attempt(self, device_id: str, attempt_num: int, ocr_result: str):
-        """Store account ID extraction attempt for consensus checking"""
-        if device_id not in self.account_id_attempts:
-            self.account_id_attempts[device_id] = {}
-        
-        # Clean the result (remove extra spaces, fix common OCR errors)
-        cleaned_result = ocr_result.strip().replace("  ", " ").replace("O", "0").replace("o", "0").replace("l", "1").replace("I", "1")
-        self.account_id_attempts[device_id][attempt_num] = cleaned_result
-        print(f"[{device_id}] Account ID attempt {attempt_num}/4: '{cleaned_result}'")
-    
-    def check_account_id_consensus(self, device_id: str):
-        """Check if there's consensus among account ID extraction attempts"""
-        if device_id not in self.account_id_attempts:
-            return None
-        
-        attempts = self.account_id_attempts[device_id]
-        
-        # Count occurrences of each value
-        value_counts = {}
-        for attempt_num, value in attempts.items():
-            if value and value.strip() and len(value.strip()) > 5:  # Only count non-empty values with reasonable length
-                value_counts[value] = value_counts.get(value, 0) + 1
-        
-        # Find values that appear 2 or more times
-        consensus_candidates = [value for value, count in value_counts.items() if count >= 2]
-        
-        if consensus_candidates:
-            # Return the most frequent value
-            consensus_value = max(consensus_candidates, key=lambda x: value_counts[x])
-            print(f"[{device_id}] Account ID extraction attempts: {attempts}")
-            print(f"[{device_id}] Value counts: {value_counts}")
-            print(f"[{device_id}] Consensus value: '{consensus_value}' (appeared {value_counts[consensus_value]} times)")
-            
-            # Clear attempts after consensus
-            self.account_id_attempts[device_id] = {}
-            return consensus_value
-        else:
-            print(f"[{device_id}] No Account ID consensus - all attempts different: {attempts}")
-            # Clear attempts after failed consensus
-            self.account_id_attempts[device_id] = {}
-            return None
-        
-    async def run_monitoring_cycle(self): 
+    async def monitor_all_devices(self) -> Optional[str]:
         """Monitor all devices concurrently"""
         self.stop_event.clear()
         
@@ -1628,7 +959,7 @@ class OptimizedBackgroundMonitor:
                 
                 async def check_and_manage_device(device_id: str):
                     try:
-                        if self.process_monitor.should_check_process(device_id):
+                        if await self.process_monitor.should_check_process(device_id):
                             is_bleach_running = await self.process_monitor.is_bleach_running(device_id)
                             
                             if self.process_monitor.is_initial_setup_needed(device_id):

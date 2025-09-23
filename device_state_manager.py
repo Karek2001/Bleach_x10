@@ -72,6 +72,7 @@ class DeviceStateManager:
             "Login2_Email_Done": 0,
             "Login2_Password_Done": 0,
             "Login2_Cloudflare_Done": 0,
+            "synced_to_airtable": False,
             "RestartingCount": 0,
             "LastUpdated": datetime.now().isoformat(),
             "CurrentTaskSet": "restarting",
@@ -176,7 +177,8 @@ class DeviceStateManager:
             "json_Account_Linked": "Account_Linked",
             "json_Login2_Email_Done": "Login2_Email_Done",
             "json_Login2_Password_Done": "Login2_Password_Done",
-            "json_Login2_Cloudflare_Done": "Login2_Cloudflare_Done"
+            "json_Login2_Cloudflare_Done": "Login2_Cloudflare_Done",
+            "json_isLinked": "isLinked"
         }
         
         if flag_name in flag_mapping:
@@ -467,11 +469,16 @@ class DeviceStateManager:
         if state.get("AccountID", "") == "":
             return "extract_account_id"
         
-        # Account ID extraction complete, check Login1 Prepare for Link
-        if state.get("Login1_Prepare_Link", 0) == 0:
-            return "login1_prepare_for_link"
+        # Account ID extraction complete, check account linking status
+        if state.get("isLinked", 0) != 1:
+            # Not linked yet - check Login1 Prepare for Link
+            if state.get("Login1_Prepare_Link", 0) == 0:
+                return "login1_prepare_for_link"
+        else:
+            # Account is linked - proceed to endgame tasks
+            return "endgame"
         
-        # Login preparation complete, proceed to Kon Bonaza
+        # Login preparation complete, proceed to Kon Bonaza (for non-linked accounts)
         if state.get("Skip_Kon_Bonaza_100Times", 0) < 100:
             return "skip_kon_bonaza"
         

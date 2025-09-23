@@ -16,7 +16,7 @@ async def handle_game_ready_routing(device_id):
     
     # Check if we're currently in a helper task set - if so, don't override it
     current_task_set = getattr(monitor.process_monitor, 'active_task_set', {}).get(device_id, 'main')
-    helper_task_sets = ['login2_klab_login', 'login3_wait_for_2fa']
+    helper_task_sets = ['login2_klab_login', 'login3_wait_for_2fa', 'login4_confirm_link']
     
     if current_task_set in helper_task_sets:
         print(f"[{device_id}] Currently in helper task set '{current_task_set}' - not overriding")

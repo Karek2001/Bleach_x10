@@ -1,15 +1,12 @@
 Extract_Orb_Counts_Tasks = [
-{
-    "task_name": "Extract Orb Count",
-    "type": "ocr",
-    "roi": [711, 6, 75, 27],
-    "use_match_position": False,
-    "click_location_str": "87,26",
-    "is_id": False,
-    "cooldown": 5.0,
-    "sleep": 10,
-    "extract_orb_value": True,  # Special flag to extract orb value to JSON
-    "Extract_Account_ID_Tasks": True  # This triggers the next task set
-}
+    {
+        "task_name": "Ultra Robust Orb Extraction",
+        "type": "ultra_robust_orb",  # New special type
+        "priority": 1,
+        "cooldown": 60.0,
+        "pre_delay": 3,  # Wait for screen to stabilize
+        "click_location_str": "93,23",
+        "Extract_Account_ID_Tasks": True  # Move to next task set after successful extraction
+    }
 ]
     

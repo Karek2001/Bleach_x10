@@ -174,16 +174,24 @@ Mark gift box orbs collection as complete
 - **Usage**: Sets `Recive_Giftbox_Orbs = 1` in device state
 
 ### `json_Login1_Prepare_Link`
-Mark login preparation as complete
+Save account linking preparation status
 - **Type**: Boolean flag
 - **Usage**: Sets `Login1_Prepare_Link = 1` in device state
 - **Purpose**: Indicates account linking preparation is complete
 
 ### `json_Account_Linked`
-Mark account as successfully linked
-- **Type**: Boolean flag
-- **Usage**: Sets `Account_Linked = 1` in device state
-- **Purpose**: Indicates KLAB account linking is complete
+Save account linking status
+- **Type**: Boolean flag (True sets to 1)
+- **Target**: Device JSON `Account_Linked` key
+- **Usage**: Marks account as linked to KLAB ID
+- **Purpose**: Tracks linking completion status
+
+### `json_isLinked`
+Save account linked status to main isLinked key
+- **Type**: Boolean flag (True sets to 1)
+- **Target**: Device JSON `isLinked` key
+- **Usage**: Marks account as linked, prevents re-linking
+- **Purpose**: Main flag that controls login task flow when KLAB account linking is complete
 
 ### `json_ScreenShot_MainMenu`
 Sets ScreenShot_MainMenu to complete (1)
@@ -383,8 +391,22 @@ Switch to KLAB login helper tasks
 Switch to 2FA wait helper tasks
 - **Type**: Boolean flag
 - **Target**: `login3_wait_for_2fa`
-- **Usage**: Triggered from login2_klab_login_tasks after login attempt
-- **Purpose**: Waits for and handles 2FA authentication
+- **Usage**: Triggered from login2_klab_login_tasks
+- **Purpose**: Waits for 2FA confirmation and handles login completion
+
+### `Login4_Confirm_Link_Tasks`
+Switch to confirm link helper tasks
+- **Type**: Boolean flag
+- **Target**: `login4_confirm_link`
+- **Usage**: Triggered from login3_wait_for_2fa_tasks
+- **Purpose**: Confirms the final linking process between account and application
+
+### `Endgame_Tasks`
+Switch to endgame main tasks
+- **Type**: Boolean flag
+- **Target**: `endgame`
+- **Usage**: Main task set for linked accounts (isLinked = 1)
+- **Purpose**: Post-linking progression tasks for fully linked accounts
 
 ### `BackToMain_Tasks`
 Return to main task set
@@ -392,6 +414,14 @@ Return to main task set
 - **Target**: `main`
 - **Usage**: Used in helper tasks to return to main flow
 - **Purpose**: Exits helper task flow and returns to main tasks
+
+### `sync_to_airtable`
+Synchronize device data to Airtable
+- **Type**: Boolean flag
+- **Usage**: Triggers Airtable synchronization process
+- **Purpose**: Updates Airtable record with device state data
+- **Fields synced**: isLinked, AccountID, UserName, Orbs, Price (calculated)
+- **Post-action**: Sets `synced_to_airtable = True` in device state
 
 ### `Enter_Email`
 Automatically type email from device JSON after clicking
@@ -466,20 +496,77 @@ Extract orb count value and save to device JSON
 - **Validation**: Keeps searching until comma-formatted value is found
 - **Example**: Used in orb count extraction tasks
 
+### `extract_orb_value`
+Extract orb count and save to device JSON (legacy single-attempt)
+- **Type**: Boolean flag
+- **Usage**: Automatically extracts orb count from OCR and saves to "Orbs" field
+- **Requirements**: Use with OCR tasks that target orb display area
+- **Pattern**: Expects comma-formatted numbers (e.g., "21,234")
+- **Action**: Applies pattern correction and saves to JSON "Orbs" field
+- **Example**: Used in legacy orb extraction tasks
+
+### `temp_orb_storage`
+Temporarily store orb extraction attempt for consensus
+- **Type**: Boolean flag
+- **Usage**: Stores OCR result temporarily for multi-attempt consensus checking
+- **Requirements**: Use with `orb_extraction_attempt` number
+- **Action**: Stores cleaned OCR result in memory for comparison
+- **Purpose**: Part of 4-attempt consensus system for accurate orb extraction
+
+### `orb_consensus_check`
+Perform consensus check on orb extraction attempts
+- **Type**: Boolean flag
+- **Usage**: Triggers consensus analysis of all 4 orb extraction attempts
+- **Logic**: Finds values that appear 2+ times among attempts
+- **Action**: Saves consensus value to "Orbs" field, or fails if no consensus
+- **Purpose**: Final step in 4-attempt consensus system for 0% error rate
+
+### `orb_extraction_attempt`
+Mark which attempt number this orb extraction is
+- **Type**: Integer (1-4)
+- **Usage**: Identifies which of the 4 attempts this OCR extraction represents
+- **Required with**: `temp_orb_storage` or `orb_consensus_check` flags
+- **Purpose**: Tracks attempt sequence for consensus system
+
 ### `extract_account_id_value`
-Extract account ID value and save to device JSON
+Extract account ID value and save to device JSON (legacy single-attempt)
 - **Type**: Boolean flag
 - **Usage**: Automatically extracts ID text from OCR and saves to "AccountID" field
 - **Requirements**: Use with `"is_id": true` for ID format
 - **Action**: Extracts "ID: 88 534 886" → saves "ID: 88 534 886" to JSON "AccountID" field
-- **Example**: Used in account ID extraction tasks
+- **Example**: Used in legacy account ID extraction tasks
+
+### `temp_account_id_storage`
+Temporarily store account ID extraction attempt for consensus
+- **Type**: Boolean flag
+- **Usage**: Stores OCR result temporarily for multi-attempt consensus checking
+- **Requirements**: Use with `account_id_extraction_attempt` number
+- **Action**: Stores cleaned OCR result in memory for comparison
+- **Purpose**: Part of 4-attempt consensus system for accurate Account ID extraction
+
+### `account_id_consensus_check`
+Perform consensus check on account ID extraction attempts
+- **Type**: Boolean flag
+- **Usage**: Triggers consensus analysis of all 4 account ID extraction attempts
+- **Logic**: Finds values that appear 2+ times among attempts
+- **Action**: Saves consensus value to "AccountID" field, or fails if no consensus
+- **Purpose**: Final step in 4-attempt consensus system for 100% accuracy
+
+### `account_id_extraction_attempt`
+Mark which attempt number this account ID extraction is
+- **Type**: Integer (1-4)
+- **Usage**: Identifies which of the 4 attempts this OCR extraction represents
+- **Required with**: `temp_account_id_storage` or `account_id_consensus_check` flags
+- **Purpose**: Tracks attempt sequence for consensus system
 
 ### `save_screenshot_with_username`
-Take screenshot and save with username from device state
+Take screenshot and save with device number and username from device state
 - **Type**: Boolean flag
 - **Usage**: Captures current screen and saves to stock_images folder
-- **Filename**: Uses "UserName" from device JSON (e.g., "Player.png")
-- **Folder**: Creates/uses "stock_images" directory in project root
+- **Filename**: Uses device number + `UserName` field (e.g., "8_Player.png")
+- **Directory**: `stock_images/`
+- **Format**: PNG image, cropped to roi [160, 0, 779, 540]
+- **Purpose**: Account documentation and verification with device identification
 - **Trigger**: Only when pixel detection task is matched
 - **Example**: Used in main menu screenshot tasks
 
