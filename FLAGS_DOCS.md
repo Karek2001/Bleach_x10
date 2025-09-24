@@ -240,6 +240,18 @@ Increments Character_Slots_Count counter by 1
 - **Action**: Increments counter, sets Character_Slots_Purchase to 1 when reaching 200
 - **Usage**: Tracks character slot purchases until completion threshold
 
+### `increment_stock`
+Increments global stock counter by 1 in currentlyStock.json
+- **Type**: Boolean flag
+- **Action**: Increments STOCK value by 1 in device_states/currentlyStock.json
+- **Usage**: Tracks global stock/inventory changes across all devices
+- **File Location**: `device_states/currentlyStock.json`
+- **Auto-Generation**: File automatically created if deleted with default STOCK: 1
+- **Timezone**: All timestamps use Istanbul/Europe timezone (+03:00)
+- **Format**: `{"STOCK": value, "LastUpdated": "ISO_timestamp_with_timezone"}`
+- **Example**: Used in reward collection, mission completion, item gathering tasks
+- **Logging**: Shows device name and increment: `[DEVICE1] Stock incremented: 5 → 6`
+
 ---
 
 ## Task Set Switching Flags
@@ -560,15 +572,17 @@ Mark which attempt number this account ID extraction is
 - **Purpose**: Tracks attempt sequence for consensus system
 
 ### `save_screenshot_with_username`
-Take screenshot and save with device number and username from device state
+Take screenshot and save with current stock, device number and username from device state
 - **Type**: Boolean flag
 - **Usage**: Captures current screen and saves to stock_images folder
-- **Filename**: Uses device number + `UserName` field (e.g., "8_Player.png")
+- **Filename**: Uses current stock + device number + `UserName` field (e.g., "15_8_Player.png")
+- **Format**: `{CurrentStock}_{DeviceNumber}_{UserName}.png`
 - **Directory**: `stock_images/`
-- **Format**: PNG image, cropped to roi [160, 0, 779, 540]
-- **Purpose**: Account documentation and verification with device identification
+- **Image Format**: PNG image, cropped to roi [160, 0, 779, 540]
+- **Purpose**: Account documentation and verification with stock tracking and device identification
 - **Trigger**: Only when pixel detection task is matched
 - **Example**: Used in main menu screenshot tasks
+- **Stock Integration**: Automatically includes current global stock value in filename
 
 ### `type_text`
 Types text from device JSON into input fields
@@ -643,17 +657,31 @@ Descriptive name for the task
 }
 ```
 
-### Screenshot Task with Username
+### Screenshot Task with Stock and Username
 ```python
 {
     "task_name": "Take Main Menu Screenshot",
     "type": "pixel",
     "click_location_str": "0,0",
     "search_array": ["960,540", "#000000"],
-    "save_screenshot_with_username": true,
+    "save_screenshot_with_username": true,  # Saves as: {Stock}_{Device}_{User}.png
     "json_ScreenShot_MainMenu": true,
     "Extract_Orb_Count_Tasks": true,
     "cooldown": 1.0
+}
+```
+
+### Stock Management Task
+```python
+{
+    "task_name": "Collect Daily Reward [Stock Tracking]",
+    "type": "pixel",
+    "click_location_str": "480,350",
+    "search_array": ["450,320","#FFD700","510,380","#FFD700"],
+    "increment_stock": true,  # Increment global stock counter
+    "cooldown": 3.0,
+    "priority": 15,
+    "sleep": 1.5
 }
 ```
 
@@ -703,3 +731,6 @@ Descriptive name for the task
 - Task switching happens immediately when flag is triggered
 - Cooldowns prevent task spam and improve stability
 - Conditional flags allow dynamic task flow based on progress
+- **Timezone Handling**: All timestamps in device states and stock files use Istanbul/Europe timezone (+03:00), regardless of system location
+- **Stock Management**: The `increment_stock` flag works globally across all devices and auto-generates the stock file if deleted
+- **Auto-Generation**: Stock and device state files are automatically created/restored with default values if corrupted or deleted

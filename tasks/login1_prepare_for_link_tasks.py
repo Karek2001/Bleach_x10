@@ -13,8 +13,6 @@ Login1_Prepare_For_Link_Tasks = [
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 2.0,
-
-
         "json_isLinked": True,
         "sync_to_airtable": True,
     },
@@ -43,7 +41,7 @@ Login1_Prepare_For_Link_Tasks = [
         "search_array": ["249,41","#0d12b5","261,55","#e60012","422,42","#191919","529,43","#191919","254,138","#ffffff","362,149","#ffffff","456,149","#ffffff"],
         "priority": 2,
         "cooldown": 5.0,
-        "sleep": 5.0
+        "sleep": 18.0
     },
             {
         "task_name": "Skip Brave Info [Welcoming] [Prepare for Link]",
@@ -52,7 +50,7 @@ Login1_Prepare_For_Link_Tasks = [
         "search_array": ["923,490","#9d2a94","795,72","#ff2000","647,319","#51cf66"],
         "priority": 2,
         "cooldown": 5.0,
-        "sleep": 2.0
+        "sleep": 5.0
     },
             {
         "task_name": "Swipe 1 Time [Prepare for Link]",
@@ -64,9 +62,11 @@ Login1_Prepare_For_Link_Tasks = [
         "swipe_command": "shell input swipe 443 400 443 140 900",
         "priority": 2,
         "cooldown": 5.0,
-        "sleep": 10.0,
+        "sleep": 7.0,
         "Login2_Klab_Login_Tasks": True,
-        "sync_to_airtable": True,
+        "ClearFlag_Email_Complete": True,
+        "ClearFlag_Password_Complete": True,
+        "ClearFlag_Cloudflare_Complete": True,
     },
 
 ]

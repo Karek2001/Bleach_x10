@@ -68,6 +68,8 @@ class ProcessMonitor:
         self.last_action_time = {}
         self.action_count = {}
         self.last_action_name = {}
+        self.time_limited_search_start = {}  # Track when time-limited search started
+        self.time_limited_search_flags = defaultdict(set)  # Track which flags triggered time-limited search
         
     async def is_bleach_running(self, device_id: str) -> bool:
         """Check if Bleach Brave Souls process is running on the device"""
@@ -111,6 +113,10 @@ class ProcessMonitor:
         self.last_action_time[device_id] = time.time()
         self.action_count[device_id] = {}
         self.last_action_name[device_id] = None
+        
+        # Clear time-limited search state from OptimizedBackgroundMonitor if it exists
+        # This is needed when switching task sets or restarting
+        # The OptimizedBackgroundMonitor tracks time-limited searches separately
     
     def track_action(self, device_id: str, action_name: str) -> bool:
         """Track action and check for repetition. Returns True if should restart"""
@@ -132,13 +138,20 @@ class ProcessMonitor:
         if action_name not in self.action_count[device_id]:
             self.action_count[device_id][action_name] = 0
         
+        # Special handling for BackToStory tasks - don't count as repetition
+        if "Game Opened Ready To Use" in action_name:
+            # This is expected to run once per restart, don't count as repetition
+            self.action_count[device_id] = {}  # Reset counts when game is ready
+            self.last_action_name[device_id] = action_name
+            return False
+        
         if self.last_action_name[device_id] == action_name:
             self.action_count[device_id][action_name] += 1
             
             max_repetitions = 5 if "template" in action_name.lower() else 13
             
             if self.action_count[device_id][action_name] >= max_repetitions:
-                print(f"[{device_id}] Task repeated {max_repetitions}x - restart needed")
+                print(f"[{device_id}] Task '{action_name}' repeated {max_repetitions}x - restart needed")
                 return True
         else:
             self.action_count[device_id][action_name] = 1
@@ -165,7 +178,54 @@ class ProcessMonitor:
         return False
     
     def should_skip_task(self, device_id: str, task: dict) -> bool:
-        """Check if a task should be skipped based on StopSupport, RequireSupport flag or ConditionalRun"""
+        """Check if a task should be skipped based on StopSupport, RequireSupport flag, ConditionalRun or TimeLimitedSearch"""
+        
+        # Check for time-limited search tasks
+        time_limit_seconds = task.get("TimeLimitedSearch")
+        if time_limit_seconds:
+            # This task has time-limited search - check if it should be skipped
+            trigger_flag = None
+            for key, value in task.items():
+                if key.startswith("RequireFlag_") and value:
+                    trigger_flag = key.replace("RequireFlag_", "")
+                    break
+            
+            if trigger_flag:
+                device_state = device_state_manager.get_state(device_id)
+                flag_value = device_state.get(trigger_flag, 0)
+                
+                # Check if the flag just got set (and we haven't started timing yet)
+                if flag_value == 1 and trigger_flag not in self.time_limited_search_flags.get(device_id, set()):
+                    # Start the timer for this flag
+                    self.time_limited_search_start[device_id] = time.time()
+                    self.time_limited_search_flags[device_id].add(trigger_flag)
+                    print(f"[{device_id}] ⏱️ Starting {time_limit_seconds}s time-limited search for '{task.get('task_name', 'Unknown')}'")
+                    return False  # Allow the task to run
+                
+                # Check if we're within the time limit
+                if flag_value == 1 and trigger_flag in self.time_limited_search_flags.get(device_id, set()):
+                    elapsed = time.time() - self.time_limited_search_start.get(device_id, time.time())
+                    if elapsed <= time_limit_seconds:
+                        # Still within time limit, allow search
+                        return False
+                    else:
+                        # Time limit exceeded, skip this task
+                        if task.get('task_name', 'Unknown') not in getattr(self, 'time_limit_logged', set()):
+                            print(f"[{device_id}] ⏱️ Time limit ({time_limit_seconds}s) expired for '{task.get('task_name', 'Unknown')}' - skipping")
+                            if not hasattr(self, 'time_limit_logged'):
+                                self.time_limit_logged = set()
+                            self.time_limit_logged.add(task.get('task_name', 'Unknown'))
+                            # Set the flag that indicates we've checked but didn't find it
+                            complete_flag = task.get("SetFlag_Remembered_Check_Complete")
+                            if complete_flag:
+                                device_state_manager.update_state(device_id, "Remembered_Check_Complete", 1)
+                                print(f"[{device_id}] ✅ Flag set: Remembered_Check_Complete = 1 (timeout)")
+                        return True
+                
+                # Flag not set yet, normal blocking
+                if flag_value != 1:
+                    print(f"[{device_id}] Task '{task.get('task_name', 'Unknown')}' blocked - waiting for {trigger_flag}")
+                    return True
         
         # FIRST: Check RequireSupport flag (task needs something to be true)
         require_support = task.get("RequireSupport")
@@ -174,22 +234,26 @@ class ProcessMonitor:
             if not should_require:  # If requirement is NOT met, skip task
                 return True
         
-        # SECOND: Check StopSupport flag (should prevent task from running)
-        stop_support = task.get("StopSupport")
-        if stop_support:
-            should_stop = device_state_manager.check_stop_support(device_id, stop_support)
-            if should_stop:
-                return True
-        
-        # THIRD: Check ConditionalRun - skip task if conditions are NOT met
+        # Check ConditionalRun flag (existing functionality)
         conditional_run = task.get("ConditionalRun")
-        if conditional_run and isinstance(conditional_run, list):
+        if conditional_run:
             device_state = device_state_manager.get_state(device_id)
-            
             for key in conditional_run:
                 value = device_state.get(key, 0)
                 if value != 1:
                     return True  # Skip task if any condition is not met
+        
+        # Check RequireFlag_ flags (new sequential execution system)
+        device_state = device_state_manager.get_state(device_id)
+        for key, value in task.items():
+            if key.startswith("RequireFlag_") and value:
+                flag_name = key.replace("RequireFlag_", "")
+                flag_value = device_state.get(flag_name, 0)
+                if flag_value != 1:
+                    # Don't log for time-limited tasks (already handled above)
+                    if not task.get("TimeLimitedSearch"):
+                        print(f"[{device_id}] Task '{task.get('task_name', 'Unknown')}' blocked - waiting for {flag_name}")
+                    return True  # Skip task until required flag is set
         
         return False
         
@@ -200,14 +264,36 @@ class ProcessMonitor:
         task_map = {
             "main": StoryMode_Tasks,
             "restarting": Restarting_Tasks,
-            "endgame": Endgame_Tasks,
+            "guild_tutorial": GUILD_TUTORIAL_TASKS,
+            "guild_rejoin": Guild_Rejoin,
+            "sell_characters": Sell_Characters,
+            "sell_accsesurry": Sell_Accessury,
+            "hardstory": HardStory_Tasks,
+            "sidestory": SideStory,
+            "substories": SubStories,
+            "substories_check": SubStories_check,
+            "character_slots_purchase": Character_Slots_Purchase,
+            "exchange_gold_characters": Exchange_Gold_Characters,
+            "recive_giftbox": Recive_GiftBox,
+            "recive_giftbox_check": Recive_Giftbox_Check,
+            "recive_giftbox_orbs": Recive_Giftbox_Orbs,
+            "recive_giftbox_orbs_check": Recive_Giftbox_Orbs_Check,
+            "skip_kon_bonaza": Skip_Kon_Bonaza,
+            "kon_bonaza_1match_tasks": Kon_Bonaza_1Match_Tasks,
+            "skip_yukio_event": Skip_Yukio_Event_Tasks,
+            "sort_characters_lowest_level": Sort_Characters_Lowest_Level_Tasks,
+            "sort_filter_ascension": Sort_Filter_Ascension_Tasks,
+            "sort_multi_select_garbage_first": Sort_Multi_Select_Garbage_First_Tasks,
+            "upgrade_characters_level": Upgrade_Characters_Level,
+            "upgrade_characters_back_to_edit": Upgrade_Characters_Back_To_Edit,
             "main_screenshot": Main_Screenshot_Tasks,
             "extract_orb_counts": Extract_Orb_Counts_Tasks,
             "extract_account_id": Extract_Account_ID_Tasks,
             "login1_prepare_for_link": Login1_Prepare_For_Link_Tasks,
             "login2_klab_login": Login2_Klab_Login_Tasks,
             "login3_wait_for_2fa": Login3_Wait_For_2FA_Tasks,
-            "login4_confirm_link": Login4_Confirm_Link_Tasks
+            "login4_confirm_link": Login4_Confirm_Link_Tasks,
+            "endgame": Endgame_Tasks
         }
         
         # Get base tasks or default to restarting
@@ -225,7 +311,19 @@ class ProcessMonitor:
     
     def set_active_tasks(self, device_id: str, task_set: str):
         """Set the active task set for a device and update state"""
-        valid_sets = ["main", "restarting", "endgame", "main_screenshot", "extract_orb_counts", "extract_account_id", "login1_prepare_for_link", "login2_klab_login", "login3_wait_for_2fa", "login4_confirm_link"]
+        valid_sets = [
+            "main", "restarting", "guild_tutorial", "guild_rejoin", 
+            "sell_characters", "sell_accsesurry", "hardstory", "sidestory", 
+            "substories", "substories_check", "character_slots_purchase",
+            "exchange_gold_characters", "recive_giftbox", "recive_giftbox_check",
+            "recive_giftbox_orbs", "recive_giftbox_orbs_check", "skip_kon_bonaza",
+            "kon_bonaza_1match_tasks", "skip_yukio_event", "sort_characters_lowest_level",
+            "sort_filter_ascension", "sort_multi_select_garbage_first",
+            "upgrade_characters_level", "upgrade_characters_back_to_edit",
+            "main_screenshot", "extract_orb_counts", "extract_account_id",
+            "login1_prepare_for_link", "login2_klab_login", "login3_wait_for_2fa",
+            "login4_confirm_link", "endgame"
+        ]
         
         if task_set in valid_sets:
             self.active_task_set[device_id] = task_set
@@ -236,14 +334,36 @@ class ProcessMonitor:
             task_names = {
                 "main": "Main",
                 "restarting": "Restarting", 
-                "endgame": "Endgame",
+                "guild_tutorial": "Guild Tutorial",
+                "guild_rejoin": "Guild Rejoin",
+                "sell_characters": "Sell Characters",
+                "sell_accsesurry": "Sell Accessory",
+                "hardstory": "Hard Story",
+                "sidestory": "Side Story",
+                "substories": "Sub Stories",
+                "substories_check": "Sub Stories Check",
+                "character_slots_purchase": "Character Slots Purchase",
+                "exchange_gold_characters": "Exchange Gold Characters",
+                "recive_giftbox": "Receive Gift Box",
+                "recive_giftbox_check": "Receive Gift Box Check",
+                "recive_giftbox_orbs": "Receive Gift Box Orbs",
+                "recive_giftbox_orbs_check": "Receive Gift Box Orbs Check",
+                "skip_kon_bonaza": "Skip Kon Bonanza",
+                "kon_bonaza_1match_tasks": "Kon Bonanza 1 Match",
+                "skip_yukio_event": "Skip Yukio Event",
+                "sort_characters_lowest_level": "Sort Characters Lowest Level",
+                "sort_filter_ascension": "Sort Filter Ascension",
+                "sort_multi_select_garbage_first": "Sort Multi Select Garbage First",
+                "upgrade_characters_level": "Upgrade Characters Level",
+                "upgrade_characters_back_to_edit": "Upgrade Characters Back To Edit",
                 "main_screenshot": "Main Screenshot",
                 "extract_orb_counts": "Extract Orb Counts",
                 "extract_account_id": "Extract Account ID", 
                 "login1_prepare_for_link": "Prepare For Link",
                 "login2_klab_login": "KLAB Login", 
                 "login3_wait_for_2fa": "Wait For 2FA",
-                "login4_confirm_link": "Confirm Link"
+                "login4_confirm_link": "Confirm Link",
+                "endgame": "Endgame"
             }
             print(f"[{device_id}] → {task_names.get(task_set, task_set)}")
     
@@ -334,13 +454,20 @@ class BackgroundMonitor:
         if action_name not in self.action_count[device_id]:
             self.action_count[device_id][action_name] = 0
         
+        # Special handling for BackToStory tasks - don't count as repetition
+        if "Game Opened Ready To Use" in action_name:
+            # This is expected to run once per restart, don't count as repetition
+            self.action_count[device_id] = {}  # Reset counts when game is ready
+            self.last_action_name[device_id] = action_name
+            return False
+        
         if self.last_action_name[device_id] == action_name:
             self.action_count[device_id][action_name] += 1
             
             max_repetitions = 5 if "template" in action_name.lower() else 13
             
             if self.action_count[device_id][action_name] >= max_repetitions:
-                print(f"[{device_id}] Task repeated {max_repetitions}x - restart needed")
+                print(f"[{device_id}] Task '{action_name}' repeated {max_repetitions}x - restart needed")
                 return True
         else:
             self.action_count[device_id][action_name] = 1
@@ -560,6 +687,7 @@ class OptimizedBackgroundMonitor:
         self.device_sleep_until: Dict[str, float] = {}
         self.keep_checking_until: Dict[str, float] = {}
         self.keep_checking_task: Dict[str, str] = {}
+        self.text_input_active: Dict[str, float] = {}  # Track when text input is happening
         
         # Print initial device states on startup
         device_state_manager.print_all_device_states()
@@ -648,25 +776,49 @@ class OptimizedBackgroundMonitor:
         
         # Check for Enter_Email flag (existing functionality)
         if task.get("Enter_Email", False):
-            await asyncio.sleep(2.0)  # 2 second delay before typing
+            # Lock text input to pause all other tasks
+            self.text_input_active[device_id] = time.time() + 15.0  # 15 second lock
+            print(f"[{device_id}] 🔒 Text input locked - pausing all other tasks for 15s")
+            
+            await asyncio.sleep(3.0)  # 3 second delay before typing email
             device_state = device_state_manager.get_state(device_id)
             email = device_state.get("Email", "")
             if email:
                 print(f"[{device_id}] Entering email: {email}")
                 await execute_text_input(device_id, email)
+                # Additional delay after email entry
+                await asyncio.sleep(1.0)
+                print(f"[{device_id}] ✅ Email entered, waiting 1s...")
             else:
                 print(f"[{device_id}] Warning: No email found in device state")
+            
+            # Release text input lock
+            if device_id in self.text_input_active:
+                del self.text_input_active[device_id]
+            print(f"[{device_id}] 🔓 Text input unlocked - resuming task detection")
         
         # Check for Enter_Password flag (existing functionality)
         if task.get("Enter_Password", False):
-            await asyncio.sleep(2.0)  # 2 second delay before typing
+            # Lock text input to pause all other tasks
+            self.text_input_active[device_id] = time.time() + 15.0  # Same 15 second lock as email
+            print(f"[{device_id}] 🔒 Text input locked - pausing all other tasks for 15s")
+            
+            await asyncio.sleep(3.0)  # Same 3 second delay as email
             device_state = device_state_manager.get_state(device_id)
             password = device_state.get("Password", "")
             if password:
-                print(f"[{device_id}] Entering password: {'*' * len(password)}")  # Hide password in logs
+                print(f"[{device_id}] Entering password: {password}")  # Show actual password (no hiding)
                 await execute_text_input(device_id, password)
+                # Additional delay after password entry (same as email)
+                await asyncio.sleep(1.0)
+                print(f"[{device_id}] ✅ Password entered, waiting 1s...")
             else:
                 print(f"[{device_id}] Warning: No password found in device state")
+            
+            # Release text input lock
+            if device_id in self.text_input_active:
+                del self.text_input_active[device_id]
+            print(f"[{device_id}] 🔓 Text input unlocked - resuming task detection")
 
     def get_prioritized_tasks(self, device_id: str) -> List[dict]:
         """Return tasks already sorted by priority from get_active_tasks, with KeepChecking filtering"""
@@ -753,6 +905,10 @@ class OptimizedBackgroundMonitor:
         for flag in json_flags:
             if task.get(flag, False):
                 device_state_manager.set_json_flag(device_id, flag, 1)
+        
+        # Handle increment_stock flag
+        if task.get("increment_stock", False):
+            device_state_manager.increment_stock(device_id)
         
         # Handle Kon Bonanza increment
         if task.get("Increment_Kon_Bonaza", False):
@@ -944,12 +1100,10 @@ class OptimizedBackgroundMonitor:
         
         # Handle standard task switching flags (including new ones)
         flag_handlers = {
-            "BackToStory": ("main", "→ Main"),
             "NeedGuildTutorial": ("guild_tutorial", "→ Guild Tutorial"),
             "NeedToRejoin": ("guild_rejoin", "→ Guild Rejoin"),
             "isRefreshed": ("guild_tutorial", "→ Guild Tutorial"),
-            "BackToRestartingTasks": ("restarting", "→ Restarting"),
-            "BackToMain": ("main", "→ Main"),
+            "BackToRestartingTasks": ("restarting", "→ Restarting [Error Recovery]"),
             "Characters_Full": ("sell_characters", "→ Sell Characters"),
             "SellAccsesurry": ("sell_accsesurry", "→ Sell Accessory"),
             "HardStory": ("hardstory", "→ Hard Story"),
@@ -984,19 +1138,30 @@ class OptimizedBackgroundMonitor:
         
         # Handle NextTaskSet_Tasks flag - triggers progression to next task set
         if task.get("NextTaskSet_Tasks", False):
+            current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
             recommended_mode = device_state_manager.get_next_task_set_after_restarting(device_id)
-            print(f"[{device_id}] Task completed → Progression to {recommended_mode}")
-            self.process_monitor.set_active_tasks(device_id, recommended_mode)
+            # Only switch if we're actually changing to a different task set
+            if recommended_mode != current_task_set:
+                print(f"[{device_id}] Task set progression: {current_task_set} → {recommended_mode}")
+                self.process_monitor.set_active_tasks(device_id, recommended_mode)
+                # Reset action tracking when switching task sets
+                self.process_monitor.reset_action_tracking(device_id)
+            else:
+                print(f"[{device_id}] Already in task set: {recommended_mode}")
             return
         
-        # Enhanced BackToStory handling with new progression logic
+        # BackToStory is now deprecated in favor of NextTaskSet_Tasks
+        # Keeping for backward compatibility but redirecting to NextTaskSet_Tasks logic
         if task.get("BackToStory", False):
             current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
             if current_task_set == "restarting":
                 # Use new progression logic from device_state_manager
                 recommended_mode = device_state_manager.get_next_task_set_after_restarting(device_id)
-                print(f"[{device_id}] Progression → {recommended_mode}")
-                self.process_monitor.set_active_tasks(device_id, recommended_mode)
+                if recommended_mode != current_task_set:
+                    print(f"[{device_id}] [BackToStory Legacy] Restarting Complete → {recommended_mode}")
+                    self.process_monitor.set_active_tasks(device_id, recommended_mode)
+                    # Clear the restarting tracking to prevent re-triggering
+                    self.process_monitor.reset_action_tracking(device_id)
                 return
         
         for flag, (task_set, message) in flag_handlers.items():
@@ -1028,6 +1193,21 @@ class OptimizedBackgroundMonitor:
                 print(f"[{device_id}] {message}")
                 self.process_monitor.set_active_tasks(device_id, task_set)
                 break
+        
+        # Handle SetFlag_ flags for sequential task execution
+        for key, value in task.items():
+            if key.startswith("SetFlag_") and value:
+                flag_name = key.replace("SetFlag_", "")
+                device_state_manager.update_state(device_id, flag_name, 1)
+                print(f"[{device_id}] ✅ Flag set: {flag_name} = 1")
+        
+        # Handle ClearFlag_ flags for restart recovery
+        for key, value in task.items():
+            if key.startswith("ClearFlag_") and value:
+                flag_name = key.replace("ClearFlag_", "")
+                device_state_manager.update_state(device_id, flag_name, 0)
+                print(f"[{device_id}] 🔄 Flag cleared: {flag_name} = 0 (restart recovery)")
+        
 
     async def process_matched_tasks(self, device_id: str, matched_tasks: List[dict]) -> bool:
         """Process all matched tasks intelligently"""
@@ -1074,15 +1254,18 @@ class OptimizedBackgroundMonitor:
                     await self.process_monitor.kill_and_restart_game(device_id)
                     return logical_triggered
                 
-                # Handle other task flags
-                await self.handle_task_flags(device_id, task)
-                
                 # Execute the click if not a detection-only task
                 if task.get("click_location_str") != "0,0" and "[Multi:" not in task_name and "[Executed" not in task_name:
                     await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
                     
                     # Handle text input flags after clicking
                     await self.handle_text_input_flags(device_id, task)
+                    
+                    # Handle task flags AFTER execution for action tasks
+                    await self.handle_task_flags(device_id, task)
+                else:
+                    # For detection-only tasks (0,0 click), handle flags immediately
+                    await self.handle_task_flags(device_id, task)
                 
                 # Handle KeepChecking flag
                 if "KeepChecking" in task:
@@ -1134,15 +1317,18 @@ class OptimizedBackgroundMonitor:
                         await self.process_monitor.kill_and_restart_game(device_id)
                         return logical_triggered
                     
-                    # Handle other task flags
-                    await self.handle_task_flags(device_id, task)
-                    
                     # Execute the click if not a detection-only task
                     if task.get("click_location_str") != "0,0" and "[Executed" not in task_name:
                         await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
                         
                         # Handle text input flags after clicking
                         await self.handle_text_input_flags(device_id, task)
+                        
+                        # Handle task flags AFTER execution for action tasks
+                        await self.handle_task_flags(device_id, task)
+                    else:
+                        # For detection-only tasks (0,0 click), handle flags immediately
+                        await self.handle_task_flags(device_id, task)
                     
                     # Handle KeepChecking flag
                     if "KeepChecking" in task:
@@ -1167,16 +1353,14 @@ class OptimizedBackgroundMonitor:
         return logical_triggered
 
     def is_device_sleeping(self, device_id: str) -> bool:
-        """Check if device is currently in sleep mode"""
-        if device_id not in self.device_sleep_until:
-            return False
-        
+        """Check if device should be sleeping (not processing tasks)"""
         current_time = time.time()
-        if current_time < self.device_sleep_until[device_id]:
-            return True
-        else:
-            del self.device_sleep_until[device_id]
-            return False
+        return current_time < self.device_sleep_until.get(device_id, 0)
+    
+    def is_text_input_active(self, device_id: str) -> bool:
+        """Check if text input is currently active (should pause all other tasks)"""
+        current_time = time.time()
+        return current_time < self.text_input_active.get(device_id, 0)
     
     async def watch_device_optimized(self, device_id: str) -> Optional[str]:
         """Optimized device watching with smart multi-detection and state tracking"""
@@ -1190,6 +1374,11 @@ class OptimizedBackgroundMonitor:
             try:
                 if self.is_device_sleeping(device_id):
                     await asyncio.sleep(0.1)
+                    continue
+                
+                # Check if text input is active - pause all other tasks
+                if self.is_text_input_active(device_id):
+                    await asyncio.sleep(0.5)
                     continue
                 
                 self.frame_processed_tasks[device_id].clear()
@@ -1209,8 +1398,13 @@ class OptimizedBackgroundMonitor:
                             self.process_monitor.set_active_tasks(device_id, "restarting")
                             device_state_manager.increment_counter(device_id, "RestartingCount")
                         else:
-                            recommended_mode = device_state_manager.should_skip_to_mode(device_id)
-                            self.process_monitor.set_active_tasks(device_id, recommended_mode)
+                            # Game is already running - only set initial task on first setup
+                            current_task_set = self.process_monitor.active_task_set.get(device_id, None)
+                            if current_task_set is None:
+                                # First time setup - set initial task based on device state
+                                recommended_mode = device_state_manager.should_skip_to_mode(device_id)
+                                print(f"[{device_id}] Initial setup: Setting task set to {recommended_mode}")
+                                self.process_monitor.set_active_tasks(device_id, recommended_mode)
                         
                         self.process_monitor.mark_initial_complete(device_id)
                     
@@ -1220,28 +1414,9 @@ class OptimizedBackgroundMonitor:
                         self.process_monitor.set_active_tasks(device_id, "restarting")
                         device_state_manager.increment_counter(device_id, "RestartingCount")
                 
-                # Check if current task set is completed and should progress
-                # Skip progression logic for intentional helper task switches
-                helper_task_sets = [
-                    "restarting",
-                    "upgrade_characters_back_to_edit",
-                    "recive_giftbox_check",
-                    "recive_giftbox_orbs_check", 
-                    "sort_filter_ascension",
-                    "sort_multi_select_garbage_first",
-                    "skip_yukio_event",
-                    "kon_bonaza_1match_tasks",
-                    "login2_klab_login",
-                    "login3_wait_for_2fa",
-                    "login4_confirm_link"
-                ]
-                current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
-                if current_task_set not in helper_task_sets:
-                    recommended_mode = device_state_manager.get_next_task_set_after_restarting(device_id)
-                    if recommended_mode != current_task_set:
-                        print(f"[{device_id}] Task set '{current_task_set}' complete → {recommended_mode}")
-                        self.process_monitor.set_active_tasks(device_id, recommended_mode)
-                        continue  # Skip to next iteration with new task set
+                # REMOVED: Automatic task progression logic that was causing infinite switching
+                # Task progression should ONLY happen through flags (BackToStory, NextTaskSet_Tasks, etc.)
+                # This prevents premature switching before tasks complete their objectives
                 
                 all_tasks = self.get_prioritized_tasks(device_id)
                 
@@ -1658,7 +1833,7 @@ class OptimizedBackgroundMonitor:
                 
                 active_devices = [
                     device_id for device_id in settings.DEVICE_IDS 
-                    if not self.is_device_sleeping(device_id)
+                    if not self.is_device_sleeping(device_id) and not self.is_text_input_active(device_id)
                 ]
                 
                 with suppress_stdout_stderr():

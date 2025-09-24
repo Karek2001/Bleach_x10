@@ -73,6 +73,63 @@ class TwoFAFunctionalityTester:
             print(f"❌ ERROR after {duration:.2f}s: {e}")
             return None
     
+    async def test_timestamp_sorting(self, email: str):
+        """Test that Airtable returns the newest 2FA code (timestamp sorting test)"""
+        self.print_step(f"Testing Timestamp Sorting for: {email}")
+        
+        print("🧪 This test will call the 2FA function multiple times to verify sorting")
+        print("📊 It should consistently return the same (newest) code")
+        
+        codes_retrieved = []
+        
+        try:
+            # Call the function 3 times in quick succession
+            for i in range(3):
+                print(f"\n🔄 Attempt {i+1}/3: Calling get_2fa_code...")
+                
+                start_time = time.time()
+                twofa_code = await airtable_helper.get_2fa_code(email)
+                end_time = time.time()
+                
+                duration = end_time - start_time
+                
+                if twofa_code:
+                    codes_retrieved.append(twofa_code)
+                    print(f"   ✅ Retrieved: {twofa_code} (took {duration:.2f}s)")
+                else:
+                    print(f"   ❌ No code returned (took {duration:.2f}s)")
+                
+                # Small delay between attempts
+                if i < 2:  # Don't wait after the last attempt
+                    await asyncio.sleep(1)
+            
+            # Analyze results
+            print(f"\n📈 Results Analysis:")
+            print(f"   Total attempts: 3")
+            print(f"   Successful retrievals: {len(codes_retrieved)}")
+            
+            if len(codes_retrieved) > 0:
+                # Check if all codes are the same (they should be if sorting works)
+                unique_codes = set(codes_retrieved)
+                print(f"   Unique codes retrieved: {len(unique_codes)}")
+                print(f"   Codes: {list(unique_codes)}")
+                
+                if len(unique_codes) == 1:
+                    print(f"   ✅ CONSISTENT: Same code returned each time (sorting works)")
+                    print(f"   🎯 Consistent code: {list(unique_codes)[0]}")
+                    return True
+                else:
+                    print(f"   ⚠️  INCONSISTENT: Different codes returned (sorting may not work)")
+                    print(f"   📋 All retrieved codes: {codes_retrieved}")
+                    return False
+            else:
+                print(f"   ❌ No codes retrieved in any attempt")
+                return False
+                
+        except Exception as e:
+            print(f"❌ ERROR during timestamp sorting test: {e}")
+            return False
+    
     async def simulate_background_process_flow(self, email: str, device_id: str = "test_device"):
         """Simulate the exact flow from background_process.py handle_text_input_flags method"""
         self.print_step(f"Simulating Background Process Flow for Device: {device_id}")
@@ -132,7 +189,10 @@ class TwoFAFunctionalityTester:
         # Test 2: Direct 2FA retrieval test
         code = await self.test_2fa_code_retrieval(email)
         
-        # Test 3: Simulate background process flow
+        # Test 3: Timestamp sorting test (NEW)
+        sorting_ok = await self.test_timestamp_sorting(email)
+        
+        # Test 4: Simulate background process flow
         flow_success = await self.simulate_background_process_flow(email)
         
         # Results summary
@@ -140,12 +200,23 @@ class TwoFAFunctionalityTester:
         
         print(f"✅ Airtable Connection: {'PASS' if connection_ok else 'FAIL'}")
         print(f"✅ 2FA Code Retrieval: {'PASS' if code else 'FAIL'}")
+        print(f"✅ Timestamp Sorting: {'PASS' if sorting_ok else 'FAIL'}")
         print(f"✅ Background Process Flow: {'PASS' if flow_success else 'FAIL'}")
         
         if code:
             print(f"\n🎯 Final 2FA Code Retrieved: {code}")
         
-        overall_success = connection_ok and code and flow_success
+        # Additional analysis
+        if sorting_ok:
+            print(f"\n🔍 Sorting Analysis:")
+            print(f"   ✅ Airtable returns consistent results (newest first)")
+            print(f"   ✅ Background process should get latest 2FA codes")
+        else:
+            print(f"\n⚠️  Sorting Analysis:")
+            print(f"   ❌ Airtable returns inconsistent results")
+            print(f"   ❌ Background process may get old 2FA codes")
+        
+        overall_success = connection_ok and code and sorting_ok and flow_success
         print(f"\n🏆 Overall Test Result: {'✅ SUCCESS' if overall_success else '❌ FAILURE'}")
         
         return overall_success

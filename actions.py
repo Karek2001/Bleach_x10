@@ -1704,7 +1704,10 @@ async def execute_tap(device_id: str, location_str: str):
 async def execute_text_input(device_id: str, text: str):
     """Execute text input command with proper special character handling"""
     if not text:
+        print(f"[TEXT_INPUT] {device_id} - Empty text, returning")
         return
+    
+    print(f"[TEXT_INPUT] {device_id} - Starting text input: {repr(text)}")
     
     # Escape special characters for ADB shell
     # Use base64 encoding for complex passwords with special characters
@@ -1712,25 +1715,44 @@ async def execute_text_input(device_id: str, text: str):
     import shlex
     
     try:
-        # Method 1: Try direct input with proper escaping
-        escaped_text = shlex.quote(text)
-        await run_adb_command(f"shell input text {escaped_text}", device_id)
+        # Method 1: Try direct input with manual command format (double quotes around single quotes)
+        command = f"shell input text \"'{text}'\""
+        print(f"[TEXT_INPUT] {device_id} - Executing Method 1: adb -s {device_id} {command}")
+        
+        result = await run_adb_command(command, device_id)
+        print(f"[TEXT_INPUT] {device_id} - Method 1 executed successfully, result: {result}")
+        
     except Exception as e:
-        print(f"[TEXT_INPUT] Direct method failed, trying base64 method: {e}")
+        print(f"[TEXT_INPUT] {device_id} - Direct method failed, trying base64 method: {e}")
         try:
             # Method 2: Base64 encoding method for complex characters
             encoded_text = base64.b64encode(text.encode('utf-8')).decode('ascii')
-            await run_adb_command(f"shell 'echo {encoded_text} | base64 -d | input text'", device_id)
+            command = f"shell 'echo {encoded_text} | base64 -d | input text'"
+            print(f"[TEXT_INPUT] {device_id} - Executing Method 2: adb -s {device_id} {command}")
+            
+            result = await run_adb_command(command, device_id)
+            print(f"[TEXT_INPUT] {device_id} - Method 2 executed successfully, result: {result}")
+            
         except Exception as e2:
-            print(f"[TEXT_INPUT] Base64 method failed: {e2}")
+            print(f"[TEXT_INPUT] {device_id} - Base64 method failed: {e2}")
             # Method 3: Character by character input as fallback
-            for char in text:
-                if char.isalnum() or char in ' .-_@':
-                    await run_adb_command(f"shell input text '{char}'", device_id)
-                else:
-                    # Use keycode for special characters if available
-                    await run_adb_command(f"shell input text '{shlex.quote(char)}'", device_id)
-                await asyncio.sleep(0.05)  # Small delay between characters
+            print(f"[TEXT_INPUT] {device_id} - Trying Method 3: character-by-character")
+            for i, char in enumerate(text):
+                try:
+                    if char.isalnum() or char in ' .-_@':
+                        char_command = f"shell input text '{char}'"
+                    else:
+                        # Use keycode for special characters if available
+                        char_command = f"shell input text '{shlex.quote(char)}'"
+                    
+                    print(f"[TEXT_INPUT] {device_id} - Char {i+1}/{len(text)}: adb -s {device_id} {char_command}")
+                    result = await run_adb_command(char_command, device_id)
+                    print(f"[TEXT_INPUT] {device_id} - Char {i+1} executed, result: {result}")
+                    await asyncio.sleep(0.05)  # Small delay between characters
+                except Exception as char_e:
+                    print(f"[TEXT_INPUT] {device_id} - Char {i+1} failed: {char_e}")
+    
+    print(f"[TEXT_INPUT] {device_id} - Text input completed")
 
 async def execute_swipe(device_id: str, x1: int, y1: int, x2: int, y2: int, duration: int):
     """Execute swipe command asynchronously"""
@@ -1815,13 +1837,16 @@ async def save_screenshot_with_username(device_id: str, screenshot: np.ndarray):
         crop_box = (160, 0, 160 + 779, 540)  # (left, top, right, bottom)
         cropped_image = pil_image.crop(crop_box)
         
-        # Save with device number and username as filename
-        filename = f"{device_number}_{username}.png"
+        # Get current stock value for filename
+        current_stock = device_state_manager.get_current_stock()
+        
+        # Save with stock, device number and username as filename
+        filename = f"{current_stock}_{device_number}_{username}.png"
         filepath = os.path.join(stock_images_dir, filename)
         
         cropped_image.save(filepath)
         print(f"[{device_id}] Screenshot saved as: {filepath}")
-        print(f"[{device_id}] Mapping: {device_id} -> {device_name} -> {device_number}_{username}")
+        print(f"[{device_id}] Mapping: {device_id} -> {device_name} -> Stock:{current_stock} + {device_number}_{username}")
         print(f"[{device_id}] Cropped to roi [160, 0, 779, 540]")
         
     except Exception as e:

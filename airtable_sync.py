@@ -16,7 +16,7 @@ AIRTABLE_BASE_URL = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_T
 S3_ACCESS_KEY_ID = "G9S4JBYD8PC70PE6JY1E"
 S3_SECRET_ACCESS_KEY = "NFlUYCfP2zVNruP4Mu2TyqMIg2ef52i1LCESRqLJ"
 S3_ENDPOINT = "fsn1.your-objectstorage.com"
-S3_BUCKET_NAME = "db-legends-aggstore"
+S3_BUCKET_NAME = "bbs-aggstore"
 S3_REGION = "eu-central-1"
 
 # Global S3 client
@@ -87,9 +87,9 @@ def upload_image_to_s3(image_path, device_id):
         return None
     
     try:
-        # Generate S3 key (path) for the image
+        # Generate S3 key (path) for the image - no folders, direct to bucket root
         filename = os.path.basename(image_path)
-        s3_key = f"bleach_devices/{device_id}/{filename}"
+        s3_key = filename
         
         # Check and delete existing object
         check_and_delete_object_from_s3(s3_key, device_id)
@@ -195,7 +195,7 @@ def upload_image_to_airtable(image_path, device_id):
         return None
 
 def get_image_path_for_device(device_id, device_data):
-    """Get the image path for a device based on device number and username"""
+    """Get the image path for a device based on new format: Stock_DeviceNumber_Username"""
     try:
         # Handle both "DEVICE10" format and IP:port format
         if device_id.startswith("DEVICE"):
@@ -211,8 +211,11 @@ def get_image_path_for_device(device_id, device_data):
         # Get username, with smart fallback logic
         username = device_data.get("UserName", "Player")
         
-        # First try with the current username
-        filename_candidate1 = f"{device_number}_{username}.png"
+        # Get current stock value
+        current_stock = device_state_manager.get_current_stock()
+        
+        # First try with the new format: Stock_DeviceNumber_Username.png
+        filename_candidate1 = f"{current_stock}_{device_number}_{username}.png"
         path_candidate1 = os.path.join("stock_images", filename_candidate1)
         
         # If that doesn't exist and username is "Player", try with AccountID
@@ -222,15 +225,24 @@ def get_image_path_for_device(device_id, device_data):
                 # Extract just the ID numbers for better naming
                 id_numbers = account_id.replace("ID:", "").strip().replace(" ", "")[:6]
                 username_alt = f"ID{id_numbers}"
-                filename_candidate2 = f"{device_number}_{username_alt}.png"
+                filename_candidate2 = f"{current_stock}_{device_number}_{username_alt}.png"
                 path_candidate2 = os.path.join("stock_images", filename_candidate2)
                 
                 # Use AccountID-based name only if it exists
                 if os.path.exists(path_candidate2):
                     username = username_alt
         
-        # Construct image path
-        filename = f"{device_number}_{username}.png"
+        # Try fallback to old format for backward compatibility
+        if not os.path.exists(path_candidate1):
+            # Check for old format: DeviceNumber_Username.png
+            old_format_filename = f"{device_number}_{username}.png"
+            old_format_path = os.path.join("stock_images", old_format_filename)
+            if os.path.exists(old_format_path):
+                print(f"[{device_id}] Found image in old format: {old_format_path}")
+                return old_format_path
+        
+        # Construct image path with new format
+        filename = f"{current_stock}_{device_number}_{username}.png"
         image_path = os.path.join("stock_images", filename)
         
         print(f"[{device_id}] Looking for image: {image_path}")

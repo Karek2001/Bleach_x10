@@ -6,6 +6,16 @@ from datetime import datetime
 import asyncio
 from threading import Lock
 
+# Timezone support
+try:
+    import pytz
+    ISTANBUL_TZ = pytz.timezone('Europe/Istanbul')
+    TIMEZONE_AVAILABLE = True
+except ImportError:
+    print("[TIMEZONE] pytz not available, falling back to system timezone")
+    TIMEZONE_AVAILABLE = False
+    ISTANBUL_TZ = None
+
 class DeviceStateManager:
     """Manages persistent state for each device including account info and task progression"""
     
@@ -31,6 +41,20 @@ class DeviceStateManager:
         
         # Initialize states for all devices
         self._initialize_all_devices()
+        
+        # Initialize stock management
+        self._initialize_stock_file()
+    
+    def _get_istanbul_time(self) -> str:
+        """Get current time in Istanbul timezone as ISO string"""
+        if TIMEZONE_AVAILABLE and ISTANBUL_TZ:
+            # Get current UTC time and convert to Istanbul timezone
+            utc_now = datetime.utcnow().replace(tzinfo=pytz.UTC)
+            istanbul_time = utc_now.astimezone(ISTANBUL_TZ)
+            return istanbul_time.isoformat()
+        else:
+            # Fallback to system timezone
+            return datetime.now().isoformat()
     
     def _get_device_name(self, device_id: str) -> str:
         """Get device name from device ID"""
@@ -74,10 +98,10 @@ class DeviceStateManager:
             "Login2_Cloudflare_Done": 0,
             "synced_to_airtable": False,
             "RestartingCount": 0,
-            "LastUpdated": datetime.now().isoformat(),
+            "LastUpdated": self._get_istanbul_time(),
             "CurrentTaskSet": "restarting",
             "SessionStats": {
-                "SessionStartTime": datetime.now().isoformat(),
+                "SessionStartTime": self._get_istanbul_time(),
                 "TasksExecuted": 0,
                 "LastTaskExecuted": None
             }
@@ -133,7 +157,7 @@ class DeviceStateManager:
         state_file = self._get_state_file_path(device_name)
         
         try:
-            self.states[device_id]["LastUpdated"] = datetime.now().isoformat()
+            self.states[device_id]["LastUpdated"] = self._get_istanbul_time()
             with open(state_file, 'w') as f:
                 json.dump(self.states[device_id], f, indent=2)
         except Exception as e:
@@ -497,7 +521,7 @@ class DeviceStateManager:
             
             if "SessionStats" not in self.states[device_id]:
                 self.states[device_id]["SessionStats"] = {
-                    "SessionStartTime": datetime.now().isoformat(),
+                    "SessionStartTime": self._get_istanbul_time(),
                     "TasksExecuted": 0,
                     "LastTaskExecuted": None
                 }
@@ -556,6 +580,115 @@ class DeviceStateManager:
             print(self.get_progress_summary(device_id))
         
         print("="*70 + "\n")
+    
+    def _get_stock_file_path(self) -> str:
+        """Get the path for the currentlyStock.json file"""
+        return os.path.join(self.state_dir, "currentlyStock.json")
+    
+    def _initialize_stock_file(self):
+        """Initialize the currentlyStock.json file with auto-generation"""
+        stock_file = self._get_stock_file_path()
+        
+        # Check if file exists, if not create it with default values
+        if not os.path.exists(stock_file):
+            self._create_default_stock_file()
+            print("[STOCK] Created new currentlyStock.json file")
+        else:
+            # Verify file integrity and add missing keys if needed
+            try:
+                with open(stock_file, 'r') as f:
+                    stock_data = json.load(f)
+                
+                # Ensure STOCK key exists
+                if "STOCK" not in stock_data:
+                    stock_data["STOCK"] = 1
+                    self._save_stock_data(stock_data)
+                    print("[STOCK] Added missing STOCK key to currentlyStock.json")
+                    
+            except (json.JSONDecodeError, Exception) as e:
+                print(f"[STOCK] Error reading stock file, recreating: {e}")
+                self._create_default_stock_file()
+    
+    def _create_default_stock_file(self):
+        """Create the default currentlyStock.json file"""
+        default_stock = {
+            "STOCK": 1,
+            "LastUpdated": self._get_istanbul_time()
+        }
+        self._save_stock_data(default_stock)
+    
+    def _save_stock_data(self, stock_data: Dict[str, Any]):
+        """Save stock data to currentlyStock.json"""
+        stock_file = self._get_stock_file_path()
+        try:
+            stock_data["LastUpdated"] = self._get_istanbul_time()
+            with open(stock_file, 'w') as f:
+                json.dump(stock_data, f, indent=2)
+        except Exception as e:
+            print(f"[STOCK] Error saving stock file: {e}")
+    
+    def _load_stock_data(self) -> Dict[str, Any]:
+        """Load stock data from currentlyStock.json with auto-generation"""
+        stock_file = self._get_stock_file_path()
+        
+        # Auto-generate if file doesn't exist
+        if not os.path.exists(stock_file):
+            print("[STOCK] File missing, auto-generating currentlyStock.json")
+            self._create_default_stock_file()
+        
+        try:
+            with open(stock_file, 'r') as f:
+                stock_data = json.load(f)
+            
+            # Ensure STOCK key exists
+            if "STOCK" not in stock_data:
+                stock_data["STOCK"] = 1
+                self._save_stock_data(stock_data)
+                print("[STOCK] Auto-added missing STOCK key")
+                
+            return stock_data
+        except (json.JSONDecodeError, Exception) as e:
+            print(f"[STOCK] Error loading stock file, recreating: {e}")
+            self._create_default_stock_file()
+            return {"STOCK": 1, "LastUpdated": self._get_istanbul_time()}
+    
+    def get_current_stock(self) -> int:
+        """Get current stock value"""
+        stock_data = self._load_stock_data()
+        return stock_data.get("STOCK", 1)
+    
+    def increment_stock(self, device_id: str = None) -> int:
+        """Increment stock value by 1 and return new value"""
+        stock_data = self._load_stock_data()
+        current_stock = stock_data.get("STOCK", 1)
+        new_stock = current_stock + 1
+        stock_data["STOCK"] = new_stock
+        self._save_stock_data(stock_data)
+        
+        # Log the increment with device info if provided
+        if device_id:
+            device_name = self._get_device_name(device_id)
+            print(f"[{device_name}] Stock incremented: {current_stock} → {new_stock}")
+        else:
+            print(f"[STOCK] Stock incremented: {current_stock} → {new_stock}")
+        
+        return new_stock
+    
+    def set_stock(self, value: int, device_id: str = None) -> int:
+        """Set stock to a specific value"""
+        stock_data = self._load_stock_data()
+        old_stock = stock_data.get("STOCK", 1)
+        stock_data["STOCK"] = value
+        self._save_stock_data(stock_data)
+        
+        # Log the change with device info if provided
+        if device_id:
+            device_name = self._get_device_name(device_id)
+            print(f"[{device_name}] Stock set: {old_stock} → {value}")
+        else:
+            print(f"[STOCK] Stock set: {old_stock} → {value}")
+        
+        return value
 
 # Global instance
 device_state_manager = DeviceStateManager()
