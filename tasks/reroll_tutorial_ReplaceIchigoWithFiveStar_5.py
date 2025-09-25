@@ -81,7 +81,7 @@ reroll_replaceichigowithfivestar_tasks = [
         "isLogical": False,
         "priority": 8,
         "cooldown": 2.0,
-        "json_Reroll_ReplaceIchigoWithFiveStar": True,
+        "json_Reroll_ReplaceIchigoWithFiveStar": True,  # Mark this reroll task as complete
         "BackToRestartingTasks": True  # Go to regular restarting tasks after reroll completion
     },
     {
@@ -92,7 +92,7 @@ reroll_replaceichigowithfivestar_tasks = [
         "isLogical": False,
         "priority": 9,
         "cooldown": 2.0,
-        "json_Reroll_ReplaceIchigoWithFiveStar": True,
-        "BackToRestartingTasks": True
+        "json_Reroll_ReplaceIchigoWithFiveStar": True,  # Mark this reroll task as complete
+        "BackToRestartingTasks": True  # Return to normal operation
     }
 ]

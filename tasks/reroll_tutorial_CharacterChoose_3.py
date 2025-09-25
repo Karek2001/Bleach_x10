@@ -54,7 +54,7 @@ reroll_tutorial_characterchoose_tasks = [
         "isLogical": False,
         "priority": 5,
         "cooldown": 2.0,
-        "json_Reroll_Tutorial_CharacterChoose": True,
+        "json_Reroll_Tutorial_CharacterChoose": True,  # Mark this reroll task as complete
         "Reroll_Tutorial_SecondMatch_Tasks": True  # Switch to second match
     },
     {
@@ -65,7 +65,7 @@ reroll_tutorial_characterchoose_tasks = [
         "isLogical": False,
         "priority": 6,
         "cooldown": 1.0,
-        "json_Reroll_Tutorial_CharacterChoose": True,
-        "Reroll_Tutorial_SecondMatch_Tasks": True
+        "json_Reroll_Tutorial_CharacterChoose": True,  # Mark this reroll task as complete
+        "Reroll_Tutorial_SecondMatch_Tasks": True  # Switch to second match
     }
 ]

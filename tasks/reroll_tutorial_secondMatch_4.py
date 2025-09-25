@@ -64,8 +64,8 @@ reroll_tutorial_secondmatch_tasks = [
         "isLogical": False,
         "priority": 6,
         "cooldown": 2.0,
-        "json_Reroll_Tutorial_SecondMatch": True,
-        "Reroll_ReplaceIchigoWithFiveStar_Tasks": True  # Switch to replace Ichigo
+        "json_Reroll_Tutorial_SecondMatch": True,  # Mark this reroll task as complete
+        "Reroll_ReplaceIchigoWithFiveStar_Tasks": True  # Switch to replace Ichigo task
     },
     {
         "task_name": "Collect Battle Rewards",
@@ -75,7 +75,7 @@ reroll_tutorial_secondmatch_tasks = [
         "isLogical": False,
         "priority": 7,
         "cooldown": 2.0,
-        "json_Reroll_Tutorial_SecondMatch": True,
-        "Reroll_ReplaceIchigoWithFiveStar_Tasks": True
+        "json_Reroll_Tutorial_SecondMatch": True,  # Mark this reroll task as complete
+        "Reroll_ReplaceIchigoWithFiveStar_Tasks": True  # Switch to replace Ichigo task
     }
 ]

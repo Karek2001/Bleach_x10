@@ -242,6 +242,36 @@ Sets Upgrade_Characters_Level to complete (1)
 - **Type**: Boolean flag
 - **Sets**: `Upgrade_Characters_Level = 1` in device state
 
+### `json_Reroll_Earse_GameData`
+Sets Reroll_Earse_GameData to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Reroll_Earse_GameData = 1` in device state
+- **Usage**: Mark game data erasure as complete in reroll cycle
+
+### `json_Reroll_Tutorial_FirstMatch`
+Sets Reroll_Tutorial_FirstMatch to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Reroll_Tutorial_FirstMatch = 1` in device state
+- **Usage**: Mark first tutorial match as complete in reroll cycle
+
+### `json_Reroll_Tutorial_CharacterChoose`
+Sets Reroll_Tutorial_CharacterChoose to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Reroll_Tutorial_CharacterChoose = 1` in device state
+- **Usage**: Mark character selection as complete in reroll cycle
+
+### `json_Reroll_Tutorial_SecondMatch`
+Sets Reroll_Tutorial_SecondMatch to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Reroll_Tutorial_SecondMatch = 1` in device state
+- **Usage**: Mark second tutorial match as complete in reroll cycle
+
+### `json_Reroll_ReplaceIchigoWithFiveStar`
+Sets Reroll_ReplaceIchigoWithFiveStar to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Reroll_ReplaceIchigoWithFiveStar = 1` in device state
+- **Usage**: Mark 5-star character replacement as complete in reroll cycle
+
 ### `Increment_Kon_Bonaza`
 Increments Skip_Kon_Bonaza_100Times counter by 1
 - **Type**: Boolean flag
@@ -398,6 +428,41 @@ Switch to extract account ID tasks
 - **Target**: `Extract_Account_ID_Tasks`
 - **Usage**: Triggered after orb count extraction completion
 - **Purpose**: Extracts player account ID information
+
+### `Reroll_Earse_GameData_Tasks`
+Switch to reroll erase game data tasks
+- **Type**: Boolean flag
+- **Target**: `reroll_earse_gamedata`
+- **Usage**: Start reroll cycle with game data erasure
+- **Purpose**: Begin fresh account reroll process
+
+### `Reroll_Tutorial_FirstMatch_Tasks`
+Switch to reroll tutorial first match tasks
+- **Type**: Boolean flag
+- **Target**: `reroll_tutorial_firstmatch`
+- **Usage**: Progress to first tutorial match after game erase
+- **Purpose**: Complete first tutorial battle in reroll
+
+### `Reroll_Tutorial_CharacterChoose_Tasks`
+Switch to reroll tutorial character choose tasks
+- **Type**: Boolean flag
+- **Target**: `reroll_tutorial_characterchoose`
+- **Usage**: Progress to character selection after first match
+- **Purpose**: Select starting character in reroll
+
+### `Reroll_Tutorial_SecondMatch_Tasks`
+Switch to reroll tutorial second match tasks
+- **Type**: Boolean flag
+- **Target**: `reroll_tutorial_secondmatch`
+- **Usage**: Progress to second tutorial match after character selection
+- **Purpose**: Complete second tutorial battle in reroll
+
+### `Reroll_ReplaceIchigoWithFiveStar_Tasks`
+Switch to reroll replace Ichigo with 5-star tasks
+- **Type**: Boolean flag
+- **Target**: `reroll_replaceichigowithfivestar`
+- **Usage**: Progress to 5-star character replacement after second match
+- **Purpose**: Replace starting character with better unit in reroll
 
 ### `Login1_Prepare_For_Link_Tasks`
 Switch to login preparation tasks

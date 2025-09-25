@@ -11,14 +11,16 @@ reroll_tutorial_firstmatch_tasks = [
         "sleep": 3,
     },
     {
-        # DUMMY TASK FOR TEST
+        # DUMMY TASK FOR TEST - marks first match complete
         "task_name": "Click  [Earse Play Data] [Reroll First Match]",
         "type": "pixel",
         "click_location_str": "860,367",
         "search_array": ["887,365","#ffffff","842,368","#ffffff","861,381","#e60012","932,367","#3d4958"],
         "isLogical": False,
         "priority": 1,
-        "cooldown": 2.0
+        "cooldown": 2.0,
+        "json_Reroll_Tutorial_FirstMatch": True,  # Mark this reroll task as complete
+        "Reroll_Tutorial_CharacterChoose_Tasks": True  # Switch to character choose
     },
     # {
     #     "task_name": "Tutorial Victory Screen",

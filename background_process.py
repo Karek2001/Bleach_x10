@@ -991,7 +991,13 @@ class OptimizedBackgroundMonitor:
             "json_Skip_Yukio_Event", "json_Sort_Characters_Lowest_Level",
             "json_Sort_Filter_Ascension", "json_Sort_Multi_Select_Garbage_First",
             "json_Upgrade_Characters_Level", "json_Recive_Giftbox_Orbs",
-            "json_isLinked"  # Missing flag for account linking status
+            "json_isLinked",  # Missing flag for account linking status
+            # Reroll task flags
+            "json_Reroll_Earse_GameData",
+            "json_Reroll_Tutorial_FirstMatch", 
+            "json_Reroll_Tutorial_CharacterChoose",
+            "json_Reroll_Tutorial_SecondMatch",
+            "json_Reroll_ReplaceIchigoWithFiveStar"
         ]
         
         for flag in json_flags:
