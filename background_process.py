@@ -10,7 +10,15 @@ from suppress_warnings import suppress_libpng_warning, suppress_stdout_stderr
 suppress_libpng_warning()
 
 import settings
-from actions import batch_check_pixels_enhanced, execute_tap, screenshot_manager, run_adb_command, task_tracker, execute_text_input
+from actions import (
+    batch_check_pixels_enhanced, 
+    ScreenshotManager,
+    execute_tap,
+    execute_text_input,
+    execute_swipe,
+    run_adb_command,
+    save_screenshot_with_username
+)
 from device_state_manager import device_state_manager
 from airtable_helper import airtable_helper
 from airtable_sync import sync_device_to_airtable
@@ -48,7 +56,13 @@ from tasks import (
     Login2_Klab_Login_Tasks,
     Login3_Wait_For_2FA_Tasks,
     Login4_Confirm_Link_Tasks,
-    Endgame_Tasks
+    Endgame_Tasks,
+    # Reroll tasks
+    reroll_earse_gamedata_tasks,
+    reroll_tutorial_firstmatch_tasks,
+    reroll_tutorial_characterchoose_tasks,
+    reroll_tutorial_secondmatch_tasks,
+    reroll_replaceichigowithfivestar_tasks
 )
 
 # Bleach game package name
@@ -286,6 +300,13 @@ class ProcessMonitor:
             "sort_multi_select_garbage_first": Sort_Multi_Select_Garbage_First_Tasks,
             "upgrade_characters_level": Upgrade_Characters_Level,
             "upgrade_characters_back_to_edit": Upgrade_Characters_Back_To_Edit,
+            # Reroll tasks
+            "reroll_earse_gamedata": reroll_earse_gamedata_tasks,
+            "reroll_tutorial_firstmatch": reroll_tutorial_firstmatch_tasks,
+            "reroll_tutorial_characterchoose": reroll_tutorial_characterchoose_tasks,
+            "reroll_tutorial_secondmatch": reroll_tutorial_secondmatch_tasks,
+            "reroll_replaceichigowithfivestar": reroll_replaceichigowithfivestar_tasks,
+            # Other tasks
             "main_screenshot": Main_Screenshot_Tasks,
             "extract_orb_counts": Extract_Orb_Counts_Tasks,
             "extract_account_id": Extract_Account_ID_Tasks,
@@ -300,9 +321,26 @@ class ProcessMonitor:
         base_tasks = task_map.get(task_set, Restarting_Tasks)
         print(f"[{device_id}] Active task set: {task_set}, Base tasks: {len(base_tasks)}")
         
+        # Check if we're in reroll phase - DON'T add Restarting_Tasks if we are
+        device_state = device_state_manager.get_state(device_id)
+        is_reroll_phase = (
+            task_set.startswith("reroll_") or 
+            device_state.get("Reroll_Earse_GameData", 1) == 0 or
+            device_state.get("Reroll_Tutorial_FirstMatch", 1) == 0 or
+            device_state.get("Reroll_Tutorial_CharacterChoose", 1) == 0 or
+            device_state.get("Reroll_Tutorial_SecondMatch", 1) == 0 or
+            device_state.get("Reroll_ReplaceIchigoWithFiveStar", 1) == 0
+        )
+        
+        # Only add Restarting_Tasks when NOT in reroll phase and not already in restarting mode
+        all_tasks = base_tasks
+        if not is_reroll_phase and task_set != "restarting":
+            # In normal mode: add Restarting_Tasks for game recovery
+            all_tasks = base_tasks + Restarting_Tasks
+            
         # Filter out tasks that should be skipped
         filtered_tasks = []
-        for task in base_tasks:
+        for task in all_tasks:  # FIXED: Should filter all_tasks, not base_tasks
             if not self.should_skip_task(device_id, task):
                 filtered_tasks.append(task)
         
@@ -320,9 +358,11 @@ class ProcessMonitor:
             "kon_bonaza_1match_tasks", "skip_yukio_event", "sort_characters_lowest_level",
             "sort_filter_ascension", "sort_multi_select_garbage_first",
             "upgrade_characters_level", "upgrade_characters_back_to_edit",
+            "reroll_earse_gamedata", "reroll_tutorial_firstmatch", "reroll_tutorial_characterchoose",
+            "reroll_tutorial_secondmatch", "reroll_replaceichigowithfivestar",
             "main_screenshot", "extract_orb_counts", "extract_account_id",
             "login1_prepare_for_link", "login2_klab_login", "login3_wait_for_2fa",
-            "login4_confirm_link", "endgame"
+            "login4_confirm_link"
         ]
         
         if task_set in valid_sets:
@@ -356,14 +396,18 @@ class ProcessMonitor:
                 "sort_multi_select_garbage_first": "Sort Multi Select Garbage First",
                 "upgrade_characters_level": "Upgrade Characters Level",
                 "upgrade_characters_back_to_edit": "Upgrade Characters Back To Edit",
+                "reroll_earse_gamedata": "Reroll Erase Game Data",
+                "reroll_tutorial_firstmatch": "Reroll Tutorial First Match",
+                "reroll_tutorial_characterchoose": "Reroll Tutorial Character Choose",
+                "reroll_tutorial_secondmatch": "Reroll Tutorial Second Match",
+                "reroll_replaceichigowithfivestar": "Reroll Replace Ichigo",
                 "main_screenshot": "Main Screenshot",
                 "extract_orb_counts": "Extract Orb Counts",
                 "extract_account_id": "Extract Account ID", 
                 "login1_prepare_for_link": "Prepare For Link",
                 "login2_klab_login": "KLAB Login", 
                 "login3_wait_for_2fa": "Wait For 2FA",
-                "login4_confirm_link": "Confirm Link",
-                "endgame": "Endgame"
+                "login4_confirm_link": "Confirm Link"
             }
             print(f"[{device_id}] → {task_names.get(task_set, task_set)}")
     
@@ -565,6 +609,13 @@ class BackgroundMonitor:
             "sort_multi_select_garbage_first": Sort_Multi_Select_Garbage_First_Tasks,
             "upgrade_characters_level": Upgrade_Characters_Level,
             "upgrade_characters_back_to_edit": Upgrade_Characters_Back_To_Edit,
+            # Reroll tasks
+            "reroll_earse_gamedata": reroll_earse_gamedata_tasks,
+            "reroll_tutorial_firstmatch": reroll_tutorial_firstmatch_tasks,
+            "reroll_tutorial_characterchoose": reroll_tutorial_characterchoose_tasks,
+            "reroll_tutorial_secondmatch": reroll_tutorial_secondmatch_tasks,
+            "reroll_replaceichigowithfivestar": reroll_replaceichigowithfivestar_tasks,
+            # Other tasks
             "main_screenshot": Main_Screenshot_Tasks,
             "extract_orb_counts": Extract_Orb_Counts_Tasks,
             "extract_account_id": Extract_Account_ID_Tasks,
@@ -584,8 +635,25 @@ class BackgroundMonitor:
             task_names = [task.get("task_name", "Unknown") for task in base_tasks]
             print(f"[{device_id}] SubStories tasks: {task_names}")
         
-        # Combine base tasks with shared tasks and switcher tasks
-        all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
+        # Check if we're in a reroll phase
+        device_state = device_state_manager.get_state(device_id)
+        is_reroll_phase = (
+            task_set.startswith("reroll_") or 
+            device_state.get("Reroll_Earse_GameData", 1) == 0 or
+            device_state.get("Reroll_Tutorial_FirstMatch", 1) == 0 or
+            device_state.get("Reroll_Tutorial_CharacterChoose", 1) == 0 or
+            device_state.get("Reroll_Tutorial_SecondMatch", 1) == 0 or
+            device_state.get("Reroll_ReplaceIchigoWithFiveStar", 1) == 0
+        )
+        
+        # Combine tasks - only include Restarting_Tasks if NOT in reroll phase
+        if is_reroll_phase:
+            # In reroll phase: only base tasks + shared + switcher (NO restarting)
+            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
+            print(f"[{device_id}] Reroll mode active - Restarting tasks disabled")
+        else:
+            # Normal operation: include restarting tasks
+            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks + Restarting_Tasks
         
         # Filter out tasks with StopSupport flag if condition is met
         filtered_tasks = []
@@ -616,6 +684,13 @@ class BackgroundMonitor:
             "sort_multi_select_garbage_first",
             "upgrade_characters_level",
             "upgrade_characters_back_to_edit",
+            # Reroll task sets
+            "reroll_earse_gamedata",
+            "reroll_tutorial_firstmatch",
+            "reroll_tutorial_characterchoose",
+            "reroll_tutorial_secondmatch",
+            "reroll_replaceichigowithfivestar",
+            # Other task sets
             "main_screenshot",
             "extract_orb_counts",
             "extract_account_id",
@@ -718,7 +793,7 @@ class OptimizedBackgroundMonitor:
         }
     
     async def execute_tap_with_offset(self, device_id: str, location_str: str, task: dict):
-        """Execute tap with optional pixel offset adjustments and delayed click support"""
+        """Execute tap with optional pixel offset adjustments, delayed click, hold, and drag support"""
         if location_str == "0,0":
             return
             
@@ -735,7 +810,24 @@ class OptimizedBackgroundMonitor:
             x += task['RightPixels']
         
         adjusted_location = f"{x},{y}"
-        await execute_tap(device_id, adjusted_location)
+        
+        # Handle hold_delay - hold the tap for specified seconds
+        if "hold_delay" in task:
+            hold_duration = float(task["hold_delay"])
+            print(f"[{device_id}] 📍 Holding at {adjusted_location} for {hold_duration}s")
+            # Use swipe with same start and end position to simulate hold
+            await execute_swipe(device_id, x, y, x, y, int(hold_duration * 1000))
+        # Handle hold_move - drag from one position to another  
+        elif "hold_move" in task:
+            target_coords = task["hold_move"].split(',')
+            target_x, target_y = int(target_coords[0]), int(target_coords[1])
+            # Default drag duration of 1 second if not specified
+            drag_duration = int(task.get("drag_duration", 1) * 1000)
+            print(f"[{device_id}] 📍 Dragging from {adjusted_location} to {target_x},{target_y} over {drag_duration/1000}s")
+            await execute_swipe(device_id, x, y, target_x, target_y, drag_duration)
+        else:
+            # Normal tap
+            await execute_tap(device_id, adjusted_location)
         
         # Handle delayed click functionality
         delayed_click_location = task.get("delayed_click_location")
@@ -1124,6 +1216,11 @@ class OptimizedBackgroundMonitor:
             "Upgrade_Characters_Level_Tasks": ("upgrade_characters_level", "→ Upgrade Characters Level"),
             "Upgrade_Characters_Back_To_Edit_Tasks": ("upgrade_characters_back_to_edit", "→ Upgrade Characters Back To Edit"),
             "Recive_Giftbox_Orbs_Tasks": ("recive_giftbox_orbs", "→ Receive Gift Box Orbs"),
+            "Reroll_Earse_GameData_Tasks": ("reroll_earse_gamedata", "→ Reroll Erase Game Data"),
+            "Reroll_Tutorial_FirstMatch_Tasks": ("reroll_tutorial_firstmatch", "→ Reroll Tutorial First Match"),
+            "Reroll_Tutorial_CharacterChoose_Tasks": ("reroll_tutorial_characterchoose", "→ Reroll Tutorial Character Choose"),
+            "Reroll_Tutorial_SecondMatch_Tasks": ("reroll_tutorial_secondmatch", "→ Reroll Tutorial Second Match"),
+            "Reroll_ReplaceIchigoWithFiveStar_Tasks": ("reroll_replaceichigowithfivestar", "→ Reroll Replace Ichigo"),
             "NextTaskSet_Tasks": ("next_task_progression", "→ Next Task Set"),
             "ScreenShot_MainMenu_Tasks": ("main_screenshot", "→ Screenshot Main Menu"),
             "Extract_Orb_Count_Tasks": ("extract_orb_counts", "→ Extract Orb Count"),
@@ -1132,7 +1229,6 @@ class OptimizedBackgroundMonitor:
             "Login2_Klab_Login_Tasks": ("login2_klab_login", "→ KLAB Login"),
             "Login3_Wait_For_2FA_Tasks": ("login3_wait_for_2fa", "→ Wait for 2FA"),
             "Login4_Confirm_Link_Tasks": ("login4_confirm_link", "→ Confirm Link"),
-            "Endgame_Tasks": ("endgame", "→ Endgame"),  # Missing flag for endgame switching
             "BackToMain_Tasks": ("main", "→ Main")
         }
         
@@ -1208,6 +1304,19 @@ class OptimizedBackgroundMonitor:
                 device_state_manager.update_state(device_id, flag_name, 0)
                 print(f"[{device_id}] 🔄 Flag cleared: {flag_name} = 0 (restart recovery)")
         
+        # Handle close_brave flag to terminate Brave browser
+        if task.get("close_brave", False):
+            print(f"[{device_id}] 🔴 Closing Brave browser...")
+            await run_adb_command("shell am force-stop com.brave.browser", device_id)
+            await asyncio.sleep(1.0)  # Small delay after closing
+            print(f"[{device_id}] ✅ Brave browser closed")
+        
+        # Handle close_game flag to terminate game process
+        if task.get("close_game", False):
+            print(f"[{device_id}] 🔴 Closing Bleach game...")
+            await run_adb_command(f"shell am force-stop {BLEACH_PACKAGE_NAME}", device_id)
+            await asyncio.sleep(1.0)  # Small delay after closing
+            print(f"[{device_id}] ✅ Bleach game closed")
 
     async def process_matched_tasks(self, device_id: str, matched_tasks: List[dict]) -> bool:
         """Process all matched tasks intelligently"""
@@ -1369,9 +1478,103 @@ class OptimizedBackgroundMonitor:
         
         self.device_states[device_id] = {'stable_count': 0, 'last_action': time.time()}
         self.no_action_timers[device_id] = time.time()
+        self.last_endgame_check = getattr(self, 'last_endgame_check', 0)
+        self.fetch_in_progress = getattr(self, 'fetch_in_progress', False)
+        self.last_successful_fetch = getattr(self, 'last_successful_fetch', 0)
         
         while not self.stop_event.is_set():
             try:
+                # Check if all devices are linked periodically (every 10 seconds)
+                # BUT ONLY if not already fetching and hasn't fetched recently
+                current_time = time.time()
+                if (current_time - self.last_endgame_check > 10 and 
+                    not self.fetch_in_progress and 
+                    current_time - self.last_successful_fetch > 300):  # Wait 5 minutes between fetches
+                    
+                    self.last_endgame_check = current_time
+                    
+                    # Check if all devices have isLinked = 1
+                    from airtable_stock_fetcher import check_and_fetch_all_accounts
+                    all_linked = True
+                    linked_count = 0
+                    # Check using the actual device IDs (IP addresses) from settings
+                    for actual_device_id in settings.DEVICE_IDS:
+                        state = device_state_manager.get_state(actual_device_id)
+                        is_linked = state.get("isLinked", 0)
+                        
+                        # Debug: Show what we're checking
+                        if current_time % 60 < 10:  # Log once per minute
+                            device_name = device_state_manager._get_device_name(actual_device_id)
+                            print(f"[DEBUG] {device_name}: isLinked={is_linked}, state keys={list(state.keys())[:5]}")
+                        
+                        if is_linked == 1:  # Explicitly check for 1, not truthy
+                            linked_count += 1
+                        else:
+                            all_linked = False
+                            # Don't break, count all linked devices
+                    
+                    # Debug log every minute
+                    if current_time % 60 < 10 and linked_count > 0:  # Log once per minute if any linked
+                        device_name = device_state_manager._get_device_name(device_id)
+                        print(f"[{device_name}] Link status check: {linked_count}/10 devices linked")
+                    
+                    if all_linked and not self.fetch_in_progress:
+                        print(f"[{device_id}] 🎉 All accounts linked! Starting fetch process...")
+                        
+                        # SET FLAG TO PREVENT MULTIPLE TRIGGERS
+                        self.fetch_in_progress = True
+                        
+                        try:
+                            # STEP 1: Stop all monitoring to prevent auto-generation
+                            print(f"[ALL DEVICES] ⏸️ Pausing all monitoring...")
+                            device_state_manager.fetch_mode = True  # Prevent auto-generation
+                            await asyncio.sleep(1)
+                            
+                            # STEP 2: Close all games
+                            print(f"[ALL DEVICES] 🔴 Closing games...")
+                            for actual_device_id in settings.DEVICE_IDS:
+                                await run_adb_command(f"shell am force-stop {BLEACH_PACKAGE_NAME}", actual_device_id)
+                            
+                            # STEP 3: Wait for games to fully close
+                            print(f"[ALL DEVICES] ⏳ Waiting for games to close...")
+                            await asyncio.sleep(3)
+                            
+                            # STEP 4: Fetch new accounts and recreate device files
+                            print(f"[ALL DEVICES] 📥 Fetching new accounts from Airtable...")
+                            result = await check_and_fetch_all_accounts()
+                            
+                            # STEP 5: Wait for file operations to complete
+                            await asyncio.sleep(2)
+                            
+                            if result:
+                                print(f"[ALL DEVICES] ✅ New accounts fetched! Starting reroll cycle...")
+                                
+                                # STEP 6: Set ALL devices to first reroll task
+                                for actual_device_id in settings.DEVICE_IDS:
+                                    self.process_monitor.set_active_tasks(actual_device_id, "reroll_earse_gamedata")
+                                
+                                # STEP 7: Launch all games
+                                print(f"[ALL DEVICES] 🚀 Launching games...")
+                                for actual_device_id in settings.DEVICE_IDS:
+                                    await self.process_monitor.launch_bleach(actual_device_id)
+                                    await asyncio.sleep(0.5)  # Small delay between launches
+                                
+                                # Mark successful fetch
+                                self.last_successful_fetch = current_time
+                            else:
+                                print(f"[ALL DEVICES] ❌ Failed to fetch accounts")
+                        
+                        finally:
+                            # ALWAYS reset flags
+                            self.fetch_in_progress = False
+                            device_state_manager.fetch_mode = False  # Re-enable auto-generation
+                            print(f"[ALL DEVICES] ▶️ Resuming monitoring...")
+                
+                # Skip all monitoring during fetch mode
+                if self.fetch_in_progress or getattr(device_state_manager, 'fetch_mode', False):
+                    await asyncio.sleep(1)
+                    continue
+                
                 if self.is_device_sleeping(device_id):
                     await asyncio.sleep(0.1)
                     continue
@@ -1395,7 +1598,14 @@ class OptimizedBackgroundMonitor:
                         if not is_bleach_running:
                             print(f"[{device_id}] Game not running, launching...")
                             await self.process_monitor.launch_bleach(device_id)
-                            self.process_monitor.set_active_tasks(device_id, "restarting")
+                            # Check if we should go to reroll tasks or restarting tasks
+                            next_task_set = device_state_manager.get_next_task_set_after_restarting(device_id)
+                            # If reroll tasks are needed, go directly to them, otherwise use restarting
+                            if next_task_set.startswith("reroll_"):
+                                print(f"[{device_id}] Incomplete reroll tasks detected, switching to: {next_task_set}")
+                                self.process_monitor.set_active_tasks(device_id, next_task_set)
+                            else:
+                                self.process_monitor.set_active_tasks(device_id, "restarting")
                             device_state_manager.increment_counter(device_id, "RestartingCount")
                         else:
                             # Game is already running - only set initial task on first setup
@@ -1411,7 +1621,14 @@ class OptimizedBackgroundMonitor:
                     elif not is_bleach_running:
                         print(f"[{device_id}] Game crashed, re-launching...")
                         await self.process_monitor.launch_bleach(device_id)
-                        self.process_monitor.set_active_tasks(device_id, "restarting")
+                        # Check if we should go to reroll tasks or restarting tasks
+                        next_task_set = device_state_manager.get_next_task_set_after_restarting(device_id)
+                        # If reroll tasks are needed, go directly to them, otherwise use restarting
+                        if next_task_set.startswith("reroll_"):
+                            print(f"[{device_id}] Incomplete reroll tasks detected, switching to: {next_task_set}")
+                            self.process_monitor.set_active_tasks(device_id, next_task_set)
+                        else:
+                            self.process_monitor.set_active_tasks(device_id, "restarting")
                         device_state_manager.increment_counter(device_id, "RestartingCount")
                 
                 # REMOVED: Automatic task progression logic that was causing infinite switching

@@ -36,6 +36,12 @@ class DeviceStateManager:
             "127.0.0.1:17088": "DEVICE10"
         }
         
+        # Create reverse mapping (DEVICE1 -> IP address)
+        self.reverse_mapping = {v: k for k, v in self.device_mapping.items()}
+        
+        # Flag to prevent auto-generation during fetch
+        self.fetch_mode = False
+        
         # Create state directory if it doesn't exist
         os.makedirs(self.state_dir, exist_ok=True)
         
@@ -58,6 +64,10 @@ class DeviceStateManager:
     
     def _get_device_name(self, device_id: str) -> str:
         """Get device name from device ID"""
+        # If it's already a DEVICE name (DEVICE1, DEVICE2, etc.), return as is
+        if device_id.startswith("DEVICE") and device_id[6:].isdigit():
+            return device_id
+        # Otherwise, look it up in the mapping
         return self.device_mapping.get(device_id, f"DEVICE_{device_id.replace(':', '_')}")
     
     def _get_state_file_path(self, device_name: str) -> str:
@@ -69,10 +79,16 @@ class DeviceStateManager:
         return {
             "AccountID": "",
             "UserName": "Player",
-            "Orbs": "0",
-            "isLinked": 0,
             "Email": "",
             "Password": "",
+            "isLinked": 0,
+            "Orbs": "0",
+            "RestartingCount": 0,
+            "Reroll_Earse_GameData": 0,
+            "Reroll_Tutorial_FirstMatch": 0,
+            "Reroll_Tutorial_CharacterChoose": 0,
+            "Reroll_Tutorial_SecondMatch": 0,
+            "Reroll_ReplaceIchigoWithFiveStar": 0,
             "EasyMode": 0,
             "HardMode": 0,
             "SideMode": 0,
@@ -97,7 +113,6 @@ class DeviceStateManager:
             "Login2_Password_Done": 0,
             "Login2_Cloudflare_Done": 0,
             "synced_to_airtable": False,
-            "RestartingCount": 0,
             "LastUpdated": self._get_istanbul_time(),
             "CurrentTaskSet": "restarting",
             "SessionStats": {
@@ -144,12 +159,14 @@ class DeviceStateManager:
                     print(f"[STATE] Loaded existing state for {device_name}")
                 except Exception as e:
                     print(f"[STATE] Error loading state for {device_name}: {e}")
+                    if not self.fetch_mode:  # Only auto-generate if not in fetch mode
+                        self.states[device_id] = self._get_default_state()
+                        self._save_state(device_id)
+            else:
+                if not self.fetch_mode:  # Only auto-generate if not in fetch mode
                     self.states[device_id] = self._get_default_state()
                     self._save_state(device_id)
-            else:
-                self.states[device_id] = self._get_default_state()
-                self._save_state(device_id)
-                print(f"[STATE] Created new state file for {device_name}")
+                    print(f"[STATE] Created new state file for {device_name}")
     
     def _save_state(self, device_id: str):
         """Save device state to JSON file"""
@@ -165,18 +182,35 @@ class DeviceStateManager:
     
     def get_state(self, device_id: str) -> Dict[str, Any]:
         """Get current state for a device"""
-        if device_id not in self.states:
-            self.states[device_id] = self._get_default_state()
-        return self.states[device_id].copy()
+        # If it's a DEVICE name, convert to IP address
+        if device_id.startswith("DEVICE") and device_id[6:].isdigit():
+            # Look up the IP address for this device name
+            actual_device_id = self.reverse_mapping.get(device_id, device_id)
+        else:
+            actual_device_id = device_id
+        
+        if actual_device_id not in self.states:
+            if not self.fetch_mode:  # Only auto-generate if not in fetch mode
+                self.states[actual_device_id] = self._get_default_state()
+            else:
+                return {}  # Return empty state during fetch mode
+        return self.states.get(actual_device_id, {}).copy()
     
     def update_state(self, device_id: str, key: str, value: Any):
         """Update a specific state value for a device"""
-        with self.locks.get(device_id, Lock()):
-            if device_id not in self.states:
-                self.states[device_id] = self._get_default_state()
+        # If it's a DEVICE name, convert to IP address
+        if device_id.startswith("DEVICE") and device_id[6:].isdigit():
+            # Look up the IP address for this device name
+            actual_device_id = self.reverse_mapping.get(device_id, device_id)
+        else:
+            actual_device_id = device_id
+        
+        with self.locks.get(actual_device_id, Lock()):
+            if actual_device_id not in self.states:
+                self.states[actual_device_id] = self._get_default_state()
             
-            self.states[device_id][key] = value
-            self._save_state(device_id)
+            self.states[actual_device_id][key] = value
+            self._save_state(actual_device_id)
     
     def set_json_flag(self, device_id: str, flag_name: str, value: Any = 1):
         """Set a JSON flag based on task detection"""
@@ -441,7 +475,23 @@ class DeviceStateManager:
         """Determine next task set based on progression logic"""
         state = self.get_state(device_id)
         
-        # Check story modes first
+        # Check reroll tasks first (these come before everything else)
+        if state.get("Reroll_Earse_GameData", 0) == 0:
+            return "reroll_earse_gamedata"
+        
+        if state.get("Reroll_Tutorial_FirstMatch", 0) == 0:
+            return "reroll_tutorial_firstmatch"
+        
+        if state.get("Reroll_Tutorial_CharacterChoose", 0) == 0:
+            return "reroll_tutorial_characterchoose"
+        
+        if state.get("Reroll_Tutorial_SecondMatch", 0) == 0:
+            return "reroll_tutorial_secondmatch"
+        
+        if state.get("Reroll_ReplaceIchigoWithFiveStar", 0) == 0:
+            return "reroll_replaceichigowithfivestar"
+        
+        # After reroll tasks, check story modes
         if state.get("EasyMode", 0) == 0 or state.get("HardMode", 0) == 0 or state.get("SideMode", 0) == 0:
             return "main"  # Stay in story mode tasks
         
@@ -498,15 +548,17 @@ class DeviceStateManager:
             # Not linked yet - check Login1 Prepare for Link
             if state.get("Login1_Prepare_Link", 0) == 0:
                 return "login1_prepare_for_link"
-        else:
-            # Account is linked - proceed to endgame tasks
-            return "endgame"
         
         # Login preparation complete, proceed to Kon Bonaza (for non-linked accounts)
         if state.get("Skip_Kon_Bonaza_100Times", 0) < 100:
             return "skip_kon_bonaza"
         
-        # Everything complete
+        # If account is linked and all tasks are done, just stay in main (waiting state)
+        # The automatic account fetcher will handle the next cycle
+        if state.get("isLinked", 0) == 1:
+            return "main"  # Stay in main, waiting for new accounts
+        
+        # Everything complete but not linked yet
         return "main"  # Default fallback
     
     def should_skip_to_mode(self, device_id: str) -> str:

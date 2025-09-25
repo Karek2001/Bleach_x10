@@ -1,35 +1,23 @@
-# main.py - Enhanced with clean logging and state tracking
+#!/usr/bin/env python
+# main_debug.py - Debug version with full error output
 import asyncio
 import atexit
 import signal
 import sys
 import traceback
 
-# Try to suppress warnings, but handle errors gracefully
-try:
-    from suppress_warnings import suppress_libpng_warning
-    suppress_libpng_warning()
-except Exception as e:
-    print(f"Warning: Could not suppress warnings: {e}")
-    # Continue without suppression
-
-try:
-    from background_process import monitor
-    from screenrecord_manager import cleanup_all_screenrecord
-    from logical_process import run_hard_mode_swipes, handle_game_ready_routing
-    from device_state_manager import device_state_manager
-    from actions import run_adb_command
-except ImportError as e:
-    print(f"❌ Import Error: {e}")
-    print("\nPlease make sure all required modules are present and installed.")
-    print("Run: pip install -r requirements.txt")
-    traceback.print_exc()
-    sys.exit(1)
+# IMPORTANT: Comment out the warning suppression to see errors
+# from suppress_warnings import suppress_libpng_warning
+# suppress_libpng_warning()
 
 def cleanup_handler(signum=None, frame=None):
     """Clean up screenrecord streaming resources on exit"""
     print("\n🧹 Cleaning up resources...")
-    cleanup_all_screenrecord()
+    try:
+        from screenrecord_manager import cleanup_all_screenrecord
+        cleanup_all_screenrecord()
+    except Exception as e:
+        print(f"Cleanup error: {e}")
     
     # Force kill any remaining ADB/FFmpeg processes
     import subprocess
@@ -45,24 +33,67 @@ def cleanup_handler(signum=None, frame=None):
 
 def main():
     """Main entry point for the background monitoring script."""
+    print("=" * 60)
+    print("DEBUG MODE - Full error output enabled")
+    print("=" * 60)
+    
     # Register cleanup handlers
     atexit.register(cleanup_handler)
     signal.signal(signal.SIGINT, cleanup_handler)
     signal.signal(signal.SIGTERM, cleanup_handler)
     
     print("🚀 Starting background monitoring...")
-    print("📊 Loading device states...")
     
     try:
+        # Test imports one by one
+        print("Testing imports...")
+        
+        print("  1. Importing background_process...")
+        from background_process import monitor
+        print("  ✓ background_process imported")
+        
+        print("  2. Importing screenrecord_manager...")
+        from screenrecord_manager import cleanup_all_screenrecord
+        print("  ✓ screenrecord_manager imported")
+        
+        print("  3. Importing logical_process...")
+        from logical_process import run_hard_mode_swipes, handle_game_ready_routing
+        print("  ✓ logical_process imported")
+        
+        print("  4. Importing device_state_manager...")
+        from device_state_manager import device_state_manager
+        print("  ✓ device_state_manager imported")
+        
+        print("  5. Importing actions...")
+        from actions import run_adb_command
+        print("  ✓ actions imported")
+        
+        print("  6. Importing settings...")
+        import settings
+        print(f"  ✓ settings imported - {len(settings.DEVICE_IDS)} devices found")
+        
+        print("\n📊 Loading device states...")
+        
         # Start continuous monitoring loop with logical task handling
         print("🔄 Starting async monitoring loop...")
         asyncio.run(run_monitoring_with_logical_tasks())
+        
+    except ImportError as e:
+        print(f"\n❌ Import Error: {e}")
+        print("\nFull traceback:")
+        traceback.print_exc()
+        print("\nPossible causes:")
+        print("1. Missing Python package - try: pip install -r requirements.txt")
+        print("2. Missing module file in the directory")
+        print("3. Syntax error in one of the imported modules")
+        
     except KeyboardInterrupt:
         print("\n🛑 Monitoring stopped by user.")
         cleanup_handler()
+        
     except Exception as e:
-        print(f"❌ Error occurred: {e}")
-        import traceback
+        print(f"\n❌ Error occurred: {e}")
+        print("\nFull traceback:")
         traceback.print_exc()
         cleanup_handler()
     finally:
@@ -71,6 +102,7 @@ def main():
 async def optimize_emulators():
     """Apply performance optimizations to all emulators at startup"""
     import settings
+    from actions import run_adb_command
     
     optimization_commands = [
         "shell cmd power set-fixed-performance-mode-enabled true",
@@ -101,6 +133,8 @@ async def optimize_emulators():
 async def run_monitoring_with_logical_tasks():
     """Run parallel monitoring for all devices with per-device logical task handling"""
     import settings
+    from device_state_manager import device_state_manager
+    from background_process import monitor
     
     try:
         print("🔧 Importing settings...")
@@ -140,6 +174,9 @@ async def run_monitoring_with_logical_tasks():
 
 async def monitor_single_device_with_logical_tasks(device_id: str):
     """Monitor a single device and handle its logical tasks independently"""
+    from background_process import monitor
+    from logical_process import run_hard_mode_swipes, handle_game_ready_routing
+    
     while True:
         try:
             # Monitor this specific device for logical tasks
@@ -167,7 +204,8 @@ async def monitor_single_device_with_logical_tasks(device_id: str):
                     del monitor.logical_task_info[triggered_device]
                     
         except Exception as e:
-            print(f"[{device_id}] Monitoring error")
+            print(f"[{device_id}] Monitoring error: {e}")
+            traceback.print_exc()
             await asyncio.sleep(1)
 
 if __name__ == '__main__':

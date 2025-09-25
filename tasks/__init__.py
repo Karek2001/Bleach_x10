@@ -33,6 +33,12 @@ from .login2_klab_login_tasks import Login2_Klab_Login_Tasks
 from .login3_wait_for_2fa import Login3_Wait_For_2FA_Tasks
 from .login4_Confirm_Link import Login4_Confirm_Link_Tasks
 from .endgame_tasks import Endgame_Tasks
+# Reroll tasks
+from .reroll_earse_gamedata_1 import reroll_earse_gamedata_tasks
+from .reroll_tutorial_firstMatch_2 import reroll_tutorial_firstmatch_tasks
+from .reroll_tutorial_CharacterChoose_3 import reroll_tutorial_characterchoose_tasks
+from .reroll_tutorial_secondMatch_4 import reroll_tutorial_secondmatch_tasks
+from .reroll_tutorial_ReplaceIchigoWithFiveStar_5 import reroll_replaceichigowithfivestar_tasks
 
 __all__ = [
     'StoryMode_Tasks',
@@ -68,5 +74,11 @@ __all__ = [
     'Login2_Klab_Login_Tasks',
     'Login3_Wait_For_2FA_Tasks',
     'Login4_Confirm_Link_Tasks',
-    'Endgame_Tasks'
+    'Endgame_Tasks',
+    # Reroll tasks
+    'reroll_earse_gamedata_tasks',
+    'reroll_tutorial_firstmatch_tasks',
+    'reroll_tutorial_characterchoose_tasks',
+    'reroll_tutorial_secondmatch_tasks',
+    'reroll_replaceichigowithfivestar_tasks'
 ]

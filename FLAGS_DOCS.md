@@ -72,6 +72,20 @@ Adjust click position by specified pixels
 - **Type**: Integer
 - **Example**: `"UpPixels": 10` moves click 10 pixels up
 
+### `hold_delay`
+Hold the click at the specified position for a duration
+- **Type**: Float (seconds)
+- **Usage**: Used with `click_location_str` to simulate a long press
+- **Example**: `"hold_delay": 3` holds the position for 3 seconds
+
+### `hold_move`
+Drag from click_location_str to another position
+- **Type**: String (coordinates)
+- **Format**: `"x,y"`
+- **Usage**: Used with `click_location_str` to simulate a drag gesture
+- **Example**: `"hold_move": "500,300"` drags from click location to 500,300
+- **Optional**: `"drag_duration"` controls drag speed (default 1 second)
+
 ---
 
 ## Task Execution Control
@@ -413,13 +427,6 @@ Switch to confirm link helper tasks
 - **Usage**: Triggered from login3_wait_for_2fa_tasks
 - **Purpose**: Confirms the final linking process between account and application
 
-### `Endgame_Tasks`
-Switch to endgame main tasks
-- **Type**: Boolean flag
-- **Target**: `endgame`
-- **Usage**: Main task set for linked accounts (isLinked = 1)
-- **Purpose**: Post-linking progression tasks for fully linked accounts
-
 ### `BackToMain_Tasks`
 Return to main task set
 - **Type**: Boolean flag
@@ -723,6 +730,70 @@ Descriptive name for the task
 
 ---
 
+## Process Control Flags
+
+### `close_brave`
+Terminate Brave browser application
+- **Type**: Boolean flag
+- **Action**: Force stops com.brave.browser
+- **Usage**: Closes Brave browser when flag is true
+- **Example**: `"close_brave": true`
+- **Delay**: 1 second pause after closing
+
+### `close_game`
+Terminate game application
+- **Type**: Boolean flag
+- **Action**: Force stops com.klab.bleach (Bleach game)
+- **Usage**: Closes the game when flag is true
+- **Example**: `"close_game": true`
+- **Delay**: 1 second pause after closing
+
+---
+
+## Automatic Airtable Account Fetching
+
+### `airtable_get_stock_details` (Automatic)
+Automatically fetches account details from Airtable when all devices have `isLinked = 1`
+- **Type**: Automatic system function (not a flag)
+- **Trigger**: All 10 devices have `isLinked = 1`
+- **Process**:
+  1. System checks every 30 seconds if all devices have `isLinked = 1`
+  2. When all linked, closes the game (force-stop com.klab.bleach)
+  3. Reads current STOCK number from `currentlyStock.json`
+  4. Searches Airtable for records matching:
+     - `Order` field = Device number (1-10)
+     - `STOCK` field = Current stock number
+  5. Retrieves `Email`, `Password`, and `UserName` fields
+  6. Deletes all old device JSON files
+  7. Creates new device JSON files with fetched account data
+  8. Sets all reroll fields to 0 for new cycle
+  9. Increments STOCK number for next batch
+  10. Restarts game with first reroll task (`reroll_earse_gamedata`)
+- **Airtable Fields Used**: Order, STOCK, Email, Password, UserName
+- **File Impact**: Resets all device states for new reroll cycle
+- **Note**: Runs automatically every 30 seconds regardless of task set
+
+---
+
+## Reroll Task Progression
+
+### Reroll Task Flags
+The following flags track reroll task completion and are checked before story mode:
+- `Reroll_Earse_GameData`: Tracks game data erasure
+- `Reroll_Tutorial_FirstMatch`: Tracks first tutorial match completion
+- `Reroll_Tutorial_CharacterChoose`: Tracks character selection
+- `Reroll_Tutorial_SecondMatch`: Tracks second tutorial match
+- `Reroll_ReplaceIchigoWithFiveStar`: Tracks 5-star character replacement
+
+### Reroll Task Files
+- `reroll_earse_gamedata_1.py`: Erases game data for fresh start
+- `reroll_tutorial_firstMatch_2.py`: Completes first tutorial match
+- `reroll_tutorial_CharacterChoose_3.py`: Selects initial character
+- `reroll_tutorial_secondMatch_4.py`: Completes second tutorial match
+- `reroll_tutorial_ReplaceIchigoWithFiveStar_5.py`: Replaces Ichigo with 5-star character
+
+---
+
 ## Notes
 
 - Tasks are processed in priority order (lowest number first)
@@ -733,4 +804,6 @@ Descriptive name for the task
 - Conditional flags allow dynamic task flow based on progress
 - **Timezone Handling**: All timestamps in device states and stock files use Istanbul/Europe timezone (+03:00), regardless of system location
 - **Stock Management**: The `increment_stock` flag works globally across all devices and auto-generates the stock file if deleted
+- **Reroll Cycle**: When all accounts are linked, system automatically fetches new accounts from Airtable and starts reroll process
+- **Task Priority**: Reroll tasks → Story Mode → Other tasks → Account Linking → Endgame
 - **Auto-Generation**: Stock and device state files are automatically created/restored with default values if corrupted or deleted
