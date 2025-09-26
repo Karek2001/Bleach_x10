@@ -8,7 +8,7 @@ GUILD_TUTORIAL_TASKS = [
         "roi": [442, 430, 109, 108],
         "confidence": 0.70,
         "use_match_position": True,
-        "isLogical": False,
+        
         "priority": 15,
         "cooldown": 5.0,
     },
@@ -17,7 +17,7 @@ GUILD_TUTORIAL_TASKS = [
         "type": "pixel",
         "click_location_str": "814,173",
         "search_array": ["801,173","#fbfcff","807,87","#485563","860,88","#ffffff"],
-        "isLogical": False,
+        
         "priority": 20,
         "cooldown": 5.0,
         "sleep": 3,
@@ -29,7 +29,7 @@ GUILD_TUTORIAL_TASKS = [
         "roi": [535, 386, 162, 49],
         "confidence": 0.80,
         "use_match_position": True,
-        "isLogical": False,
+        
         "shared_detection": True,
         "priority": 25,
         "cooldown": 5.0,
@@ -41,7 +41,7 @@ GUILD_TUTORIAL_TASKS = [
         "roi": [321, 337, 312, 59],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "priority": 30,
         "cooldown": 5.0,
     },
@@ -55,7 +55,7 @@ Guild_Rejoin = [
         "roi": [772, 116, 79, 399],
         "confidence": 0.80,
         "use_match_position": True,
-        "isLogical": False,
+        
         "shared_detection": True,
         "priority": 15,
         "cooldown": 5.0,
@@ -65,7 +65,7 @@ Guild_Rejoin = [
         "type": "pixel",
         "click_location_str": "856,84",
         "search_array": ["859,88","#ffffff","861,78","#4d555c","876,100","#dedddd"],
-        "isLogical": False,
+        
         "priority": 10,  # Higher priority to refresh guild list
         "cooldown": 5.0,
         "sleep": 3,
@@ -77,7 +77,7 @@ Guild_Rejoin = [
         "roi": [321, 337, 312, 59],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "NeedGuildTutorial": True,
         "priority": 25,
         "cooldown": 5.0,

@@ -4,7 +4,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "384,494",
         "search_array": ["380,481","#e1773a","367,462","#323348","362,524","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -14,7 +14,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "483,200",
         "search_array": ["74,24","#ffffff","117,77","#ffffff","177,86","#e60012","787,91","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -24,7 +24,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "197,491",
         "search_array": ["151,496","#ffffff","229,496","#ffffff","236,475","#31fc24"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -34,7 +34,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "120,209",
         "search_array": ["851,239","#90909c","585,235","#90909c","323,231","#90909c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -44,7 +44,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "378,209",
         "search_array": ["119,211","#00ff00","591,243","#90909c","851,234","#90909c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -54,7 +54,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "636,210",
         "search_array": ["120,211","#00ff00","378,211","#00ff00","849,242","#90909c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -64,7 +64,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "647,493",
         "search_array": ["120,211","#00ff00","378,211","#00ff00","636,211","#00ff00"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -74,7 +74,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "395,443",
         "search_array": ["457,444","#454e57","422,451","#e60012","392,428","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -84,7 +84,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "545,213",
         "search_array": ["210,217","#eb4c01","120,218","#ec4e01","137,212","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -94,7 +94,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "387,318",
         "search_array": ["265,322","#ec4c01","129,322","#ec4c01"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -104,7 +104,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "381,436",
         "search_array": ["261,433","#ec4e01","267,433","#ec4e01"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -117,7 +117,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "multi_click": True,
         "min_matches_for_swipe": 2,
         "swipe_command": "shell input swipe 443 400 443 140 900",
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 0.1,
         "sleep": 3,
@@ -127,7 +127,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "731,415",
         "search_array": ["332,421","#ec4c01","836,420","#3e4e5f"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -137,7 +137,7 @@ Sort_Multi_Select_Garbage_First_Tasks = [
         "type": "pixel",
         "click_location_str": "652,484",
         "search_array": ["838,421","#ec4c01","734,418","#ffffff","739,419","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "json_Sort_Multi_Select_Garbage_First": True,

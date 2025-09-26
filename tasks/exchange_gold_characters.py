@@ -5,7 +5,7 @@ Exchange_Gold_Characters = [
         "type": "pixel",
         "click_location_str": "121,220",
         "search_array": ["679,179","#ffffff","736,201","#ffffff","377,201","#fdc46f","175,242","#ffffff","260,109","#ffffff"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -15,7 +15,7 @@ Exchange_Gold_Characters = [
         "type": "pixel",
         "click_location_str": "256,503",
         "search_array": ["237,527","#eff1ff","271,527","#eef0ff","275,507","#c7d4c2"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -25,7 +25,7 @@ Exchange_Gold_Characters = [
         "type": "pixel",
         "click_location_str": "805,289",
         "search_array": ["824,273","#fcd931","781,237","#ffffff","797,192","#d41706"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -35,7 +35,7 @@ Exchange_Gold_Characters = [
         "type": "pixel",
         "click_location_str": "258,80",
         "search_array": ["74,25","#ffffff","261,80","#ffffff","260,95","#d9091a","271,82","#424850","122,83","#21212c","194,82","#262631","214,86","#1c1c28"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -45,7 +45,7 @@ Exchange_Gold_Characters = [
         "type": "pixel",
         "click_location_str": "256,426",
         "search_array": ["158,423","#a9aab9","173,424","#121215","221,424","#151518","347,427","#a9aab9"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 10.0,
         "sleep": 3,
@@ -54,7 +54,7 @@ Exchange_Gold_Characters = [
         "task_name": "Choose Characcter has 10 Remaining",
         "type": "template",
         "template_path": "templates/Exchange/Remaining10.png",
-        "isLogical": False,
+        
         "roi": [705, 112, 169, 427],
         "confidence": 0.90,
         "use_match_position": True,
@@ -67,7 +67,7 @@ Exchange_Gold_Characters = [
         "type": "pixel",
         "click_location_str": "613,410",
         "search_array": ["228,124","#0d12b5","246,139","#e60012","368,126","#191925","478,127","#191925","553,413","#ffffff"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 10.0,
         "sleep": 3,
@@ -77,7 +77,7 @@ Exchange_Gold_Characters = [
         "type": "pixel",
         "click_location_str": "487,408",
         "search_array": ["230,121","#0d12b5","245,135","#e60012","351,123","#191925","610,125","#191925","608,409","#2159f9"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 10.0,
         "sleep": 3,
@@ -86,7 +86,7 @@ Exchange_Gold_Characters = [
         "task_name": "Detect 3 Characters Are 9 Remaining",
         "type": "template",
         "template_path": "templates/Exchange/Remaining9.png",
-        "isLogical": False,
+        
         "roi": [705, 112, 169, 427],
         "confidence": 0.75,
         "shared_detection": True,
@@ -102,7 +102,7 @@ Exchange_Gold_Characters = [
         "type": "pixel",
         "click_location_str": "23,22",
         "search_array": ["876,526","#7a7a7a","876,505","#e8e8e8","876,490","#4e4e4e","876,498","#4e4e4e"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "json_Exchange_Gold_Characters":True,

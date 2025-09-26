@@ -4,7 +4,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "384,494",
         "search_array": ["380,481","#e1773a","367,462","#323348","362,524","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -14,7 +14,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "483,200",
         "search_array": ["74,24","#ffffff","106,25","#ffffff","24,20","#ffffff","855,513","#56390d"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -24,7 +24,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "197,491",
         "search_array": ["151,496","#ffffff","229,496","#ffffff","236,475","#31fc24"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -34,7 +34,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "120,209",
         "search_array": ["851,239","#90909c","585,235","#90909c","323,231","#90909c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -44,7 +44,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "378,209",
         "search_array": ["119,211","#00ff00","591,243","#90909c","851,234","#90909c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -54,7 +54,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "636,210",
         "search_array": ["120,211","#00ff00","378,211","#00ff00","849,242","#90909c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -64,7 +64,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "647,493",
         "search_array": ["120,211","#00ff00","378,211","#00ff00","636,211","#00ff00"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -74,7 +74,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "766,38",
         "search_array": ["123,39","#191925","255,38","#191925","467,39","#191925","762,40","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -84,7 +84,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "289,415",
         "search_array": ["788,416","#ec4c01","402,415","#3e4e5f","258,100","#ef5201"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -94,7 +94,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "432,36",
         "search_array": ["401,415","#e84b01","258,100","#ef5201"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -104,7 +104,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "585,252",
         "search_array": ["183,255","#e74901","622,254","#3e4957","582,251","#ffffff","598,256","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -117,7 +117,7 @@ Sort_Filter_Ascension_Tasks = [
         "shared_detection": True,
         "min_matches_for_swipe": 1,
         "swipe_command": "shell input swipe 443 400 443 140 900",
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 5,
@@ -130,7 +130,7 @@ Sort_Filter_Ascension_Tasks = [
         "shared_detection": True,
         "min_matches_for_swipe": 1,
         "swipe_command": "shell input swipe 443 400 443 140 900",
-        "isLogical": False,
+        
         "use_match_position": True,
         "priority": 1,
         "cooldown": 5.0,
@@ -144,7 +144,7 @@ Sort_Filter_Ascension_Tasks = [
         "use_match_position": True,
         "delayed_click_location": "477,491",
         "delayed_click_delay": 2.0,
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -154,7 +154,7 @@ Sort_Filter_Ascension_Tasks = [
         "type": "pixel",
         "click_location_str": "0,0",
         "search_array": ["856,37","#e14601","675,37","#e14601","754,37","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "json_Sort_Filter_Ascension": True,

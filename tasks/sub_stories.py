@@ -8,7 +8,7 @@ SubStories = [
         "roi": [814, 420, 142, 118],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "priority": 35,
         "cooldown": 5.0,
     },

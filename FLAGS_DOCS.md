@@ -246,7 +246,13 @@ Sets Upgrade_Characters_Level to complete (1)
 Sets Reroll_Earse_GameData to complete (1)
 - **Type**: Boolean flag
 - **Sets**: `Reroll_Earse_GameData = 1` in device state
-- **Usage**: Mark game data erasure as complete in reroll cycle
+- **Usage**: Mark game data erasure (Part 1) as complete in reroll cycle
+
+### `json_Reroll_Earse_GameDataPart2`
+Sets Reroll_Earse_GameDataPart2 to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Reroll_Earse_GameDataPart2 = 1` in device state
+- **Usage**: Mark game data erasure (Part 2) as complete in reroll cycle
 
 ### `json_Reroll_Tutorial_FirstMatch`
 Sets Reroll_Tutorial_FirstMatch to complete (1)
@@ -430,11 +436,18 @@ Switch to extract account ID tasks
 - **Purpose**: Extracts player account ID information
 
 ### `Reroll_Earse_GameData_Tasks`
-Switch to reroll erase game data tasks
+Switch to reroll erase game data tasks (Part 1)
 - **Type**: Boolean flag
 - **Target**: `reroll_earse_gamedata`
 - **Usage**: Start reroll cycle with game data erasure
 - **Purpose**: Begin fresh account reroll process
+
+### `Reroll_Earse_GameDataPart2_Tasks`
+Switch to reroll erase game data tasks (Part 2)
+- **Type**: Boolean flag
+- **Target**: `reroll_earse_gamedatapart2`
+- **Usage**: Continue reroll cycle after game data erasure Part 1
+- **Purpose**: Complete game data erasure process
 
 ### `Reroll_Tutorial_FirstMatch_Tasks`
 Switch to reroll tutorial first match tasks
@@ -523,6 +536,15 @@ Automatically type password from device JSON after clicking
 - **Method**: Uses ADB text input with special character support
 - **Security**: Password is masked in logs (shown as asterisks)
 - **Example**: `"Enter_Password": true` types password after clicking text field
+
+### `Enter_UserName`
+Automatically type username from device JSON after clicking
+- **Type**: Boolean flag
+- **Usage**: After executing click, waits 3 seconds then types username
+- **Source**: Uses `UserName` field from device JSON state
+- **Method**: Uses ADB text input with special character support
+- **Locking**: Pauses all other tasks for 15s during text input
+- **Example**: `"Enter_UserName": true` types username after clicking text field
 
 ---
 
@@ -692,7 +714,7 @@ Descriptive name for the task
     "type": "pixel",
     "click_location_str": "756,508",
     "search_array": ["713,512","#ffffff","760,507","#ffffff"],
-    "isLogical": False,
+    
     "priority": 5,
     "cooldown": 5.0,
     "shared_detection": True,
@@ -851,7 +873,8 @@ The following flags track reroll task completion and are checked before story mo
 - `Reroll_ReplaceIchigoWithFiveStar`: Tracks 5-star character replacement
 
 ### Reroll Task Files
-- `reroll_earse_gamedata_1.py`: Erases game data for fresh start
+- `reroll_earse_gamedata_1.py`: Erases game data for fresh start (Part 1)
+- `reroll_earse_gamedataPart2.py`: Completes game data erasure process (Part 2)
 - `reroll_tutorial_firstMatch_2.py`: Completes first tutorial match
 - `reroll_tutorial_CharacterChoose_3.py`: Selects initial character
 - `reroll_tutorial_secondMatch_4.py`: Completes second tutorial match

@@ -4,7 +4,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "384,494",
         "search_array": ["380,481","#e1773a","367,462","#323348","362,524","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -15,7 +15,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "795,90",
         "search_array": ["866,92","#404b59","798,91","#ffffff","786,100","#e60012"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -25,7 +25,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "391,332",
         "search_array": ["342,332","#ffffff","393,333","#ffffff","370,332","#ffffff","450,333","#3d4c5a"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -35,7 +35,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "291,414",
         "search_array": ["248,413","#ffffff","359,420","#ffffff","405,415","#414e5c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -45,7 +45,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "428,36",
         "search_array": ["403,416","#ec4c01","451,334","#ec4c01"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -55,7 +55,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "260,254",
         "search_array": ["252,252","#ffffff","291,255","#3e4d5c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -65,7 +65,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "371,254",
         "search_array": ["362,252","#ffffff","400,255","#3d4d5c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -75,7 +75,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "481,254",
         "search_array": ["471,252","#ffffff","510,255","#3e4d5c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -85,7 +85,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "590,254",
         "search_array": ["581,252","#ffffff","622,256","#434f5c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -95,7 +95,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "699,254",
         "search_array": ["691,252","#ffffff","731,256","#424f5c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -105,7 +105,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "0,0",
         "search_array": ["293,257","#ec4d01","402,257","#ec4d01","512,257","#ec4d01","622,257","#ec4d01","732,256","#ea4b01"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "swipe_count": 5,
@@ -119,7 +119,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "template_path": "templates/Sort_Filter/CharacterPowerUpStatus.png",
         "confidence": 0.90,
         "roi": [98, 134, 293, 278],
-        "isLogical": False,
+        
         "use_match_position": True,
         "RightPixels": 563,
         "priority": 1,
@@ -131,7 +131,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "660,395",
         "search_array": ["720,396","#384c60","640,398","#ffffff","663,395","#ffffff","714,394","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -142,7 +142,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "708,479",
         "search_array": ["844,398","#eb4c01","830,481","#1f58f9","698,480","#ffffff","725,479","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -154,7 +154,7 @@ Sort_Characters_Lowest_Level_Tasks = [
         "type": "pixel",
         "click_location_str": "0,0",
         "search_array": ["749,91","#ffffff","782,91","#ffffff","871,88","#e34802"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "json_Sort_Characters_Lowest_Level": True,

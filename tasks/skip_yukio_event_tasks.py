@@ -4,7 +4,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "319,490",
         "search_array": ["128,37","#191925","186,36","#191925","276,34","#191925","128,90","#ee5501"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -14,7 +14,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "29,25",
         "search_array": ["23,22","#ffffff","74,25","#ffffff","211,26","#ffffff","56,307","#3d4c5a"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -25,7 +25,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "29,25",
         "search_array": ["74,24","#ffffff","106,26","#ffffff","25,21","#ffffff","870,92","#444b54"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -35,7 +35,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "29,25",
         "search_array": ["23,21","#ffffff","74,24","#ffffff","32,47","#e60012"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -45,7 +45,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "892,493",
         "search_array": ["893,485","#978e74","891,498","#978e74","868,500","#978e74","874,529","#dce0fd"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -55,7 +55,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "507,299",
         "search_array": ["450,288","#ffffff","534,308","#ffffff","552,315","#981400","531,323","#2e0d02"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -67,7 +67,7 @@ Skip_Yukio_Event_Tasks = [
         "roi": [71, 45, 408, 489],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
     },
@@ -76,7 +76,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "673,488",
         "search_array": ["646,492","#ffffff","716,490","#ffffff","759,480","#0a37e7"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -86,7 +86,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "726,496",
         "search_array": ["435,513","#fe0706","526,513","#f3605c","799,493","#0a3ae1"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -96,7 +96,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "734,495",
         "search_array": ["492,490","#ffffff","507,489","#ffffff","560,483","#ea5405","506,498","#ffc130"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -106,7 +106,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "507,490",
         "search_array": ["500,349","#191925","481,491","#ffffff","508,489","#ffffff","510,499","#e60012"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -116,7 +116,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "594,423",
         "search_array": ["589,429","#01b801","595,423","#f4f4f4","600,429","#01b801"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -126,7 +126,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "151,26",
         "search_array": ["146,26","#ffffff","203,28","#ffffff","133,33","#2b3c52"],
-        "isLogical": False,
+        
         "priority": 20,
         "cooldown": 5.0,
         "sleep": 3,
@@ -137,7 +137,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "197,509",
         "search_array": ["262,510","#2059f9","172,508","#ffffff"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "Increment_Yukio_Retry": True,
@@ -149,7 +149,7 @@ Skip_Yukio_Event_Tasks = [
         "type": "pixel",
         "click_location_str": "391,509",
         "search_array": ["357,508","#ffffff","408,509","#ffffff","451,509","#1d56f9"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 8.0,
         "ConditionalRun": ["Skip_Yukio_Event_Retry_At_3"],

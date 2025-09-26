@@ -6,7 +6,7 @@ Kon_Bonaza_1Match_Tasks = [
         "type": "pixel",
         "click_location_str": "389,511",
         "search_array": ["357,506","#ffffff","368,507","#ffffff","450,505","#0939e0"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "Upgrade_Characters_Level_Tasks": True,
@@ -22,7 +22,7 @@ Kon_Bonaza_1Match_Tasks = [
         "roi": [71, 45, 408, 489],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -32,7 +32,7 @@ Kon_Bonaza_1Match_Tasks = [
         "type": "pixel",
         "click_location_str": "673,488",
         "search_array": ["646,492","#ffffff","716,490","#ffffff","759,480","#0a37e7"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -42,7 +42,7 @@ Kon_Bonaza_1Match_Tasks = [
         "type": "pixel",
         "click_location_str": "734,495",
         "search_array": ["492,490","#ffffff","507,489","#ffffff","560,483","#ea5405","506,498","#ffc130"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -52,7 +52,7 @@ Kon_Bonaza_1Match_Tasks = [
         "type": "pixel",
         "click_location_str": "507,490",
         "search_array": ["500,349","#191925","481,491","#ffffff","508,489","#ffffff","510,499","#e60012"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -62,7 +62,7 @@ Kon_Bonaza_1Match_Tasks = [
         "type": "pixel",
         "click_location_str": "594,423",
         "search_array": ["589,429","#01b801","595,423","#f4f4f4","600,429","#01b801"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -72,7 +72,7 @@ Kon_Bonaza_1Match_Tasks = [
         "type": "pixel",
         "click_location_str": "151,26",
         "search_array": ["254,25","#ffffff","457,27","#ffffff","139,25","#fafbfb"],
-        "isLogical": False,
+        
         "priority": 20,
         "cooldown": 5.0,
         "sleep": 3,

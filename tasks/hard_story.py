@@ -6,7 +6,7 @@ HardStory_Tasks = [
         "type": "pixel",
         "click_location_str": "34,29",
         "search_array": ["537,344","#ff0000","918,42","#eb1a1a","506,364","#e9e902","486,148","#f5cd3d"],
-        "isLogical": False,
+        
         "priority": 1,
         "Sub-Stores": True,
         "KeepChecking": 5.0,
@@ -20,7 +20,7 @@ HardStory_Tasks = [
         "type": "pixel",
         "click_location_str": "845,41",
         "search_array": ["921,42","#0a36e5","47,15","#010101","24,49","#e50012","81,32","#fefefe"],
-        "isLogical": False,
+        
         "priority": 20,
         "sleep": 3,
     },

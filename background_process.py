@@ -59,11 +59,12 @@ from tasks import (
     Endgame_Tasks,
     # Reroll tasks
     reroll_earse_gamedata_tasks,
+    reroll_earse_gamedatapart2_tasks,
     reroll_tutorial_firstmatch_tasks,
     reroll_tutorial_characterchoose_tasks,
     reroll_tutorial_secondmatch_tasks,
     reroll_replaceichigowithfivestar_tasks
-)
+)   
 
 # Bleach game package name
 BLEACH_PACKAGE_NAME = "com.klab.bleach"
@@ -302,6 +303,7 @@ class ProcessMonitor:
             "upgrade_characters_back_to_edit": Upgrade_Characters_Back_To_Edit,
             # Reroll tasks
             "reroll_earse_gamedata": reroll_earse_gamedata_tasks,
+            "reroll_earse_gamedatapart2": reroll_earse_gamedatapart2_tasks,
             "reroll_tutorial_firstmatch": reroll_tutorial_firstmatch_tasks,
             "reroll_tutorial_characterchoose": reroll_tutorial_characterchoose_tasks,
             "reroll_tutorial_secondmatch": reroll_tutorial_secondmatch_tasks,
@@ -326,6 +328,7 @@ class ProcessMonitor:
         is_reroll_phase = (
             task_set.startswith("reroll_") or 
             device_state.get("Reroll_Earse_GameData", 1) == 0 or
+            device_state.get("Reroll_Earse_GameDataPart2", 1) == 0 or
             device_state.get("Reroll_Tutorial_FirstMatch", 1) == 0 or
             device_state.get("Reroll_Tutorial_CharacterChoose", 1) == 0 or
             device_state.get("Reroll_Tutorial_SecondMatch", 1) == 0 or
@@ -358,7 +361,7 @@ class ProcessMonitor:
             "kon_bonaza_1match_tasks", "skip_yukio_event", "sort_characters_lowest_level",
             "sort_filter_ascension", "sort_multi_select_garbage_first",
             "upgrade_characters_level", "upgrade_characters_back_to_edit",
-            "reroll_earse_gamedata", "reroll_tutorial_firstmatch", "reroll_tutorial_characterchoose",
+            "reroll_earse_gamedata", "reroll_earse_gamedatapart2", "reroll_tutorial_firstmatch", "reroll_tutorial_characterchoose",
             "reroll_tutorial_secondmatch", "reroll_replaceichigowithfivestar",
             "main_screenshot", "extract_orb_counts", "extract_account_id",
             "login1_prepare_for_link", "login2_klab_login", "login3_wait_for_2fa",
@@ -397,6 +400,7 @@ class ProcessMonitor:
                 "upgrade_characters_level": "Upgrade Characters Level",
                 "upgrade_characters_back_to_edit": "Upgrade Characters Back To Edit",
                 "reroll_earse_gamedata": "Reroll Erase Game Data",
+                "reroll_earse_gamedatapart2": "Reroll Erase Game Data Part 2", 
                 "reroll_tutorial_firstmatch": "Reroll Tutorial First Match",
                 "reroll_tutorial_characterchoose": "Reroll Tutorial Character Choose",
                 "reroll_tutorial_secondmatch": "Reroll Tutorial Second Match",
@@ -611,6 +615,7 @@ class BackgroundMonitor:
             "upgrade_characters_back_to_edit": Upgrade_Characters_Back_To_Edit,
             # Reroll tasks
             "reroll_earse_gamedata": reroll_earse_gamedata_tasks,
+            "reroll_earse_gamedatapart2": reroll_earse_gamedatapart2_tasks,
             "reroll_tutorial_firstmatch": reroll_tutorial_firstmatch_tasks,
             "reroll_tutorial_characterchoose": reroll_tutorial_characterchoose_tasks,
             "reroll_tutorial_secondmatch": reroll_tutorial_secondmatch_tasks,
@@ -640,6 +645,7 @@ class BackgroundMonitor:
         is_reroll_phase = (
             task_set.startswith("reroll_") or 
             device_state.get("Reroll_Earse_GameData", 1) == 0 or
+            device_state.get("Reroll_Earse_GameDataPart2", 1) == 0 or
             device_state.get("Reroll_Tutorial_FirstMatch", 1) == 0 or
             device_state.get("Reroll_Tutorial_CharacterChoose", 1) == 0 or
             device_state.get("Reroll_Tutorial_SecondMatch", 1) == 0 or
@@ -839,7 +845,7 @@ class OptimizedBackgroundMonitor:
             await execute_tap(device_id, delayed_click_location)
 
     async def handle_text_input_flags(self, device_id: str, task: dict):
-        """Handle Enter_Email, Enter_Password, and Get_2fa flags after clicking"""
+        """Handle Enter_Email, Enter_Password, Enter_UserName, and Get_2fa flags after clicking"""
         
         # Check for Get_2fa flag (new functionality)
         if task.get("Get_2fa", False):
@@ -906,6 +912,29 @@ class OptimizedBackgroundMonitor:
                 print(f"[{device_id}] ✅ Password entered, waiting 1s...")
             else:
                 print(f"[{device_id}] Warning: No password found in device state")
+            
+            # Release text input lock
+            if device_id in self.text_input_active:
+                del self.text_input_active[device_id]
+            print(f"[{device_id}] 🔓 Text input unlocked - resuming task detection")
+        
+        # Check for Enter_UserName flag (new functionality)
+        if task.get("Enter_UserName", False):
+            # Lock text input to pause all other tasks
+            self.text_input_active[device_id] = time.time() + 15.0  # Same 15 second lock as email and password
+            print(f"[{device_id}] 🔒 Text input locked - pausing all other tasks for 15s")
+            
+            await asyncio.sleep(3.0)  # Same 3 second delay as email and password
+            device_state = device_state_manager.get_state(device_id)
+            username = device_state.get("UserName", "")
+            if username:
+                print(f"[{device_id}] Entering username: {username}")
+                await execute_text_input(device_id, username)
+                # Additional delay after username entry (same as email and password)
+                await asyncio.sleep(1.0)
+                print(f"[{device_id}] ✅ Username entered, waiting 1s...")
+            else:
+                print(f"[{device_id}] Warning: No username found in device state")
             
             # Release text input lock
             if device_id in self.text_input_active:
@@ -994,6 +1023,7 @@ class OptimizedBackgroundMonitor:
             "json_isLinked",  # Missing flag for account linking status
             # Reroll task flags
             "json_Reroll_Earse_GameData",
+            "json_Reroll_Earse_GameDataPart2",  # Second part of game data erase
             "json_Reroll_Tutorial_FirstMatch", 
             "json_Reroll_Tutorial_CharacterChoose",
             "json_Reroll_Tutorial_SecondMatch",
@@ -1223,6 +1253,7 @@ class OptimizedBackgroundMonitor:
             "Upgrade_Characters_Back_To_Edit_Tasks": ("upgrade_characters_back_to_edit", "→ Upgrade Characters Back To Edit"),
             "Recive_Giftbox_Orbs_Tasks": ("recive_giftbox_orbs", "→ Receive Gift Box Orbs"),
             "Reroll_Earse_GameData_Tasks": ("reroll_earse_gamedata", "→ Reroll Erase Game Data"),
+            "Reroll_Earse_GameDataPart2_Tasks": ("reroll_earse_gamedatapart2", "→ Reroll Erase Game Data Part 2"),
             "Reroll_Tutorial_FirstMatch_Tasks": ("reroll_tutorial_firstmatch", "→ Reroll Tutorial First Match"),
             "Reroll_Tutorial_CharacterChoose_Tasks": ("reroll_tutorial_characterchoose", "→ Reroll Tutorial Character Choose"),
             "Reroll_Tutorial_SecondMatch_Tasks": ("reroll_tutorial_secondmatch", "→ Reroll Tutorial Second Match"),

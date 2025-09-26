@@ -7,7 +7,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "24,21",
         "search_array": ["75,24","#ffffff","106,25","#ffffff","534,328","#ffffff","636,325","#ffffff","768,327","#ffffff","476,173","#191925","855,429","#191925","567,117","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -23,7 +23,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "309,495",
         "search_array": ["352,202","#ffffff","370,204","#ffffff","379,206","#ffffff","389,202","#ffffff","123,38","#191925","264,35","#191925","467,38","#191925"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "Upgrade_Characters_Back_To_Edit_Tasks": True,
@@ -35,7 +35,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "310,495",
         "search_array": ["456,270","#000000","500,272","#000000","593,272","#000000","707,275","#000000","383,155","#a9aab9","811,215","#a9aab9"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "Skip_Yukio_Event_Tasks": True,
@@ -47,7 +47,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "311,488",
         "search_array": ["685,488","#7f0000","695,489","#7f0000","768,491","#0f2c7c"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "Skip_Yukio_Event_Tasks": True,
@@ -60,7 +60,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "384,494",
         "search_array": ["380,481","#e1773a","367,462","#323348","362,524","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -70,7 +70,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "479,200",
         "search_array": ["74,24","#ffffff","106,25","#ffffff","24,20","#ffffff","855,513","#56390d"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -81,7 +81,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "197,491",
         "search_array": ["151,496","#ffffff","229,496","#ffffff","236,475","#31fc24"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -91,7 +91,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "120,209",
         "search_array": ["851,239","#90909c","585,235","#90909c","323,231","#90909c"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 6.0,
         "sleep": 3,
@@ -101,7 +101,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "378,209",
         "search_array": ["119,211","#00ff00","591,243","#90909c","851,234","#90909c"],
-        "isLogical": False,
+        
         "priority": 15,
         "cooldown": 6.0,
         "sleep": 3,
@@ -111,7 +111,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "636,210",
         "search_array": ["120,211","#00ff00","378,211","#00ff00","849,242","#90909c"],
-        "isLogical": False,
+        
         "priority": 20,
         "cooldown": 6.0,
         "sleep": 3,
@@ -121,7 +121,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "648,493",
         "search_array": ["636,210","#00ff00","377,210","#00ff00","119,210","#00ff00"],
-        "isLogical": False,
+        
         "priority": 20,
         "cooldown": 6.0,
         "sleep": 3,
@@ -134,7 +134,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "344,372",
         "search_array": ["712,153","#0d12b5","709,167","#e60012","588,236","#ffffff","684,236","#ffffff","690,241","#ffffff"],
-        "isLogical": False,
+        
         "priority": 5,
         "cooldown": 6.0,
         "sleep": 3,
@@ -145,7 +145,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "639,209",
         "search_array": ["850,217","#90909c","579,217","#545460","433,208","#ffffff","325,230","#545460","175,209","#ffffff"],
-        "isLogical": False,
+        
         "priority": 5,
         "cooldown": 6.0,
         "sleep": 3,
@@ -155,7 +155,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "379,207",
         "search_array": ["636,210","#00ff00","588,235","#90909c","475,209","#ffffff"],
-        "isLogical": False,
+        
         "priority": 5,
         "cooldown": 6.0,
         "sleep": 3,
@@ -165,7 +165,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "648,491",
         "search_array": ["636,210","#00ff00","378,210","#00ff00","175,209","#ffffff","287,210","#ffffff","321,223","#545460"],
-        "isLogical": False,
+        
         "priority": 5,
         "cooldown": 6.0,
         "sleep": 3,
@@ -175,7 +175,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "645,491",
         "search_array": ["636,211","#00ff00","578,231","#545460","313,228","#545460","175,208","#ffffff","287,213","#ffffff","433,207","#ffffff","529,206","#ffffff"],
-        "isLogical": False,
+        
         "priority": 5,
         "cooldown": 6.0,
         "sleep": 3,
@@ -185,7 +185,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "387,441",
         "search_array": ["857,38","#e14601","794,494","#7f7f7f","782,492","#041c70","351,451","#e60012"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 18.0,
         "sleep": 3,
@@ -195,7 +195,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "656,495",
         "search_array": ["856,37","#e14601","783,491","#0a3ae1","123,39","#191925"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -205,7 +205,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "657,491",
         "search_array": ["852,40","#fd3838","770,492","#215af9","457,432","#ec4c01","591,220","#f15602"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -215,7 +215,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "736,487",
         "search_array": ["690,487","#ffffff","776,486","#ffffff","804,490","#2159f9"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -225,7 +225,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "26,21",
         "search_array": ["79,26","#ffffff","150,28","#ffffff","158,24","#ffffff","214,27","#ffffff","29,48","#e60012","25,22","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "Upgrade_Characters_Back_To_Edit_Tasks": True,
@@ -236,7 +236,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "479,487",
         "search_array": ["713,35","#0d12b5","704,47","#e60012","253,35","#0d12b5","256,46","#e60012","452,486","#ffffff"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -247,7 +247,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "208,481",
         "search_array": ["162,496","#ffffff","234,496","#ffffff","200,453","#ffb033",],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -257,7 +257,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "620,488",
         "search_array": ["259,35","#0d12b5","272,48","#e60012","372,39","#191925","595,38","#191925"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -267,7 +267,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "153,489",
         "search_array": ["102,496","#ffffff","203,494","#ffffff","187,475","#25f854"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -277,7 +277,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "481,446",
         "search_array": ["275,421","#ffffff","289,449","#ffff58","253,425","#ffff58"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -287,7 +287,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "0,0",
         "search_array": ["105,496","#ffffff","192,495","#ffffff","169,447","#29292b","196,456","#29292b"],
-        "isLogical": False,
+        
         "priority": 1,
         "cooldown": 6.0,
         "Upgrade_Characters_Back_To_Edit_Tasks": True,
@@ -302,7 +302,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "120,210",
         "search_array": ["336,243","#90909c","590,244","#545460","850,239","#545460"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 6.0,
         "sleep": 3,
@@ -315,7 +315,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "120,210",
         "search_array": ["337,238","#90909c","595,241","#545460","852,243","#90909c"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 6.0,
         "sleep": 3,
@@ -326,7 +326,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "636,210",
         "search_array": ["119,211","#00ff00","590,240","#545460","433,210","#ffffff","545,214","#ffffff","850,236","#90909c"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 6.0,
         "sleep": 3,
@@ -337,7 +337,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "379,211",
         "search_array": ["120,211","#00ff00","636,211","#00ff00","585,242","#90909c"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 6.0,
         "sleep": 3,
@@ -348,7 +348,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "121,206",
         "search_array": ["326,236","#90909c","593,242","#545460","849,237","#90909c","433,210","#ffffff","545,214","#ffffff"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 6.0,
         "sleep": 3,
@@ -359,7 +359,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "311,491",
         "search_array": ["119,210","#00ff00","594,246","#545460","852,248","#545460","433,209","#ffffff","691,209","#ffffff"],
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 6.0,
         "sleep": 3,
@@ -372,7 +372,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "378,209",
         "search_array": ["119,210","#00ff00","590,243","#90909c","849,241","#545460"],
-        "isLogical": False,
+        
         "priority": 15,
         "cooldown": 6.0,
         "sleep": 3,
@@ -382,7 +382,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "654,495",
         "search_array": ["120,211","#00ff00","378,211","#00ff00","849,240","#545460","691,210","#ffffff"],
-        "isLogical": False,
+        
         "priority": 20,
         "cooldown": 6.0,
         "sleep": 3,
@@ -393,7 +393,7 @@ Upgrade_Characters_Level = [
         "type": "pixel",
         "click_location_str": "540,332",
         "search_array": ["306,330","#ffffff","362,336","#ffffff","415,332","#ffffff","650,336","#ffffff","704,327","#0a3ae1"],
-        "isLogical": False,
+        
         "priority": 20,
         "cooldown": 6.0,
         "Kon_Bonaza_1Match_Tasks": True,

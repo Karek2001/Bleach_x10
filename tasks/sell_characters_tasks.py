@@ -9,7 +9,7 @@ Sell_Characters = [
         "roi": [174, 330, 607, 87],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
     },
@@ -20,7 +20,7 @@ Sell_Characters = [
         "roi": [497, 331, 252, 86],
         "confidence": 0.80,
         "use_match_position": True,
-        "isLogical": False,
+        
         "priority": 10,
         "cooldown": 5.0,
     },
@@ -31,7 +31,7 @@ Sell_Characters = [
         "type": "pixel",
         "click_location_str": "153,515",
         "search_array": ["141,516","#eaeaea","168,515","#ffffff","132,513","#2b3a48"],
-        "isLogical": False,
+        
         "priority": 15,
         "cooldown": 5.0,
         "sleep": 3,
@@ -41,7 +41,7 @@ Sell_Characters = [
         "type": "pixel",
         "click_location_str": "319,511",
         "search_array": ["218,521","#ffbc2e","276,513","#d9dada","291,511","#f9f9fa","857,516","#16337d"],
-        "isLogical": False,
+        
         "priority": 20,
         "cooldown": 5.0,
         "sleep": 3,
@@ -53,7 +53,7 @@ Sell_Characters = [
         "roi": [290, 276, 185, 171],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "priority": 25,
         "cooldown": 5.0,
     },
@@ -64,7 +64,7 @@ Sell_Characters = [
         "roi": [370, 169, 115, 58],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "shared_detection": True,  # Check with other selection options
         "priority": 30,
         "cooldown": 5.0,
@@ -74,7 +74,7 @@ Sell_Characters = [
         "type": "pixel",
         "click_location_str": "656,488",
         "search_array": ["473,207","#ec4d01","456,423","#ec4d01","458,314","#e94b01","472,208","#ee5001","769,492","#215af9","586,485","#0c3be2"],
-        "isLogical": False,
+        
         "priority": 35,
         "cooldown": 5.0,
         "sleep": 3,
@@ -84,7 +84,7 @@ Sell_Characters = [
         "type": "pixel",
         "click_location_str": "817,510",
         "search_array": ["806,509","#ffffff","832,510","#ffffff","859,506","#0a3ae1"],
-        "isLogical": False,
+        
         "priority": 40,
         "cooldown": 5.0,
         "sleep": 3,
@@ -96,7 +96,7 @@ Sell_Characters = [
         "type": "pixel",
         "click_location_str": "621,486",
         "search_array": ["603,486","#ffffff","622,489","#ffffff","225,433","#191925","686,485","#0939e0"],
-        "isLogical": False,
+        
         "priority": 45,
         "cooldown": 5.0,  # Longer cooldown to ensure sale processes
     },
@@ -107,7 +107,7 @@ Sell_Characters = [
         "roi": [370, 169, 115, 58],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "shared_detection": True,
         "priority": 50,
         "cooldown": 5.0,

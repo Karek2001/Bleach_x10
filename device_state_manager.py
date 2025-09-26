@@ -85,6 +85,7 @@ class DeviceStateManager:
             "Orbs": "0",
             "RestartingCount": 0,
             "Reroll_Earse_GameData": 0,
+            "Reroll_Earse_GameDataPart2": 0,
             "Reroll_Tutorial_FirstMatch": 0,
             "Reroll_Tutorial_CharacterChoose": 0,
             "Reroll_Tutorial_SecondMatch": 0,
@@ -478,6 +479,9 @@ class DeviceStateManager:
         # Check reroll tasks first (these come before everything else)
         if state.get("Reroll_Earse_GameData", 0) == 0:
             return "reroll_earse_gamedata"
+        
+        if state.get("Reroll_Earse_GameDataPart2", 0) == 0:
+            return "reroll_earse_gamedatapart2"
         
         if state.get("Reroll_Tutorial_FirstMatch", 0) == 0:
             return "reroll_tutorial_firstmatch"

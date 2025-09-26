@@ -7,7 +7,7 @@ Switcher_Tasks = [
     #     "type": "pixel",
     #     "click_location_str": "482,373",
     #     "search_array": ["395,155","#191925","460,152","#191925","567,155","#191925","263,154","536,153","#191925","#0d12b5","265,166","#e60012"],
-    #     "isLogical": False,
+    #     
     #     "shared_detection": True,
     #     "priority": 1,
     #     "cooldown": 5.0,
@@ -21,7 +21,7 @@ Switcher_Tasks = [
         "roi": [470, 365, 76, 104],
         "confidence": 0.60,
         "use_match_position": False,
-        "isLogical": False,
+        
         "NeedGuildTutorial": True,  # Switches to GUILD_TUTORIAL_TASKS
     },
     
@@ -31,7 +31,7 @@ Switcher_Tasks = [
         "type": "pixel",
         "click_location_str": "0,0",  # No click needed, just detection
         "search_array": ["718,148","#0d12b5","709,163","#e60012","418,372","#ffffff","513,372","#ffffff"],
-        "isLogical": False,
+        
         "Characters_Full": True,  # Switches to Sell_Characters
     },
         {
@@ -39,7 +39,7 @@ Switcher_Tasks = [
         "type": "pixel",
         "click_location_str": "0,0",  # No click needed, just detection
         "search_array": ["257,154","#0d12b5","262,164","#e60012","491,236","#ffffff","591,237","#ffffff"],
-        "isLogical": False,
+        
         "Characters_Full": True,  # Switches to Sell_Characters
     },
     
@@ -49,7 +49,7 @@ Switcher_Tasks = [
         "type": "pixel",
         "click_location_str": "481,372",
         "search_array": ["240,154","#0d12b5","259,165","#e60012","450,153","#191925","505,156","#191925"],
-        "isLogical": False,
+        
         "NeedToRejoin": True,  # Switches to Guild_Rejoin
     },
     
@@ -61,7 +61,7 @@ Switcher_Tasks = [
         "roi": [321, 337, 312, 59],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": False,
+        
         "isRefreshed": True,  # Returns to GUILD_TUTORIAL_TASKS
     },
     
@@ -71,7 +71,7 @@ Switcher_Tasks = [
         "type": "pixel",
         "click_location_str": "31,28",
         "search_array": ["792,494","#e6f6f2","517,501","#eeeef2"],
-        "isLogical": False,
+        
         "BackToRestartingTasks": True,  # Switches to Restarting_Tasks
     },
     
@@ -81,7 +81,7 @@ Switcher_Tasks = [
         "type": "pixel",
         "click_location_str": "315,490",
         "search_array": ["684,487","#7f0000","457,421","#e64801","461,313","#e64801","473,206","#e94b01"],
-        "isLogical": False,
+        
         "BackToRestartingTasks": True,  # Switches to Restarting_Tasks
     },
         # We Need to Sell Accsesurry
@@ -90,7 +90,7 @@ Switcher_Tasks = [
         "type": "pixel",
         "click_location_str": "486,375",
         "search_array": ["708,149","#0d12b5","708,161","#e60012","587,269","#ffffff","700,274","#ffffff","584,296","#ffffff"],
-        "isLogical": False,
+        
         "SellAccsesurry": True,
         "sleep": 3,
     },
