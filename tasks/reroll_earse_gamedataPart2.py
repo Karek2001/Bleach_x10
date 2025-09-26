@@ -1,5 +1,15 @@
 # reroll_earse_gamedataPart2.py - Second part of reroll game data erase process
 reroll_earse_gamedatapart2_tasks = [
+          {
+        "task_name": "Click [Thank You] For Mod Menu [Reroll Earse GameData Part 2]",
+        "type": "pixel",
+        "click_location_str": "434,470",
+        "search_array": ["265,470","#1c262b","338,469","#ffffff"],
+        
+        "priority": 10,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
      {
         "task_name": "Click [Game Start] [Reroll Earse GameData Part 2]",
         "type": "template",

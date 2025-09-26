@@ -88,6 +88,7 @@ class DeviceStateManager:
             "Reroll_Earse_GameDataPart2": 0,
             "Reroll_Tutorial_FirstMatch": 0,
             "Reroll_Tutorial_CharacterChoose": 0,
+            "Reroll_Tutorial_CharacterChoosePart2": 0,
             "Reroll_Tutorial_SecondMatch": 0,
             "Reroll_ReplaceIchigoWithFiveStar": 0,
             "EasyMode": 0,
@@ -488,6 +489,9 @@ class DeviceStateManager:
         
         if state.get("Reroll_Tutorial_CharacterChoose", 0) == 0:
             return "reroll_tutorial_characterchoose"
+        
+        if state.get("Reroll_Tutorial_CharacterChoosePart2", 0) == 0:
+            return "reroll_tutorial_characterchoosepart2"
         
         if state.get("Reroll_Tutorial_SecondMatch", 0) == 0:
             return "reroll_tutorial_secondmatch"

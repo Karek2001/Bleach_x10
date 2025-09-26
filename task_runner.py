@@ -6,7 +6,7 @@ import settings
 
 # Import from our actions file and other modules
 from actions import run_adb_command
-from logical_process import run_logical_tasks, run_hard_mode_swipes
+from logical_process import run_logical_tasks, run_hard_mode_swipes, run_first_match_script
 # Import the monitor instance directly to run it per-device
 from background_process import monitor
 
@@ -90,6 +90,9 @@ async def run_full_cycle_for_device(device_id: str):
         if task_info.get("HardModeSwipe", False):
             print(f"[{triggered_device}] Hard Mode detected - executing swipe sequence...")
             await run_hard_mode_swipes(triggered_device)
+        elif task_info.get("First_Match_Script", False):
+            print(f"[{triggered_device}] First Match detected - executing tutorial script...")
+            await run_first_match_script(triggered_device)
         else:
             # Default logical task (clear story logic)
             print(f"[{triggered_device}] Running default logical tasks...")

@@ -5,67 +5,80 @@ reroll_tutorial_characterchoose_tasks = [
         "type": "pixel",
         "click_location_str": "434,470",
         "search_array": ["265,470","#1c262b","338,469","#ffffff"],
-        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
     },
-    {
-        "task_name": "Open Character Select",
+         {
+        "task_name": "Click [Game Start] [Reroll Character Choose]",
+        "type": "template",
+        "template_path": "templates/Reroll/GameStart.png",
+        "roi": [350, 432, 274, 35],
+        "confidence": 0.80,
+        "use_match_position": True,
+        "priority": 15,
+        "cooldown": 50.0,
+        "sleep": 3,
+    },
+       {
+        "task_name": "Rokiia Is Talking [Open Character Select]",
         "type": "pixel",
-        "click_location_str": "480,400",
-        "search_array": ["450,380","#9c27b0","510,380","#9c27b0","480,400","#ffffff"],
-        
+        "click_location_str": "449,481",
+        "search_array": ["238,152","#282828","232,213","#fad2c2","236,259","#fad2c2"],
         "priority": 1,
-        "cooldown": 2.0
+        "cooldown": 5.0,
+        "sleep": 3,
     },
-    {
-        "task_name": "Select Ichigo",
+
+        {
+        "task_name": "Click [Character Summon] [Reroll Character Choose]",
         "type": "pixel",
-        "click_location_str": "300,300",
-        "search_array": ["280,280","#ff6f00","320,280","#ff6f00","300,300","#ffffff"],
-        
-        "priority": 2,
-        "cooldown": 1.5
+        "click_location_str": "78,489",
+        "search_array": ["63,523","#ffffff","54,494","#31323a","35,486","#31323a"],
+        "priority": 1,
+        "cooldown": 30.0
     },
-    {
-        "task_name": "Confirm Character Selection",
+            {
+        "task_name": "Click [Select Free Summon] [Reroll Character Choose]",
         "type": "pixel",
-        "click_location_str": "600,500",
-        "search_array": ["580,480","#4caf50","620,480","#4caf50","600,500","#ffffff"],
-        
-        "priority": 3,
-        "cooldown": 2.0
+        "click_location_str": "600,464",
+        "search_array": ["613,482","#00ff00","648,482","#00ff00","616,501","#ffffff"],
+        "priority": 1,
+        "cooldown": 30.0
     },
-    {
-        "task_name": "Tutorial Team Setup",
+                {
+        "task_name": "Select [Aizen FREE 5 STAR] [Reroll Character Choose]",
         "type": "pixel",
-        "click_location_str": "480,450",
-        "search_array": ["450,430","#2196f3","510,430","#2196f3","480,450","#ffffff"],
-        
-        "priority": 4,
-        "cooldown": 2.0
+        "click_location_str": "374,356",
+        "search_array": ["393,338","#513d38","376,366","#ecc5b1","342,326","#ffffff","609,493","#122f7c"],
+        "priority": 1,
+        "cooldown": 30.0
     },
-    {
-        "task_name": "Confirm Team",
+                {
+        "task_name": "Click [Select] Confirm Aizen Select [Reroll Character Choose]",
         "type": "pixel",
-        "click_location_str": "700,500",
-        "search_array": ["680,480","#4caf50","720,480","#4caf50","700,500","#ffffff"],
-        
-        "priority": 5,
-        "cooldown": 2.0,
+        "click_location_str": "488,487",
+        "search_array": ["333,329","#00ff00","447,491","#ffffff","610,491","#1f58f9"],
+        "priority": 1,
+        "cooldown": 30.0
+    },
+                {
+        "task_name": "Click [OK] To Confirm Using Free Ticket For AIZEN 5 STAR [Reroll Character Choose]",
+        "type": "pixel",
+        "click_location_str": "621,370",
+        "search_array": ["258,147","#0d12b5","267,159","#e60012","282,326","#ff0000","675,327","#ff0000","641,270","#ffeb04"],
+        "priority": 1,
+        "cooldown": 30.0
+    },
+                {
+        "task_name": "Click [Green House] [Reroll Character Choose]",
+        "type": "pixel",
+        "click_location_str": "30,298",
+        "search_array": ["642,87","#513c37","623,119","#edc7b2","43,279","#65a92e"],
+        "priority": 1,
+        "cooldown": 30.0,
         "json_Reroll_Tutorial_CharacterChoose": True,  # Mark this reroll task as complete
-        "Reroll_Tutorial_SecondMatch_Tasks": True  # Switch to second match
+        "Reroll_Tutorial_CharacterChoosePart2":True,
     },
-    {
-        "task_name": "Tutorial Continue",
-        "type": "pixel",
-        "click_location_str": "480,520",
-        "search_array": ["450,500","#ff9800","510,500","#ff9800","480,520","#ffffff"],
-        
-        "priority": 6,
-        "cooldown": 1.0,
-        "json_Reroll_Tutorial_CharacterChoose": True,  # Mark this reroll task as complete
-        "Reroll_Tutorial_SecondMatch_Tasks": True  # Switch to second match
-    }
+
 ]

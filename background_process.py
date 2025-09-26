@@ -62,6 +62,7 @@ from tasks import (
     reroll_earse_gamedatapart2_tasks,
     reroll_tutorial_firstmatch_tasks,
     reroll_tutorial_characterchoose_tasks,
+    reroll_tutorial_characterchoosepart2_tasks,
     reroll_tutorial_secondmatch_tasks,
     reroll_replaceichigowithfivestar_tasks
 )   
@@ -306,6 +307,7 @@ class ProcessMonitor:
             "reroll_earse_gamedatapart2": reroll_earse_gamedatapart2_tasks,
             "reroll_tutorial_firstmatch": reroll_tutorial_firstmatch_tasks,
             "reroll_tutorial_characterchoose": reroll_tutorial_characterchoose_tasks,
+            "reroll_tutorial_characterchoosepart2": reroll_tutorial_characterchoosepart2_tasks,
             "reroll_tutorial_secondmatch": reroll_tutorial_secondmatch_tasks,
             "reroll_replaceichigowithfivestar": reroll_replaceichigowithfivestar_tasks,
             # Other tasks
@@ -331,6 +333,7 @@ class ProcessMonitor:
             device_state.get("Reroll_Earse_GameDataPart2", 1) == 0 or
             device_state.get("Reroll_Tutorial_FirstMatch", 1) == 0 or
             device_state.get("Reroll_Tutorial_CharacterChoose", 1) == 0 or
+            device_state.get("Reroll_Tutorial_CharacterChoosePart2", 1) == 0 or
             device_state.get("Reroll_Tutorial_SecondMatch", 1) == 0 or
             device_state.get("Reroll_ReplaceIchigoWithFiveStar", 1) == 0
         )
@@ -362,7 +365,7 @@ class ProcessMonitor:
             "sort_filter_ascension", "sort_multi_select_garbage_first",
             "upgrade_characters_level", "upgrade_characters_back_to_edit",
             "reroll_earse_gamedata", "reroll_earse_gamedatapart2", "reroll_tutorial_firstmatch", "reroll_tutorial_characterchoose",
-            "reroll_tutorial_secondmatch", "reroll_replaceichigowithfivestar",
+            "reroll_tutorial_characterchoosepart2", "reroll_tutorial_secondmatch", "reroll_replaceichigowithfivestar",
             "main_screenshot", "extract_orb_counts", "extract_account_id",
             "login1_prepare_for_link", "login2_klab_login", "login3_wait_for_2fa",
             "login4_confirm_link"
@@ -403,6 +406,7 @@ class ProcessMonitor:
                 "reroll_earse_gamedatapart2": "Reroll Erase Game Data Part 2", 
                 "reroll_tutorial_firstmatch": "Reroll Tutorial First Match",
                 "reroll_tutorial_characterchoose": "Reroll Tutorial Character Choose",
+                "reroll_tutorial_characterchoosepart2": "Reroll Tutorial Character Choose Part 2",
                 "reroll_tutorial_secondmatch": "Reroll Tutorial Second Match",
                 "reroll_replaceichigowithfivestar": "Reroll Replace Ichigo",
                 "main_screenshot": "Main Screenshot",
@@ -618,6 +622,7 @@ class BackgroundMonitor:
             "reroll_earse_gamedatapart2": reroll_earse_gamedatapart2_tasks,
             "reroll_tutorial_firstmatch": reroll_tutorial_firstmatch_tasks,
             "reroll_tutorial_characterchoose": reroll_tutorial_characterchoose_tasks,
+            "reroll_tutorial_characterchoosepart2": reroll_tutorial_characterchoosepart2_tasks,
             "reroll_tutorial_secondmatch": reroll_tutorial_secondmatch_tasks,
             "reroll_replaceichigowithfivestar": reroll_replaceichigowithfivestar_tasks,
             # Other tasks
@@ -648,6 +653,7 @@ class BackgroundMonitor:
             device_state.get("Reroll_Earse_GameDataPart2", 1) == 0 or
             device_state.get("Reroll_Tutorial_FirstMatch", 1) == 0 or
             device_state.get("Reroll_Tutorial_CharacterChoose", 1) == 0 or
+            device_state.get("Reroll_Tutorial_CharacterChoosePart2", 1) == 0 or
             device_state.get("Reroll_Tutorial_SecondMatch", 1) == 0 or
             device_state.get("Reroll_ReplaceIchigoWithFiveStar", 1) == 0
         )
@@ -1026,6 +1032,7 @@ class OptimizedBackgroundMonitor:
             "json_Reroll_Earse_GameDataPart2",  # Second part of game data erase
             "json_Reroll_Tutorial_FirstMatch", 
             "json_Reroll_Tutorial_CharacterChoose",
+            "json_Reroll_Tutorial_CharacterChoosePart2",  # Second part of character choose
             "json_Reroll_Tutorial_SecondMatch",
             "json_Reroll_ReplaceIchigoWithFiveStar"
         ]
@@ -1256,6 +1263,7 @@ class OptimizedBackgroundMonitor:
             "Reroll_Earse_GameDataPart2_Tasks": ("reroll_earse_gamedatapart2", "→ Reroll Erase Game Data Part 2"),
             "Reroll_Tutorial_FirstMatch_Tasks": ("reroll_tutorial_firstmatch", "→ Reroll Tutorial First Match"),
             "Reroll_Tutorial_CharacterChoose_Tasks": ("reroll_tutorial_characterchoose", "→ Reroll Tutorial Character Choose"),
+            "Reroll_Tutorial_CharacterChoosePart2_Tasks": ("reroll_tutorial_characterchoosepart2", "→ Reroll Tutorial Character Choose Part 2"),
             "Reroll_Tutorial_SecondMatch_Tasks": ("reroll_tutorial_secondmatch", "→ Reroll Tutorial Second Match"),
             "Reroll_ReplaceIchigoWithFiveStar_Tasks": ("reroll_replaceichigowithfivestar", "→ Reroll Replace Ichigo"),
             "NextTaskSet_Tasks": ("next_task_progression", "→ Next Task Set"),

@@ -38,6 +38,7 @@ from .reroll_earse_gamedata_1 import reroll_earse_gamedata_tasks
 from .reroll_earse_gamedataPart2 import reroll_earse_gamedatapart2_tasks
 from .reroll_tutorial_firstMatch_2 import reroll_tutorial_firstmatch_tasks
 from .reroll_tutorial_CharacterChoose_3 import reroll_tutorial_characterchoose_tasks
+from .reroll_tutorial_CharacterChoosePart2 import reroll_tutorial_characterchoosepart2_tasks
 from .reroll_tutorial_secondMatch_4 import reroll_tutorial_secondmatch_tasks
 from .reroll_tutorial_ReplaceIchigoWithFiveStar_5 import reroll_replaceichigowithfivestar_tasks
 
@@ -81,6 +82,7 @@ __all__ = [
     'reroll_earse_gamedatapart2_tasks',
     'reroll_tutorial_firstmatch_tasks',
     'reroll_tutorial_characterchoose_tasks',
+    'reroll_tutorial_characterchoosepart2_tasks',
     'reroll_tutorial_secondmatch_tasks',
     'reroll_replaceichigowithfivestar_tasks'
 ]

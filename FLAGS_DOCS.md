@@ -266,6 +266,12 @@ Sets Reroll_Tutorial_CharacterChoose to complete (1)
 - **Sets**: `Reroll_Tutorial_CharacterChoose = 1` in device state
 - **Usage**: Mark character selection as complete in reroll cycle
 
+### `json_Reroll_Tutorial_CharacterChoosePart2`
+Sets Reroll_Tutorial_CharacterChoosePart2 to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Reroll_Tutorial_CharacterChoosePart2 = 1` in device state
+- **Usage**: Mark character selection Part 2 as complete in reroll cycle
+
 ### `json_Reroll_Tutorial_SecondMatch`
 Sets Reroll_Tutorial_SecondMatch to complete (1)
 - **Type**: Boolean flag
@@ -461,7 +467,14 @@ Switch to reroll tutorial character choose tasks
 - **Type**: Boolean flag
 - **Target**: `reroll_tutorial_characterchoose`
 - **Usage**: Progress to character selection after first match
-- **Purpose**: Select starting character in reroll
+- **Purpose**: Handle character selection in reroll
+
+### `Reroll_Tutorial_CharacterChoosePart2_Tasks`
+Switch to reroll tutorial character choose part 2 tasks
+- **Type**: Boolean flag
+- **Target**: `reroll_tutorial_characterchoosepart2`
+- **Usage**: Continue character selection process after part 1
+- **Purpose**: Complete character selection in reroll cycle
 
 ### `Reroll_Tutorial_SecondMatch_Tasks`
 Switch to reroll tutorial second match tasks
@@ -583,6 +596,20 @@ Restrict task to specific task sets
 Triggers hard mode swipe sequence
 - **Type**: Boolean flag
 - **Usage**: Executes special swipe logic for hard mode
+
+### `First_Match_Script`
+Triggers first match tutorial automation script
+- **Type**: Boolean flag
+- **Usage**: Executes complex sequence of swipes and taps for reroll first match tutorial
+- **Sequence**: 
+  - Phase 1: 7 right swipes
+  - Phase 2: 4 taps with 1s delays
+  - Phase 3: 2 left swipes
+  - Phase 4: 7 taps with 1s delays
+  - Phase 5: 4 right swipes
+  - Phase 6: 2 top-right corner taps
+  - Phase 7: 2 right swipes with delays
+  - Phase 8: 9 taps with 1s delays
 
 ### `FullyAnylaze`
 Enable comprehensive analysis mode
@@ -876,7 +903,8 @@ The following flags track reroll task completion and are checked before story mo
 - `reroll_earse_gamedata_1.py`: Erases game data for fresh start (Part 1)
 - `reroll_earse_gamedataPart2.py`: Completes game data erasure process (Part 2)
 - `reroll_tutorial_firstMatch_2.py`: Completes first tutorial match
-- `reroll_tutorial_CharacterChoose_3.py`: Selects initial character
+- `reroll_tutorial_CharacterChoose_3.py`: Selects initial character (Part 1)
+- `reroll_tutorial_CharacterChoosePart2.py`: Completes character selection (Part 2)
 - `reroll_tutorial_secondMatch_4.py`: Completes second tutorial match
 - `reroll_tutorial_ReplaceIchigoWithFiveStar_5.py`: Replaces Ichigo with 5-star character
 

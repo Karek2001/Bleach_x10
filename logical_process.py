@@ -1,8 +1,11 @@
 # logical_process.py
 import asyncio
-from actions import execute_tap, find_template_in_region, execute_swipe
+from actions import execute_tap, find_template_in_region, execute_swipe, ScreenshotManager
 from screenrecord_manager import get_screenrecord_manager
 import settings
+
+# Initialize screenshot manager
+screenshot_manager = ScreenshotManager()
 
 async def handle_game_ready_routing(device_id):
     """
@@ -89,3 +92,68 @@ async def run_hard_mode_swipes(device_id):
     
     if settings.SPAM_LOGS:
         print(f"[{device_id}] ⚠️ Part-1 HARD template not found after 7 swipes - sequence complete")
+
+async def run_first_match_script(device_id):
+    """
+    Execute the First Match tutorial script sequence.
+    This is a complex sequence of swipes and taps for the reroll first match tutorial.
+    """
+    print(f"\n--- Executing First Match Tutorial Script on {device_id} ---")
+    
+    # Phase 1: 7 swipes to the right
+    print(f"[{device_id}] Phase 1: Executing 7 right swipes...")
+    for i in range(7):
+        await execute_swipe(device_id, 100, 500, 900, 500, 2000)
+    
+    # 2 second sleep
+    print(f"[{device_id}] Waiting 2 seconds...")
+    await asyncio.sleep(2)
+    
+    # Phase 2: 4 taps with 1s between
+    print(f"[{device_id}] Phase 2: Executing 4 taps...")
+    for i in range(4):
+        await execute_tap(device_id, "884,464")
+        await asyncio.sleep(1)
+    
+    # Phase 3: 2 left swipes
+    print(f"[{device_id}] Phase 3: Executing 2 left swipes...")
+    for i in range(2):
+        await execute_swipe(device_id, 900, 380, 100, 380, 2000)
+    
+    await asyncio.sleep(1)
+    
+    # Phase 4: 7 taps with 1s between
+    print(f"[{device_id}] Phase 4: Executing 7 taps...")
+    for i in range(7):
+        await execute_tap(device_id, "884,464")
+        await asyncio.sleep(1)
+    
+    # Phase 5: 4 right swipes
+    print(f"[{device_id}] Phase 5: Executing 4 right swipes...")
+    for i in range(4):
+        await execute_swipe(device_id, 100, 500, 900, 500, 2000)
+    
+    # 4 second sleep
+    print(f"[{device_id}] Waiting 4 seconds...")
+    await asyncio.sleep(4)
+    
+    # Phase 6: 2 taps on top-right
+    print(f"[{device_id}] Phase 6: Tapping top-right corner twice...")
+    for i in range(2):
+        await execute_tap(device_id, "901,28")
+        await asyncio.sleep(1)
+    
+    # Phase 7: 2 right swipes with 1s between
+    print(f"[{device_id}] Phase 7: Executing 2 right swipes...")
+    for i in range(2):
+        await execute_swipe(device_id, 100, 500, 900, 500, 2000)
+        await asyncio.sleep(1)
+    
+    # Phase 8: 9 taps with 1s between
+    print(f"[{device_id}] Phase 8: Executing 9 taps...")
+    for i in range(9):
+        await execute_tap(device_id, "884,464")
+        if i < 8:  # Don't sleep after the last tap
+            await asyncio.sleep(1)
+    
+    print(f"[{device_id}] ✅ First Match Tutorial Script completed successfully!")

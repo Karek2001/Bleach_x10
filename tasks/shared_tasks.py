@@ -137,7 +137,7 @@ Shared_Tasks = [
         "click_location_str": "715,497",
         "search_array": ["583,490","#ffffff","652,491","#0d3de4","671,498","#ffffff","735,496","#ffffff"],
         
-        "priority": 5,
+        "priority": 20,
         "cooldown": 5.0,
         "StopSupport": "json_Character_Slots_Purchased",
         "sleep": 3,
@@ -158,7 +158,7 @@ Shared_Tasks = [
         "click_location_str": "756,508",
         "search_array": ["713,512","#ffffff","760,507","#ffffff","698,496","#1e46f2"],
         
-        "priority": 5,
+        "priority": 20,
         "sleep": 3,
     },
     {

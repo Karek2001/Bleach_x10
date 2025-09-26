@@ -16,7 +16,7 @@ except Exception as e:
 try:
     from background_process import monitor
     from screenrecord_manager import cleanup_all_screenrecord
-    from logical_process import run_hard_mode_swipes, handle_game_ready_routing
+    from logical_process import run_hard_mode_swipes, handle_game_ready_routing, run_first_match_script
     from device_state_manager import device_state_manager
     from actions import run_adb_command
 except ImportError as e:
@@ -156,6 +156,9 @@ async def monitor_single_device_with_logical_tasks(device_id: str):
                 if task_info.get("HardModeSwipe", False):
                     print(f"[{triggered_device}] Executing Hard Mode swipes...")
                     await run_hard_mode_swipes(triggered_device)
+                elif task_info.get("First_Match_Script", False):
+                    print(f"[{triggered_device}] Executing First Match tutorial script...")
+                    await run_first_match_script(triggered_device)
                 elif "Game Opened Ready To Use" in task_info.get("task_name", ""):
                     print(f"[{triggered_device}] Handling game ready routing...")
                     await handle_game_ready_routing(triggered_device)

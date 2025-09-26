@@ -71,7 +71,7 @@ class PixelPicker:
         """Open an image via file‑dialog and reset zoom."""
         path = filedialog.askopenfilename(
             title="Select image",
-            initialdir="/mnt/storagebox/",
+            initialdir="/mnt/storagebox/Match2",
             filetypes=[
                 ("Images", "*.png *.jpg *.jpeg *.bmp *.gif *.tiff"),
                 ("All files", "*.*"),
