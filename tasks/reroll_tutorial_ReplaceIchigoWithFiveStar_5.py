@@ -1,98 +1,71 @@
 # reroll_tutorial_ReplaceIchigoWithFiveStar_5.py - Replace Ichigo with 5-star character
 reroll_replaceichigowithfivestar_tasks = [
        {
-        "task_name": "Click [Thank You] For Mod Menu [Reroll Replace Ichigo With FiveStar]",
+        "task_name": "Click [Thank You] For Mod Menu [Replace Ichigo With FiveStar]",
         "type": "pixel",
         "click_location_str": "434,470",
         "search_array": ["265,470","#1c262b","338,469","#ffffff"],
-        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
     },
-    {
-        "task_name": "Open Team Menu",
+         {
+        "task_name": "Click [Game Start] [Replace Ichigo With FiveStar]",
+        "type": "template",
+        "template_path": "templates/Reroll/GameStart.png",
+        "roi": [350, 432, 274, 35],
+        "confidence": 0.80,
+        "use_match_position": True,
+        "priority": 15,
+        "cooldown": 50.0,
+        "sleep": 3,
+    },
+           {
+        "task_name": "Rokiia Is Talking [Replace Ichigo With FiveStar]",
         "type": "pixel",
-        "click_location_str": "120,500",
-        "search_array": ["100,480","#3f51b5","140,480","#3f51b5","120,500","#ffffff"],
-        
+        "click_location_str": "449,481",
+        "search_array": ["238,152","#282828","232,213","#fad2c2","236,259","#fad2c2"],
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
+    {
+        "task_name": "Click [Edit] [Replace Ichigo With FiveStar]",
+        "type": "pixel",
+        "click_location_str": "382,507",
+        "search_array": ["387,479","#e1773a","368,462","#323348"],
         "priority": 1,
         "cooldown": 2.0
     },
     {
-        "task_name": "Click Edit Team",
+        "task_name": "Switch From [Party 1] To [Party 2] [Replace Ichigo With FiveStar]",
         "type": "pixel",
-        "click_location_str": "700,200",
-        "search_array": ["680,180","#ff9800","720,180","#ff9800","700,200","#ffffff"],
-        
+        "click_location_str": "278,78",
+        "search_array": ["211,75","#4767d4","209,85","#e60012","193,77","#ffffff","299,78","#405761","293,86","#e60012"],
         "priority": 2,
-        "cooldown": 1.5
+        "cooldown": 6.0
     },
     {
-        "task_name": "Select Ichigo to Replace",
+        "task_name": "Swipe Aizen To Be Main Character [Replace Ichigo With FiveStar]",
         "type": "pixel",
-        "click_location_str": "300,300",
-        "search_array": ["280,280","#ff6f00","320,280","#ff6f00","300,300","#ffffff"],
-        
+        "click_location_str": "0,0",
+        "search_array": ["142,190","#ececef","145,223","#e8e9eb","300,79","#425bcf","510,157","#523d38","485,193","#edc7b2"],
+        "shared_detection": True,
+        "min_matches_for_swipe": 1,
+        "swipe_command": "shell input swipe 489 212 253 211 2000",
         "priority": 3,
-        "cooldown": 1.0
+        "cooldown": 20.0
     },
     {
-        "task_name": "Open Character List",
+        "task_name": "Check is Aizen Main And is we Party2 And Leave [Replace Ichigo With FiveStar]",
         "type": "pixel",
-        "click_location_str": "480,450",
-        "search_array": ["450,430","#2196f3","510,430","#2196f3","480,450","#ffffff"],
-        
+        "click_location_str": "24,23",
+        "search_array": ["299,79","#425bcf","146,190","#eec8b5","170,158","#523d38""282,86","#e60012"],
         "priority": 4,
-        "cooldown": 1.5
+        "cooldown": 10.0,
+        "sleep": 5,
+        "json_Reroll_ReplaceIchigoWithFiveStar": True,
+        "BackToStory": True
     },
-    {
-        "task_name": "Filter 5-Star Characters",
-        "type": "pixel",
-        "click_location_str": "850,150",
-        "search_array": ["830,130","#ffc107","870,130","#ffc107","850,150","#ffffff"],
-        
-        "priority": 5,
-        "cooldown": 1.0
-    },
-    {
-        "task_name": "Select 5-Star Character",
-        "type": "pixel",
-        "click_location_str": "400,300",
-        "search_array": ["380,280","#ffeb3b","420,280","#ffeb3b","400,300","#ffffff"],
-        
-        "priority": 6,
-        "cooldown": 1.5
-    },
-    {
-        "task_name": "Confirm Character Replace",
-        "type": "pixel",
-        "click_location_str": "600,500",
-        "search_array": ["580,480","#4caf50","620,480","#4caf50","600,500","#ffffff"],
-        
-        "priority": 7,
-        "cooldown": 2.0
-    },
-    {
-        "task_name": "Save Team Changes",
-        "type": "pixel",
-        "click_location_str": "700,500",
-        "search_array": ["680,480","#4caf50","720,480","#4caf50","700,500","#ffffff"],
-        
-        "priority": 8,
-        "cooldown": 2.0,
-        "json_Reroll_ReplaceIchigoWithFiveStar": True,  # Mark this reroll task as complete
-        "BackToRestartingTasks": True  # Go to regular restarting tasks after reroll completion
-    },
-    {
-        "task_name": "Return to Main Menu",
-        "type": "pixel",
-        "click_location_str": "60,60",
-        "search_array": ["40,40","#ffffff","80,40","#ffffff","60,60","#616161"],
-        
-        "priority": 9,
-        "cooldown": 2.0,
-        "json_Reroll_ReplaceIchigoWithFiveStar": True,  # Mark this reroll task as complete
-        "BackToRestartingTasks": True  # Return to normal operation
-    }
+
 ]

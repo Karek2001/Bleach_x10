@@ -1,6 +1,15 @@
 from .detect_chapter_end import DETECT_CHAPTER_END
 
 StoryMode_Tasks = [
+        {
+        "task_name": "Click [Next Quest] [Story Mode]",
+        "type": "pixel",
+        "click_location_str": "756,508",
+        "search_array": ["713,512","#ffffff","760,507","#ffffff","698,496","#1e46f2"],
+        "priority": 20,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
 
         # LOWER PRIORITY - Navigation/Menu Access (Priority 35-40)
     {

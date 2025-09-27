@@ -153,15 +153,6 @@ Shared_Tasks = [
         "sleep": 3,
     },
     {
-        "task_name": "Click [Next Quest]",
-        "type": "pixel",
-        "click_location_str": "756,508",
-        "search_array": ["713,512","#ffffff","760,507","#ffffff","698,496","#1e46f2"],
-        
-        "priority": 20,
-        "sleep": 3,
-    },
-    {
         "task_name": "New Record Quest Obtained",
         "type": "pixel",
         "click_location_str": "478,281",
@@ -206,6 +197,37 @@ Shared_Tasks = [
         "click_location_str": "344,481",
         "search_array": ["318,49","#191919","384,50","#191919","454,46","#191919","652,49","#191919","738,45","#0d12b5","727,58","#e60012"],
         
+        "priority": 20,
+        "sleep": 3,
+    },
+
+
+    # THIS MESSAGE SHOWED UP AFTER FINISHING REROLL SECOND MATCH ASKING USER TO LINK ACCOUNT
+            {
+        "task_name": "Asking USER TO LINK KLAB ID [Click [CLOSE]]",
+        "type": "pixel",
+        "click_location_str": "482,494",
+        "search_array": ["348,35","#191919","460,39","#191919","479,35","#191919","560,36","#191919","257,51","#e60012","236,83","#ffff00","510,112","#ffff00"],
+        "priority": 20,
+        "sleep": 3,
+    },
+
+    # 10x Anniviersry Asking User To Go For Official Website For INFO [Click [CLOSE]]
+            {
+        "task_name": "10x Anniviersry Asking User To Go For Official Website For INFO [Click [CLOSE]]",
+        "type": "pixel",
+        "click_location_str": "337,371",
+        "search_array": ["258,152","#0d12b5","267,166","#e60012","306,151","#494952","436,154","#191925","473,155","#191925","644,154","#191925","474,262","#ffffff","542,260","#ffffff","539,291","#ffffff"],
+        "priority": 20,
+        "sleep": 3,
+    },
+
+    # EVENT INFO ABOUT ICHIGO WITH BASKETBALL [Click [Anywhere]]
+                {
+        "task_name": "Event Info About Ichigo With Basketball [Click [Anywhere]]",
+        "type": "pixel",
+        "click_location_str": "812,520",
+        "search_array": ["581,56","#302248","597,79","#d9e781","567,42","#343854"],
         "priority": 20,
         "sleep": 3,
     },

@@ -1,4 +1,5 @@
 SideStory = [
+    
     {
         "task_name": "Click [Side]",
         "type": "pixel",

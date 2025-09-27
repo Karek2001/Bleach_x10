@@ -1,5 +1,14 @@
 
 SubStories = [
+            {
+        "task_name": "Click [Next Quest] [Sub-Stories]",
+        "type": "pixel",
+        "click_location_str": "756,508",
+        "search_array": ["713,512","#ffffff","760,507","#ffffff","698,496","#1e46f2"],
+        "priority": 20,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
         # LOWER PRIORITY - Navigation/Menu Access (Priority 35-40)
     {
         "task_name": "Open [SOLO] Menu For Sub-Stories",
