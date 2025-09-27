@@ -338,15 +338,20 @@ class ProcessMonitor:
             device_state.get("Reroll_ReplaceIchigoWithFiveStar", 1) == 0
         )
         
+        # ALWAYS include Shared_Tasks and Switcher_Tasks for all task sets
         # Only add Restarting_Tasks when NOT in reroll phase and not already in restarting mode
-        all_tasks = base_tasks
         if not is_reroll_phase and task_set != "restarting":
             # In normal mode: add Restarting_Tasks for game recovery
-            all_tasks = base_tasks + Restarting_Tasks
+            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks + Restarting_Tasks
+        else:
+            # In reroll mode or restarting: only base tasks + shared + switcher (NO restarting)
+            all_tasks = base_tasks + Shared_Tasks
+            
+        print(f"[{device_id}] Total tasks loaded: {len(all_tasks)} (Base: {len(base_tasks)}, Shared: {len(Shared_Tasks)}, Switcher: {len(Switcher_Tasks)})")
             
         # Filter out tasks that should be skipped
         filtered_tasks = []
-        for task in all_tasks:  # FIXED: Should filter all_tasks, not base_tasks
+        for task in all_tasks:
             if not self.should_skip_task(device_id, task):
                 filtered_tasks.append(task)
         
@@ -1291,19 +1296,19 @@ class OptimizedBackgroundMonitor:
                 print(f"[{device_id}] Already in task set: {recommended_mode}")
             return
         
-        # BackToStory is now deprecated in favor of NextTaskSet_Tasks
-        # Keeping for backward compatibility but redirecting to NextTaskSet_Tasks logic
+        # BackToStory flag - works from ANY task set to determine next progression
         if task.get("BackToStory", False):
             current_task_set = self.process_monitor.active_task_set.get(device_id, "restarting")
-            if current_task_set == "restarting":
-                # Use new progression logic from device_state_manager
-                recommended_mode = device_state_manager.get_next_task_set_after_restarting(device_id)
-                if recommended_mode != current_task_set:
-                    print(f"[{device_id}] [BackToStory Legacy] Restarting Complete → {recommended_mode}")
-                    self.process_monitor.set_active_tasks(device_id, recommended_mode)
-                    # Clear the restarting tracking to prevent re-triggering
-                    self.process_monitor.reset_action_tracking(device_id)
-                return
+            # Use device state manager to determine next appropriate task set
+            recommended_mode = device_state_manager.get_next_task_set_after_restarting(device_id)
+            if recommended_mode != current_task_set:
+                print(f"[{device_id}] [BackToStory] {current_task_set} Complete → {recommended_mode}")
+                self.process_monitor.set_active_tasks(device_id, recommended_mode)
+                # Clear the action tracking to prevent re-triggering
+                self.process_monitor.reset_action_tracking(device_id)
+            else:
+                print(f"[{device_id}] [BackToStory] Already in recommended task set: {recommended_mode}")
+            return
         
         for flag, (task_set, message) in flag_handlers.items():
             if task.get(flag, False):
@@ -1362,6 +1367,26 @@ class OptimizedBackgroundMonitor:
             await run_adb_command(f"shell am force-stop {BLEACH_PACKAGE_NAME}", device_id)
             await asyncio.sleep(1.0)  # Small delay after closing
             print(f"[{device_id}] ✅ Bleach game closed")
+        
+        # Handle First_Match_Script flag to run tutorial automation
+        if task.get("First_Match_Script", False):
+            print(f"[{device_id}] 🎮 First Match Script detected - executing tutorial script...")
+            try:
+                from logical_process import run_first_match_script
+                await run_first_match_script(device_id)
+                print(f"[{device_id}] ✅ First Match Script completed")
+            except Exception as e:
+                print(f"[{device_id}] ❌ Error running First Match Script: {e}")
+        
+        # Handle HardModeSwipe flag to run hard mode automation
+        if task.get("HardModeSwipe", False):
+            print(f"[{device_id}] 🎮 Hard Mode Swipe detected - executing swipe sequence...")
+            try:
+                from logical_process import run_hard_mode_swipes
+                await run_hard_mode_swipes(device_id)
+                print(f"[{device_id}] ✅ Hard Mode Swipe completed")
+            except Exception as e:
+                print(f"[{device_id}] ❌ Error running Hard Mode Swipe: {e}")
 
     async def process_matched_tasks(self, device_id: str, matched_tasks: List[dict]) -> bool:
         """Process all matched tasks intelligently"""

@@ -1,5 +1,34 @@
 # reroll_tutorial_CharacterChoose_3.py - Character selection in tutorial
 reroll_tutorial_characterchoose_tasks = [
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
+        "sleep": 3,
+    },
+
+   {
+        "task_name": "Click [Skip] When Showed [Reroll Character Choose]",
+        "type": "pixel",
+        "click_location_str": "900,29",
+        "search_array": ["909,32","#ffffff","897,37","#e60012","936,30","#485159"],
+        "priority": 10,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
+       {
+        "task_name": "Click [Skip] For Character Unlocked! [Aizen] [Reroll Character Choose]",
+        "type": "pixel",
+        "click_location_str": "912,18",
+        "search_array": ["901,18","#ffffff","919,21","#ffffff","924,25","#e60012"],
+        "priority": 10,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
+
    {
         "task_name": "Click [Thank You] For Mod Menu [Reroll Character Choose]",
         "type": "pixel",
@@ -28,6 +57,8 @@ reroll_tutorial_characterchoose_tasks = [
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
+                "delayed_click_location": "449,481",
+        "delayed_click_delay": 2.0,
     },
 
         {
@@ -78,7 +109,7 @@ reroll_tutorial_characterchoose_tasks = [
         "priority": 1,
         "cooldown": 30.0,
         "json_Reroll_Tutorial_CharacterChoose": True,  # Mark this reroll task as complete
-        "Reroll_Tutorial_CharacterChoosePart2":True,
+        "Reroll_Tutorial_CharacterChoosePart2_Tasks": True,  # Switch to Character Choose Part 2
     },
 
 ]

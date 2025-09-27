@@ -1,8 +1,15 @@
 # tasks/sell_characters_tasks.py - Complete tasks for selling excess characters
 
 Sell_Accessury = [
-    
-    # Selling process - Sequential steps
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
+        "sleep": 3,
+    },
     {
         "task_name": "Click [Sell]",
         "type": "pixel",

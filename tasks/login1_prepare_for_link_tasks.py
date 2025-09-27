@@ -5,13 +5,21 @@ This is the first step in the login sequence.
 """
 
 Login1_Prepare_For_Link_Tasks = [
-                    {
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
+        "sleep": 3,
+    },
+    {
         "task_name": "Detect Account Already Linked! [Confirm Link]",
         "type": "pixel",
         "click_location_str": "480,497",
         "search_array": ["716,43","#0d12b5","700,55","#e60012","547,158","#ffffff","661,161","#ffffff","704,160","#ffffff","714,158","#dc0d0d"],
         "priority": 1,
-        "cooldown": 5.0,
         "sleep": 2.0,
         "json_isLinked": True,
         "sync_to_airtable": True,

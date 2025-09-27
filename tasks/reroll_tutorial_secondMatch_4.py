@@ -1,6 +1,22 @@
 # reroll_tutorial_secondMatch_4.py - Second tutorial match
 reroll_tutorial_secondmatch_tasks = [
-
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
+        "sleep": 3,
+    },
+    {
+        "task_name": "Click [Skip] When Showed [Reroll Second Match]",
+        "type": "pixel",
+        "click_location_str": "900,29",
+        "search_array": ["909,32","#ffffff","897,37","#e60012","936,30","#485159"],
+        "priority": 10,
+        "sleep": 3,
+    },
        {
     
         "task_name": "Detect The Map is Already Completed! [Reroll Second Match]",
@@ -30,10 +46,10 @@ reroll_tutorial_secondmatch_tasks = [
         "type": "template",
         "template_path": "templates/Reroll/GameStart.png",
         "roi": [350, 432, 274, 35],
-        "confidence": 0.80,
+        "confidence": 0.70,
         "use_match_position": True,
         "priority": 15,
-        "cooldown": 50.0,
+        "cooldown": 10.0,
         "sleep": 3,
     },
        {
@@ -44,6 +60,8 @@ reroll_tutorial_secondmatch_tasks = [
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
+                "delayed_click_location": "449,481",
+        "delayed_click_delay": 2.0,
     },
     {
         "task_name": "CLick [SOLO] Menu [Reroll Second Match]",
@@ -51,7 +69,8 @@ reroll_tutorial_secondmatch_tasks = [
         "click_location_str": "890,492",
         "search_array": ["897,485","#978e74","914,495","#635a44","915,482","#978e74"],
         "priority": 5,
-        "cooldown": 3.0
+        "cooldown": 3.0,
+                "sleep": 3,
     },
         {
         "task_name": "Click [Story] [Reroll Second Match]",
@@ -59,7 +78,8 @@ reroll_tutorial_secondmatch_tasks = [
         "click_location_str": "531,187",
         "search_array": ["523,190","#ffffff","376,197","#fdc46f","354,198","#e8cbab"],
         "priority": 5,
-        "cooldown": 3.0
+        "cooldown": 3.0,
+                "sleep": 3,
     },
         {
         "task_name": "Click [Mission 2] [Reroll Second Match]",
@@ -67,7 +87,8 @@ reroll_tutorial_secondmatch_tasks = [
         "click_location_str": "266,279",
         "search_array": ["266,304","#dcdce6","245,319","#040404","265,319","#060606","286,319","#020202"],
         "priority": 5,
-        "cooldown": 3.0
+        "cooldown": 3.0,
+                "sleep": 3,
     },
         {
         "task_name": "Click [Prepare To Quest] [Reroll Second Match]",
@@ -75,7 +96,17 @@ reroll_tutorial_secondmatch_tasks = [
         "click_location_str": "655,496",
         "search_array": ["567,491","#ffffff","711,490","#ffffff","754,492","#ffffff","797,494","#225af9"],
         "priority": 5,
-        "cooldown": 3.0
+        "cooldown": 3.0,
+                "sleep": 3,
+    },
+            {
+        "task_name": "Click [Start Quest] [Reroll Second Match]",
+        "type": "pixel",
+        "click_location_str": "718,496",
+        "search_array": ["671,498","#ffffff","721,495","#ffffff","778,497","#ffffff","848,498","#2058f9"],
+        "priority": 5,
+        "cooldown": 3.0,
+                "sleep": 3,
     },
         {
         "task_name": "Replace From [Ichigo] To [Aizen] [Reroll Second Match]",
@@ -83,7 +114,8 @@ reroll_tutorial_secondmatch_tasks = [
         "click_location_str": "50,131",
         "search_array": ["54,18","#ffad42","73,29","#ef7300"],
         "priority": 5,
-        "cooldown": 3.0
+        "cooldown": 3.0,
+                "sleep": 3,
     },
         {
         "task_name": "Aizen is [Main] Let's Start Clicks Bot [Reroll Second Match]",
@@ -93,6 +125,10 @@ reroll_tutorial_secondmatch_tasks = [
         "priority": 5,
         "cooldown": 40.0,
         "First_Match_Script": True,
+                "shared_detection": True,
+                
+
+                "sleep": 3,
     },
         {
         "task_name": "Map 2 Completed [Click Completed Mission Title] [Reroll Second Match]",
@@ -100,7 +136,8 @@ reroll_tutorial_secondmatch_tasks = [
         "click_location_str": "474,473",
         "search_array": ["833,36","#ff0000","833,59","#ffffff","146,25","#ffffff","238,22","#ffffff"],
         "priority": 5,
-        "cooldown": 3.0
+        "cooldown": 3.0,
+                "sleep": 3,
     },
         {
         "task_name": "Click [HOME] [Reroll Second Match]",
@@ -109,6 +146,7 @@ reroll_tutorial_secondmatch_tasks = [
         "search_array": ["356,507","#ffffff","402,511","#ffffff","449,510","#2059f9"],
         "priority": 1,
         "cooldown": 3.0,
+        "sleep": 3,
         "json_Reroll_Tutorial_SecondMatch": True,  # Mark this reroll task as complete
         "Reroll_ReplaceIchigoWithFiveStar_Tasks": True  # Switch to replace Ichigo task
 

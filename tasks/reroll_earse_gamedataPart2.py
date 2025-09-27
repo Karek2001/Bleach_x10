@@ -1,5 +1,24 @@
 # reroll_earse_gamedataPart2.py - Second part of reroll game data erase process
 reroll_earse_gamedatapart2_tasks = [
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
+        "sleep": 3,
+    },
+
+       {
+        "task_name": "Click [Skip] When Showed [Reroll Earse GameData Part 2]",
+        "type": "pixel",
+        "click_location_str": "900,29",
+        "search_array": ["909,32","#ffffff","897,37","#e60012","936,30","#485159"],
+        "priority": 10,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
           {
         "task_name": "Click [Thank You] For Mod Menu [Reroll Earse GameData Part 2]",
         "type": "pixel",
@@ -15,10 +34,10 @@ reroll_earse_gamedatapart2_tasks = [
         "type": "template",
         "template_path": "templates/Reroll/GameStart.png",
         "roi": [350, 432, 274, 35],
-        "confidence": 0.80,
+        "confidence": 0.70,
         "use_match_position": True,
         "priority": 15,
-        "cooldown": 50.0,
+        "cooldown": 10.0,
         "sleep": 3,
     },
             {
@@ -28,6 +47,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["256,33","#0d12b5","269,47","#e60012","404,33","#191925","473,40","#191925","520,34","#191925","562,35","#191925","598,487","#ffffff"],
         "priority": 1,
         "cooldown": 10.0,
+        "sleep": 3,
     },
             {
         "task_name": "Age Verifiction [OK] [Reroll Earse GameData Part 2]",
@@ -36,6 +56,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["237,35","#0d12b5","229,49","#e60012","393,34","#020204","443,36","#020204","576,38","#020204","676,491","#1f58f9"],
         "priority": 1,
         "cooldown": 10.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Consent] To View Them [Reroll Earse GameData Part 2]",
@@ -44,6 +65,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["231,39","#0d12b5","243,51","#e60012","295,39","#191925","441,42","#191925","739,337","#2058f9","611,490","#102c7c","478,486","#7f7f7f"],
         "priority": 1,
         "cooldown": 99.0,
+        "sleep": 3,
     },
             {
         "task_name": "Click [Conesnet Word] In GooglePlay [Reroll Earse GameData Part 2]",
@@ -52,6 +74,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["585,368","#1967d2","596,365","#ffffff","665,366","#ffffff","698,369","#1967d2"],
         "priority": 1,
         "cooldown": 10.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Click [OK] After Checking Consenet [Reroll Earse GameData Part 2]",
@@ -60,6 +83,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["229,40","#0d12b5","295,40","#191925","663,43","#191925","634,333","#ffffff","715,335","#ffffff","611,490","#2159f9"],
         "priority": 1,
         "cooldown": 10.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Select [Global] Server [Reroll Earse GameData Part 2]",
@@ -68,6 +92,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["431,113","#ffffff","526,114","#ffffff","376,39","#ffff00","449,36","#ffff00","585,39","#ffff00","599,43","#ffff00"],
         "priority": 1,
         "cooldown": 10.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Confirm [Global] Server Selected [Reroll Earse GameData Part 2]",
@@ -76,6 +101,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["257,152","#0d12b5","267,166","#e60012","359,246","#ffff00","682,376","#225cf9"],
         "priority": 1,
         "cooldown": 10.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Click [Cancel] For Google Play Trying Links [Reroll Earse GameData Part 2]",
@@ -86,6 +112,7 @@ reroll_earse_gamedatapart2_tasks = [
         "use_match_position": True,
         "priority": 1,
         "cooldown": 10.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Click [OK] For Verifiction Failed [Reroll Earse GameData Part 2]",
@@ -94,23 +121,26 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["246,153","#0d12b5","265,166","#e60012","432,151","#191925","527,156","#191925","387,259","#ffffff","569,260","#ffffff","612,376","#225cf9"],
         "priority": 1,
         "cooldown": 10.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Click [Tap To Input!] For Entering The UserName [Reroll Earse GameData Part 2]",
         "type": "pixel",
-        "click_location_str": "632,403",
+        "click_location_str": "598,174",
         "search_array": ["554,174","#8b8686","714,181","#8b8686","493,123","#ffffff","722,128","#ffffff","949,6","#0d12b5"],
         "priority": 1,
         "Enter_UserName":True,
         "cooldown": 10.0,
+        "sleep": 3,
     },
                 {
         "task_name": "Click [Start] After Writting The UserName [Reroll Earse GameData Part 2]",
         "type": "pixel",
         "click_location_str": "634,406",
-        "search_array": ["833,444","#ffffff","904,493","#000000","764,405","#1f58f9"],
-        "priority": 1,
+        "search_array": ["886,492","#000000","864,489","#ffffff","763,400","#0a3ae1"],
+        "priority": 20,
         "cooldown": 10.0,
+        "sleep": 3,
     },
                     {
         "task_name": "Detect First Match Has Been Started! Let's Switch To First Match Tasks [Reroll Earse GameData Part 2]",
@@ -119,6 +149,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["51,22","#ffaa4e","59,51","#eec2b0"],
         "priority": 1,
         "cooldown": 10.0,
+        "sleep": 3,
         "json_Reroll_Earse_GameDataPart2": True,
         "Reroll_Tutorial_FirstMatch_Tasks": True  
     },

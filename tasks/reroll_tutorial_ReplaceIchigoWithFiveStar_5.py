@@ -1,5 +1,22 @@
-# reroll_tutorial_ReplaceIchigoWithFiveStar_5.py - Replace Ichigo with 5-star character
+# reroll_tutorial_ReplaceIchigoWithFiveStar_5.py - replace Ichigo with 5-star character
 reroll_replaceichigowithfivestar_tasks = [
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
+        "sleep": 3,
+    },
+    {
+        "task_name": "Click [Skip] When Showed [Replace Ichigo With FiveStar]",
+        "type": "pixel",
+        "click_location_str": "900,29",
+        "search_array": ["909,32","#ffffff","897,37","#e60012","936,30","#485159"],
+        "priority": 10,
+        "sleep": 3,
+    },
        {
         "task_name": "Click [Thank You] For Mod Menu [Replace Ichigo With FiveStar]",
         "type": "pixel",
@@ -28,6 +45,19 @@ reroll_replaceichigowithfivestar_tasks = [
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
+        "delayed_click_location": "449,481",
+        "delayed_click_delay": 2.0,
+    },
+               {
+        "task_name": "Rokiia Is Talking [Event Biggener Edtion] [Replace Ichigo With FiveStar]",
+        "type": "pixel",
+        "click_location_str": "449,481",
+        "search_array": ["152,149","#282828","153,208","#fad2c2","179,299","#29282f"],
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 3,
+                "delayed_click_location": "449,481",
+        "delayed_click_delay": 2.0,
     },
     {
         "task_name": "Click [Edit] [Replace Ichigo With FiveStar]",
@@ -60,7 +90,7 @@ reroll_replaceichigowithfivestar_tasks = [
         "task_name": "Check is Aizen Main And is we Party2 And Leave [Replace Ichigo With FiveStar]",
         "type": "pixel",
         "click_location_str": "24,23",
-        "search_array": ["299,79","#425bcf","146,190","#eec8b5","170,158","#523d38""282,86","#e60012"],
+        "search_array": ["299,79","#425bcf","146,190","#eec8b5","170,158","#523d38","282,86","#e60012"],
         "priority": 4,
         "cooldown": 10.0,
         "sleep": 5,

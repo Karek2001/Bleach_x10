@@ -1,21 +1,25 @@
 # tasks/skip_kon_bonaza.py - Tasks for skipping Kon Bonanza 100 times
 
 Skip_Kon_Bonaza = [
-
-{
-    "task_name": "Leave Gift Box If we are still there",
-    "type": "pixel",
-    "click_location_str": "475,488",
-    "search_array": ["794,36","#0d12b5","780,49","#e60012","431,37","#191925","582,493","#2762fa"],
-    
-    "shared_detection": True,
-    "priority": 10,
-    "cooldown": 5.0,
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
         "sleep": 3,
-},
-
-
-
+    },
+    {
+        "task_name": "Skip [Kon Bonanza]",
+        "type": "pixel",
+        "click_location_str": "475,488",
+        "search_array": ["794,36","#0d12b5","780,49","#e60012","431,37","#191925","582,493","#2762fa"],
+        "shared_detection": True,
+        "priority": 10,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
     # Navigate to Kon Bonanza
     {
         "task_name": "Open [Solo] Menu For Kon Bonanza",

@@ -1,13 +1,20 @@
 # tasks/switcher_tasks.py - Tasks responsible for switching between task sets
 
 Switcher_Tasks = [
-        # STORY COMPLETED LET'S Back To Restarting SO WE CAN RESTART THE GAME
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
+        "sleep": 3,
+    },
     # {
     #     "task_name": "Story Completed",
     #     "type": "pixel",
     #     "click_location_str": "482,373",
     #     "search_array": ["395,155","#191925","460,152","#191925","567,155","#191925","263,154","536,153","#191925","#0d12b5","265,166","#e60012"],
-    #     
     #     "shared_detection": True,
     #     "priority": 1,
     #     "cooldown": 5.0,

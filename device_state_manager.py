@@ -238,7 +238,15 @@ class DeviceStateManager:
             "json_Login2_Email_Done": "Login2_Email_Done",
             "json_Login2_Password_Done": "Login2_Password_Done",
             "json_Login2_Cloudflare_Done": "Login2_Cloudflare_Done",
-            "json_isLinked": "isLinked"
+            "json_isLinked": "isLinked",
+            # Reroll task flags
+            "json_Reroll_Earse_GameData": "Reroll_Earse_GameData",
+            "json_Reroll_Earse_GameDataPart2": "Reroll_Earse_GameDataPart2",
+            "json_Reroll_Tutorial_FirstMatch": "Reroll_Tutorial_FirstMatch",
+            "json_Reroll_Tutorial_CharacterChoose": "Reroll_Tutorial_CharacterChoose",
+            "json_Reroll_Tutorial_CharacterChoosePart2": "Reroll_Tutorial_CharacterChoosePart2",
+            "json_Reroll_Tutorial_SecondMatch": "Reroll_Tutorial_SecondMatch",
+            "json_Reroll_ReplaceIchigoWithFiveStar": "Reroll_ReplaceIchigoWithFiveStar"
         }
         
         if flag_name in flag_mapping:

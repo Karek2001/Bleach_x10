@@ -38,16 +38,6 @@ Shared_Tasks = [
         "priority": 2,
         "cooldown": 3.0,
     },
-       {
-        "task_name": "Detect Game Updated! [Game Update]",
-        "type": "pixel",
-        "click_location_str": "480,373",
-        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
-        "shared_detection": True,
-        "priority": 1,
-        "cooldown": 999.0,
-        "sleep": 3,
-    },
            {
         "task_name": "Click [Update] When Game Updated!",
         "type": "pixel",
@@ -95,6 +85,7 @@ Shared_Tasks = [
         "confidence": 0.90,
         "use_match_position": True,
         
+        "shared_detection": True,
         "priority": 40,
         "cooldown": 5.0,
     },
@@ -106,6 +97,7 @@ Shared_Tasks = [
         "confidence": 0.90,
         "use_match_position": True,
         
+        "shared_detection": True,
         "priority": 45,
         "cooldown": 5.0,
     },
@@ -117,6 +109,7 @@ Shared_Tasks = [
         "confidence": 0.90,
         "use_match_position": True,
         
+        "shared_detection": True,
         "priority": 45,
         "cooldown": 5.0,
     },
@@ -127,6 +120,7 @@ Shared_Tasks = [
         "click_location_str": "693,492",
         "search_array": ["527,486","#0c3be2","567,490","#ffffff","660,493","#ffffff","754,492","#ffffff"],
         
+        "shared_detection": True,
         "priority": 5,
         "cooldown": 5.0,
         "sleep": 3,
@@ -137,6 +131,7 @@ Shared_Tasks = [
         "click_location_str": "715,497",
         "search_array": ["583,490","#ffffff","652,491","#0d3de4","671,498","#ffffff","735,496","#ffffff"],
         
+        "shared_detection": True,
         "priority": 20,
         "cooldown": 5.0,
         "StopSupport": "json_Character_Slots_Purchased",
@@ -149,6 +144,7 @@ Shared_Tasks = [
         "click_location_str": "449,503",
         "search_array": ["833,35","#ff0000","819,54","#ffffff","834,74","#ff0000"],
         
+        "shared_detection": True,
         "priority": 20,
         "sleep": 3,
     },
@@ -158,6 +154,7 @@ Shared_Tasks = [
         "click_location_str": "478,281",
         "search_array": ["170,273","#fefefe","810,187","#ff0000","798,209","#ffffff"],
         
+        "shared_detection": True,
         "priority": 20,
         "sleep": 3,
     },
@@ -167,6 +164,7 @@ Shared_Tasks = [
         "click_location_str": "469,504",
         "search_array": ["183,77","#ffffff","398,503","#ffffff","567,508","#ffffff","339,428","#1f9bf4"],
         
+        "shared_detection": True,
         "priority": 20,
         "sleep": 3,
     },
@@ -177,6 +175,7 @@ Shared_Tasks = [
         "click_location_str": "344,409",
         "search_array": ["720,121","#0d12b5","713,134","#e60012","489,175","#ffffff","565,174","#ffffff"],
         
+        "shared_detection": True,
         "priority": 50,
         "sleep": 3,
     },
@@ -188,6 +187,7 @@ Shared_Tasks = [
         "click_location_str": "343,374",
         "search_array": ["249,153","#0d12b5","259,163","#e60012","535,262","#ffffff","612,263","#ffffff","542,258","#ffffff"],
         
+        "shared_detection": True,
         "priority": 20,
         "sleep": 3,
     },
@@ -197,6 +197,7 @@ Shared_Tasks = [
         "click_location_str": "344,481",
         "search_array": ["318,49","#191919","384,50","#191919","454,46","#191919","652,49","#191919","738,45","#0d12b5","727,58","#e60012"],
         
+        "shared_detection": True,
         "priority": 20,
         "sleep": 3,
     },
@@ -208,6 +209,7 @@ Shared_Tasks = [
         "type": "pixel",
         "click_location_str": "482,494",
         "search_array": ["348,35","#191919","460,39","#191919","479,35","#191919","560,36","#191919","257,51","#e60012","236,83","#ffff00","510,112","#ffff00"],
+        "shared_detection": True,
         "priority": 20,
         "sleep": 3,
     },
@@ -218,6 +220,7 @@ Shared_Tasks = [
         "type": "pixel",
         "click_location_str": "337,371",
         "search_array": ["258,152","#0d12b5","267,166","#e60012","306,151","#494952","436,154","#191925","473,155","#191925","644,154","#191925","474,262","#ffffff","542,260","#ffffff","539,291","#ffffff"],
+        "shared_detection": True,
         "priority": 20,
         "sleep": 3,
     },
@@ -228,7 +231,47 @@ Shared_Tasks = [
         "type": "pixel",
         "click_location_str": "812,520",
         "search_array": ["581,56","#302248","597,79","#d9e781","567,42","#343854"],
+        "shared_detection": True,
         "priority": 20,
         "sleep": 3,
     },
+                   {
+        "task_name": "Leave News Window Click [x]",
+        "type": "pixel",
+        "click_location_str": "931,25",
+        "search_array": ["931,25","#ffffff","932,45","#e60012","945,26","#373737"],
+        "shared_detection": True,
+        "priority": 20,
+        "sleep": 3,
+    },
+
+    # SKIP BIGGENER LOGIN BONUS STUFF
+                       {
+        "task_name": "Login Bonus Anniviersary 10th",
+        "type": "pixel",
+        "click_location_str": "890,89",
+        "search_array": ["181,81","#0d12b3","183,93","#e40012","246,81","#191925","716,86","#191925","521,78","#191925"],
+        "shared_detection": True,
+        "priority": 20,
+        "sleep": 3,
+    },
+                       {
+        "task_name": "Beginner Gifts Login Bonus",
+        "type": "pixel",
+        "click_location_str": "891,89",
+        "search_array": ["334,81","#191925","553,97","#0d12b4","543,126","#e29b48","404,130","#cd7c48","272,124","#2c384c"],
+        "shared_detection": True,
+        "priority": 20,
+        "sleep": 3,
+    },
+                       {
+        "task_name": "Normal Login Bonus",
+        "type": "pixel",
+        "click_location_str": "857,96",
+        "search_array": ["250,34","#0d12b4","266,49","#e50012","404,37","#191925","483,35","#191925","556,39","#191925","559,51","#0d12b4"],
+        "shared_detection": True,
+        "priority": 20,
+        "sleep": 3,
+    },
+    
 ]

@@ -1,5 +1,33 @@
 # reroll_tutorial_firstMatch_2.py - Tutorial first match tasks
 reroll_tutorial_firstmatch_tasks = [
+         {
+        "task_name": "Detect First Match Has Been Started! Let's Switch To First Match Tasks [Reroll Earse GameData Part 2]",
+        "type": "pixel",
+        "click_location_str": "0,0",
+        "search_array": ["51,22","#ffaa4e","59,51","#eec2b0"],
+        "priority": 1,
+        "cooldown": 30.0,
+        "First_Match_Script": True,
+        "shared_detection": True,
+    },
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
+        "sleep": 3,
+    },
+    {
+        "task_name": "Click [Skip] When Showed [Reroll First Match]",
+        "type": "pixel",
+        "click_location_str": "900,29",
+        "search_array": ["909,32","#ffffff","897,37","#e60012","936,30","#485159"],
+        "priority": 10,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
        {
         "task_name": "Click [Thank You] For Mod Menu [Reroll First Match]",
         "type": "pixel",
@@ -14,21 +42,13 @@ reroll_tutorial_firstmatch_tasks = [
         "type": "template",
         "template_path": "templates/Reroll/GameStart.png",
         "roi": [350, 432, 274, 35],
-        "confidence": 0.80,
+        "confidence": 0.70,
         "use_match_position": True,
         "priority": 15,
-        "cooldown": 50.0,
+        "cooldown": 10.0,
         "sleep": 3,
     },
-     {
-        "task_name": "Detect First Match Has Been Started! Let's Switch To First Match Tasks [Reroll Earse GameData Part 2]",
-        "type": "pixel",
-        "click_location_str": "0,0",
-        "search_array": ["51,22","#ffaa4e","59,51","#eec2b0"],
-        "priority": 1,
-        "cooldown": 30.0,
-        "First_Match_Script": True,
-    },
+
         {
         "task_name": "Click [New Record] [Reroll Earse GameData Part 2]",
         "type": "pixel",

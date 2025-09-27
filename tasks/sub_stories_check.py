@@ -1,12 +1,19 @@
 SubStories_check = [
-
-        {
+    {
+        "task_name": "Detect Game Updated! [Game Update]",
+        "type": "pixel",
+        "click_location_str": "480,373",
+        "search_array": ["249,152","#0d12b5","264,166","#e60012","216,260","#ffffff","316,268","#ffffff","645,262","#ffffff","744,266","#ffffff"],
+        "priority": 1,
+        "cooldown": 999.0,
+        "sleep": 3,
+    },
+    {
         "task_name": "Not All Sub-Storiies sheet are clear",
         "type": "Pixel-OneOrMoreMatched",
         "pixel-values":["175,115","#ff4866","175,200","#ff4866","175,285","#ff4866","175,371","#ff4866","406,115","#ff4866","405,200","#ff4866","405,285","#ff4866","406,371","#ff4866","630,115","#ff4866","630,200","#ff4866","630,285","#ff4866","611,370","#ff4866"],
         "click_location_str": "0,0",
         "priority": 1,
-        "KeepChecking": 5.0,
         "cooldown": 5.0,
         "Sub-Stores": True
     },
