@@ -273,5 +273,16 @@ Shared_Tasks = [
         "priority": 20,
         "sleep": 3,
     },
+
+    # SKIP BIRTHDAY CHARACTER 
+                           {
+        "task_name": "Character Birthday!",
+        "type": "pixel",
+        "click_location_str": "899,437",
+        "search_array": ["846,468","#d27c00","114,468","#d27c00""177,131","#fdc3b1","173,196","#fef89a"],
+        "shared_detection": True,
+        "priority": 20,
+        "sleep": 3,
+    },
     
 ]

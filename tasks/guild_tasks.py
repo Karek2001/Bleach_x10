@@ -50,9 +50,18 @@ GUILD_TUTORIAL_TASKS = [
         "roi": [321, 337, 312, 59],
         "confidence": 0.90,
         "use_match_position": True,
-        
         "priority": 30,
         "cooldown": 5.0,
+    },
+       {
+        "task_name": "Leave [Guild Menu TOP]",
+        "type": "pixel",
+        "click_location_str": "31,27", 
+        "search_array": ["890,442","#ffa146","884,471","#ecbca8","842,434","#24252b","778,522","#13178c"],
+        "BackToStory": True,
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 5,
     },
 ]
 
@@ -83,7 +92,6 @@ Guild_Rejoin = [
         "type": "pixel",
         "click_location_str": "856,84",
         "search_array": ["859,88","#ffffff","861,78","#4d555c","876,100","#dedddd"],
-        
         "priority": 10,  # Higher priority to refresh guild list
         "cooldown": 5.0,
         "sleep": 3,
@@ -95,7 +103,6 @@ Guild_Rejoin = [
         "roi": [321, 337, 312, 59],
         "confidence": 0.90,
         "use_match_position": True,
-        
         "NeedGuildTutorial": True,
         "priority": 25,
         "cooldown": 5.0,

@@ -52,12 +52,10 @@ Skip_Yukio_Event_Tasks = [
     {
         "task_name": "Open [Solo] Menu For Yukio Event",
         "type": "pixel",
-        "click_location_str": "892,493",
-        "search_array": ["893,485","#978e74","891,498","#978e74","868,500","#978e74","874,529","#dce0fd"],
-        
-        "priority": 10,
-        "cooldown": 5.0,
-        "sleep": 3,
+        "click_location_str": "895,493",
+        "search_array": ["885,490","#211d15","899,495","#211d15","906,485","#978e74","892,493","#978e74"],
+        "priority": 1,
+        "cooldown": 30.0,
     },
     {
         "task_name": "Click [Powerup Quests]",

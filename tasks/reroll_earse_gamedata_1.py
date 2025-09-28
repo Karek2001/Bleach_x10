@@ -4,7 +4,7 @@ reroll_earse_gamedata_tasks = [
         "task_name": "Detect Account Is Logened no Data Erased Happen! [Reroll Earse GameData]",
         "type": "pixel",
         "click_location_str": "0,0",
-        "search_array": ["527,466","#ffa146","380,480","#e1773a","366,463","#323348","787,475","#e1773a","896,485","#978e74"],
+        "search_array": ["895,484","#978e74","61,76","#ffffff","442,20","#0f47ca"],
         "priority": 1,
         "cooldown": 10.0,
         "sleep": 3,

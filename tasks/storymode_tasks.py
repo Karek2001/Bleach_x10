@@ -23,14 +23,11 @@ StoryMode_Tasks = [
         # LOWER PRIORITY - Navigation/Menu Access (Priority 35-40)
     {
         "task_name": "Open [SOLO] Menu For Story Mode",
-        "type": "template",
-        "template_path": "templates/Restarting/Solo.png",
-        "roi": [814, 420, 142, 118],
-        "confidence": 0.90,
-        "use_match_position": True,
-        
-        "priority": 35,
-        "cooldown": 5.0,
+        "type": "pixel",
+        "click_location_str": "895,493",
+        "search_array": ["885,490","#211d15","899,495","#211d15","906,485","#978e74","892,493","#978e74"],
+        "priority": 1,
+        "cooldown": 30.0,
     },
 
             {
@@ -38,9 +35,10 @@ StoryMode_Tasks = [
         "type": "pixel",
         "click_location_str": "531,193",
         "search_array": ["479,146","#ebebea","457,184","#ffffff","524,191","#ffffff"],
-        
         "StopSupport": "json_SideMode",
         "sleep": 3,
+        "priority": 1,
+        "cooldown": 30.0,
     },
 
     {
