@@ -159,11 +159,38 @@ class DeviceStateManager:
                     
                     self.states[device_id] = loaded_state
                     print(f"[STATE] Loaded existing state for {device_name}")
+                except json.JSONDecodeError as e:
+                    # JSON CORRUPTION DETECTED - Try to restore from backup
+                    print(f"[STATE] ❌ CRITICAL - JSON CORRUPTION in {device_name}: {e}")
+                    print(f"[STATE] ⚠️ File corrupted at line {e.lineno}, column {e.colno}")
+                    
+                    # Attempt automatic recovery from backup
+                    backup_file = state_file + ".backup"
+                    if os.path.exists(backup_file):
+                        try:
+                            print(f"[STATE] 🔄 Attempting auto-recovery from backup...")
+                            with open(backup_file, 'r') as f:
+                                backup_state = json.load(f)
+                            
+                            # Backup is valid, restore it
+                            self.states[device_id] = backup_state
+                            self._save_state(device_id)  # Save the restored backup
+                            print(f"[STATE] ✅ Successfully restored {device_name} from backup!")
+                            print(f"[STATE] 📊 Restored state: EasyMode={backup_state.get('EasyMode', 0)}, "
+                                  f"HardMode={backup_state.get('HardMode', 0)}, "
+                                  f"isLinked={backup_state.get('isLinked', 0)}")
+                        except Exception as backup_error:
+                            print(f"[STATE] ❌ Backup recovery failed: {backup_error}")
+                            print(f"[STATE] 🔴 MANUAL INTERVENTION REQUIRED - Both files corrupted")
+                            self.states[device_id] = self._get_default_state()
+                    else:
+                        print(f"[STATE] ⚠️ No backup file found at {backup_file}")
+                        print(f"[STATE] 🔴 Loading default state - DATA LOSS OCCURRED")
+                        self.states[device_id] = self._get_default_state()
                 except Exception as e:
                     print(f"[STATE] Error loading state for {device_name}: {e}")
-                    if not self.fetch_mode:  # Only auto-generate if not in fetch mode
-                        self.states[device_id] = self._get_default_state()
-                        self._save_state(device_id)
+                    # Load empty state to memory but DON'T auto-save
+                    self.states[device_id] = self._get_default_state()
             else:
                 if not self.fetch_mode:  # Only auto-generate if not in fetch mode
                     self.states[device_id] = self._get_default_state()
@@ -171,16 +198,43 @@ class DeviceStateManager:
                     print(f"[STATE] Created new state file for {device_name}")
     
     def _save_state(self, device_id: str):
-        """Save device state to JSON file"""
+        """Save device state to JSON file with atomic write to prevent corruption"""
         device_name = self._get_device_name(device_id)
         state_file = self._get_state_file_path(device_name)
         
         try:
             self.states[device_id]["LastUpdated"] = self._get_istanbul_time()
-            with open(state_file, 'w') as f:
+            
+            # Create backup of existing file before overwriting
+            backup_file = state_file + ".backup"
+            if os.path.exists(state_file):
+                try:
+                    import shutil
+                    shutil.copy2(state_file, backup_file)
+                except Exception as backup_error:
+                    print(f"[STATE] ⚠️ Could not create backup for {device_name}: {backup_error}")
+            
+            # ATOMIC WRITE: Write to temporary file first, then rename
+            # This prevents file corruption if write is interrupted
+            temp_file = state_file + ".tmp"
+            
+            with open(temp_file, 'w') as f:
                 json.dump(self.states[device_id], f, indent=2)
+                f.flush()  # Ensure data is written to disk
+                os.fsync(f.fileno())  # Force write to physical storage
+            
+            # Atomic rename - replaces old file only after new one is complete
+            os.replace(temp_file, state_file)
+            
         except Exception as e:
-            print(f"[STATE] Error saving state for {device_name}: {e}")
+            print(f"[STATE] ❌ CRITICAL - Error saving state for {device_name}: {e}")
+            # Clean up temp file if it exists
+            temp_file = state_file + ".tmp"
+            if os.path.exists(temp_file):
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass
     
     def get_state(self, device_id: str) -> Dict[str, Any]:
         """Get current state for a device"""

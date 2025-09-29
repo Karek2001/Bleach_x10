@@ -2,6 +2,17 @@ from .detect_chapter_end import DETECT_CHAPTER_END
 
 StoryMode_Tasks = [
     {
+        "task_name": "Currently Story Mode Is Completed! Lets Return To [HOME]",
+        "type": "pixel",
+        "click_location_str": "478,368",
+        "search_array": ["247,151","#0d12b5","257,164","#e60012","395,156","#191925","566,155","#191925","576,153","#191925","699,279","#ffffff"],
+        "priority": 1,
+        "cooldown": 10.0,
+        "sleep": 3,
+        "delayed_click_location": "390,508",
+        "delayed_click_delay": 3.0,
+    },
+    {
         "task_name": "Detect Game Updated! [Game Update]",
         "type": "pixel",
         "click_location_str": "480,373",

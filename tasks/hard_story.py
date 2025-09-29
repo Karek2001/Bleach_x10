@@ -1,6 +1,22 @@
 # tasks/hard_story.py - Advanced Hard Story progression tasks
 
 HardStory_Tasks = [
+
+        {
+        "task_name": "Let's Start With Part-1 HARD!",
+        "type": "template",
+        "template_path": "templates/Story_Mode_Hard/Part1_hard.png",
+        "roi": [135, 113, 491, 290],
+        "confidence": 0.90,
+        "use_match_position": True,
+        "isLogical": True,
+        "shared_detection": True,
+        "priority": 1,
+        "cooldown": 5.0,
+        "BackToStory": True,
+        "json_EasyMode": True,
+        "KeepChecking": 3.0,
+    },
     {
         "task_name": "Detect Game Updated! [Game Update]",
         "type": "pixel",
@@ -45,20 +61,7 @@ HardStory_Tasks = [
         "cooldown": 5.0,
         "sleep": 3,
     },
-    {
-        "task_name": "Let's Start With Part-1 HARD!",
-        "type": "template",
-        "template_path": "templates/Story_Mode_Hard/Part1_hard.png",
-        "roi": [135, 113, 491, 290],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": True,
-        "shared_detection": True,
-        "priority": 20,
-        "cooldown": 5.0,
-        "BackToStory": True,
-        "json_EasyMode": True,
-    },
+
         {
         "task_name": "Let's Start With Part-1 HARD! [Side Story]",
         "type": "template",
@@ -71,7 +74,7 @@ HardStory_Tasks = [
         "priority": 20,
         "cooldown": 5.0,
         "BackToStory": True,
-        
+        "KeepChecking": 5.0,
     },
 
     

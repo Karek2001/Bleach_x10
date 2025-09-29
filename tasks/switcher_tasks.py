@@ -10,16 +10,16 @@ Switcher_Tasks = [
         "cooldown": 999.0,
         "sleep": 3,
     },
-    # {
-    #     "task_name": "Story Completed",
-    #     "type": "pixel",
-    #     "click_location_str": "482,373",
-    #     "search_array": ["395,155","#191925","460,152","#191925","567,155","#191925","263,154","536,153","#191925","#0d12b5","265,166","#e60012"],
-    #     "shared_detection": True,
-    #     "priority": 1,
-    #     "cooldown": 5.0,
-    #     "BackToRestarting": True,
-    # },
+    {
+        "task_name": "Story Completed",
+        "type": "pixel",
+        "click_location_str": "482,373",
+        "search_array": ["395,155","#191925","460,152","#191925","567,155","#191925","263,154","#0d12b5","265,166","#e60012"],
+        "shared_detection": True,
+        "priority": 1,
+        "cooldown": 5.0,
+        "BackToRestarting": True,
+    },
     # From any task set to Sell_Characters when characters are full
     {
         "task_name": "Character FULL",
