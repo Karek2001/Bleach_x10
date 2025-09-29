@@ -38,6 +38,7 @@ try:
         Sort_Multi_Select_Garbage_First_Tasks, Upgrade_Characters_Level,
         Upgrade_Characters_Back_To_Edit
     )
+    from tasks.detect_chapter_end import DETECT_CHAPTER_END
     
     # Combine all task lists into a dictionary for easy access
     ALL_TASK_CATEGORIES = {
@@ -63,7 +64,8 @@ try:
         "Sort Filter Ascension": Sort_Filter_Ascension_Tasks,
         "Sort Multi Select Garbage First": Sort_Multi_Select_Garbage_First_Tasks,
         "Upgrade Characters Level": Upgrade_Characters_Level,
-        "Upgrade Characters Back To Edit": Upgrade_Characters_Back_To_Edit
+        "Upgrade Characters Back To Edit": Upgrade_Characters_Back_To_Edit,
+        "Detect Chapter End": DETECT_CHAPTER_END
     }
 except ImportError as e:
     print(f"Warning: Could not import tasks: {e}")
@@ -469,7 +471,7 @@ def run_template_matching_browser():
                 if task_type == "template":
                     template_path = task.get("template_path")
                     roi = task.get("roi")
-                    confidence = 0.9
+                    confidence = task.get("confidence", 0.9)  # Use task's confidence or 0.9 as fallback
                     
                     if settings.SPAM_LOGS:
                         print(f"\nTesting: {task_name} [{category_name}] [TEMPLATE]")

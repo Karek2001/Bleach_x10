@@ -339,13 +339,16 @@ class ProcessMonitor:
         )
         
         # ALWAYS include Shared_Tasks and Switcher_Tasks for all task sets
-        # Only add Restarting_Tasks when NOT in reroll phase and not already in restarting mode
-        if not is_reroll_phase and task_set != "restarting":
-            # In normal mode: add Restarting_Tasks for game recovery
-            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks + Restarting_Tasks
+        # Restarting_Tasks should ONLY be used when task_set is "restarting"
+        if is_reroll_phase:
+            # In reroll mode: only base tasks + shared + switcher (NO restarting)
+            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
+        elif task_set == "restarting":
+            # Restarting task set: restarting tasks are already the base tasks
+            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
         else:
-            # In reroll mode or restarting: only base tasks + shared + switcher (NO restarting)
-            all_tasks = base_tasks + Shared_Tasks
+            # Other task sets: only base + shared + switcher (NO restarting tasks)
+            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
             
         print(f"[{device_id}] Total tasks loaded: {len(all_tasks)} (Base: {len(base_tasks)}, Shared: {len(Shared_Tasks)}, Switcher: {len(Switcher_Tasks)})")
             
@@ -663,14 +666,17 @@ class BackgroundMonitor:
             device_state.get("Reroll_ReplaceIchigoWithFiveStar", 1) == 0
         )
         
-        # Combine tasks - only include Restarting_Tasks if NOT in reroll phase
+        # Combine tasks - Restarting_Tasks should only be included when task_set is "restarting"
         if is_reroll_phase:
             # In reroll phase: only base tasks + shared + switcher (NO restarting)
             all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
             print(f"[{device_id}] Reroll mode active - Restarting tasks disabled")
+        elif task_set == "restarting":
+            # Restarting task set: include restarting tasks as they ARE the base tasks
+            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
         else:
-            # Normal operation: include restarting tasks
-            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks + Restarting_Tasks
+            # Other task sets: only base + shared + switcher (NO restarting tasks)
+            all_tasks = base_tasks + Shared_Tasks + Switcher_Tasks
         
         # Filter out tasks with StopSupport flag if condition is met
         filtered_tasks = []

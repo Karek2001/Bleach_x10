@@ -1,6 +1,7 @@
 # tasks/shared_tasks.py - Complete shared tasks with smart detection
 
 Shared_Tasks = [
+
     # HIGHEST PRIORITY - Connection/Network Issues (Priority 1-5)
     {
         "task_name": "Connection Error - Retry-OutGame",

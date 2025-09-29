@@ -6,7 +6,7 @@ DETECT_CHAPTER_END = [
         "roi": [765, 346, 114, 62],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -17,7 +17,7 @@ DETECT_CHAPTER_END = [
         "roi": [765, 346, 114, 62],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -28,7 +28,7 @@ DETECT_CHAPTER_END = [
         "roi": [768, 345, 115, 86],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -39,7 +39,7 @@ DETECT_CHAPTER_END = [
         "roi": [777, 350, 99, 66],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -50,7 +50,7 @@ DETECT_CHAPTER_END = [
         "roi": [799, 348, 98, 60],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -61,7 +61,7 @@ DETECT_CHAPTER_END = [
         "roi": [756, 282, 92, 52],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -72,7 +72,7 @@ DETECT_CHAPTER_END = [
         "roi": [793, 282, 92, 55],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -83,7 +83,7 @@ DETECT_CHAPTER_END = [
         "roi": [771, 345, 109, 64],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -94,7 +94,7 @@ DETECT_CHAPTER_END = [
         "roi": [772, 346, 108, 63],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -105,7 +105,7 @@ DETECT_CHAPTER_END = [
         "roi": [749, 281, 114, 59],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -116,7 +116,7 @@ DETECT_CHAPTER_END = [
         "roi": [749, 281, 114, 59],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -127,7 +127,7 @@ DETECT_CHAPTER_END = [
         "roi": [769, 347, 115, 54],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -138,7 +138,7 @@ DETECT_CHAPTER_END = [
         "roi": [748, 284, 111, 61],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -149,7 +149,7 @@ DETECT_CHAPTER_END = [
         "roi": [784, 349, 88, 72],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -160,7 +160,7 @@ DETECT_CHAPTER_END = [
         "roi": [762, 283, 85, 56],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -171,7 +171,7 @@ DETECT_CHAPTER_END = [
         "roi": [418, 348, 126, 79],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -182,7 +182,7 @@ DETECT_CHAPTER_END = [
         "roi": [644, 278, 120, 75],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -193,7 +193,7 @@ DETECT_CHAPTER_END = [
         "roi": [425, 347, 122, 75],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -204,7 +204,7 @@ DETECT_CHAPTER_END = [
         "roi": [759, 346, 129, 80],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -215,7 +215,7 @@ DETECT_CHAPTER_END = [
         "roi": [704, 344, 136, 83],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -226,7 +226,7 @@ DETECT_CHAPTER_END = [
         "roi": [757, 350, 122, 75],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -237,7 +237,7 @@ DETECT_CHAPTER_END = [
         "roi": [739, 278, 137, 88],
         "click_location_str": "76,480",
         "use_match_position": False,
-"confidence": 0.80,
+"confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -271,7 +271,7 @@ DETECT_CHAPTER_END = [
         "roi": [779, 280, 117, 68],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -282,7 +282,7 @@ DETECT_CHAPTER_END = [
         "roi": [775, 346, 102, 63],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -293,7 +293,7 @@ DETECT_CHAPTER_END = [
         "roi": [750, 281, 107, 67],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -304,7 +304,7 @@ DETECT_CHAPTER_END = [
         "roi": [770, 327, 120, 88],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -315,7 +315,7 @@ DETECT_CHAPTER_END = [
         "roi": [796, 318, 127, 112],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -326,7 +326,7 @@ DETECT_CHAPTER_END = [
         "roi": [791, 266, 125, 96],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -337,7 +337,7 @@ DETECT_CHAPTER_END = [
         "roi": [745, 263, 120, 97],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -348,7 +348,7 @@ DETECT_CHAPTER_END = [
         "roi": [788, 337, 123, 76],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -359,7 +359,7 @@ DETECT_CHAPTER_END = [
         "roi": [744, 274, 120, 70],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -370,7 +370,7 @@ DETECT_CHAPTER_END = [
         "roi": [751, 249, 114, 90],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -381,7 +381,7 @@ DETECT_CHAPTER_END = [
         "roi": [764, 325, 124, 91],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -392,7 +392,7 @@ DETECT_CHAPTER_END = [
         "roi": [766, 328, 118, 78],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -403,7 +403,7 @@ DETECT_CHAPTER_END = [
         "roi": [699, 334, 125, 95],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -414,7 +414,7 @@ DETECT_CHAPTER_END = [
         "roi": [767, 326, 125, 79],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -425,7 +425,7 @@ DETECT_CHAPTER_END = [
         "roi": [783, 262, 120, 76],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -436,7 +436,7 @@ DETECT_CHAPTER_END = [
         "roi": [704, 336, 134, 88],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -447,7 +447,7 @@ DETECT_CHAPTER_END = [
         "roi": [710, 318, 139, 93],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -458,7 +458,7 @@ DETECT_CHAPTER_END = [
         "roi": [710, 318, 139, 93],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -469,7 +469,7 @@ DETECT_CHAPTER_END = [
         "roi": [769, 258, 139, 120],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -480,7 +480,7 @@ DETECT_CHAPTER_END = [
         "roi": [796, 327, 102, 74],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -491,7 +491,7 @@ DETECT_CHAPTER_END = [
         "roi": [752, 339, 128, 84],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -502,7 +502,7 @@ DETECT_CHAPTER_END = [
         "roi": [753, 275, 99, 82],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -513,7 +513,7 @@ DETECT_CHAPTER_END = [
         "roi": [775, 331, 109, 76],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0
     },
@@ -524,7 +524,7 @@ DETECT_CHAPTER_END = [
         "roi": [699, 324, 139, 115],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0,
     },
@@ -536,7 +536,7 @@ DETECT_CHAPTER_END = [
         "roi": [762, 328, 136, 92],
         "click_location_str": "76,480",
         "use_match_position": False,
-        "confidence": 0.80,
+        "confidence": 0.90,
         "priority": 5,
         "cooldown": 5.0,
         "HardStory": True,
