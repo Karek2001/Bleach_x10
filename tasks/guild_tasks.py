@@ -52,6 +52,7 @@ GUILD_TUTORIAL_TASKS = [
         "use_match_position": True,
         "priority": 30,
         "cooldown": 5.0,
+        "sleep": 3,
     },
        {
         "task_name": "Leave [Guild Menu TOP]",
@@ -86,13 +87,14 @@ Guild_Rejoin = [
         "shared_detection": True,
         "priority": 15,
         "cooldown": 5.0,
+        "sleep": 3,
     },
     {
         "task_name": "Click Refresh",
         "type": "pixel",
         "click_location_str": "856,84",
         "search_array": ["859,88","#ffffff","861,78","#4d555c","876,100","#dedddd"],
-        "priority": 10,  # Higher priority to refresh guild list
+        "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
     },
@@ -106,5 +108,6 @@ Guild_Rejoin = [
         "NeedGuildTutorial": True,
         "priority": 25,
         "cooldown": 5.0,
+        "sleep": 3,
     },
 ]

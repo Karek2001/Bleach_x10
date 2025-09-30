@@ -15,6 +15,7 @@ reroll_replaceichigowithfivestar_tasks = [
         "click_location_str": "900,29",
         "search_array": ["909,32","#ffffff","897,37","#e60012","936,30","#485159"],
         "priority": 10,
+        "cooldown": 5.0,
         "sleep": 3,
     },
        {
@@ -65,7 +66,8 @@ reroll_replaceichigowithfivestar_tasks = [
         "click_location_str": "382,507",
         "search_array": ["387,479","#e1773a","368,462","#323348"],
         "priority": 1,
-        "cooldown": 2.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Switch From [Party 1] To [Party 2] [Replace Ichigo With FiveStar]",
@@ -73,7 +75,8 @@ reroll_replaceichigowithfivestar_tasks = [
         "click_location_str": "278,78",
         "search_array": ["211,75","#4767d4","209,85","#e60012","193,77","#ffffff","299,78","#405761","293,86","#e60012"],
         "priority": 2,
-        "cooldown": 6.0
+        "cooldown": 6.0,
+        "sleep": 3
     },
     {
         "task_name": "Swipe Aizen To Be Main Character [Replace Ichigo With FiveStar]",
@@ -84,7 +87,8 @@ reroll_replaceichigowithfivestar_tasks = [
         "min_matches_for_swipe": 1,
         "swipe_command": "shell input swipe 489 212 253 211 2000",
         "priority": 3,
-        "cooldown": 20.0
+        "cooldown": 20.0,
+        "sleep": 3
     },
     {
         "task_name": "Check is Aizen Main And is we Party2 And Leave [Replace Ichigo With FiveStar]",

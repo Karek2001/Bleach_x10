@@ -47,6 +47,7 @@ HardStory_Tasks = [
         "search_array": ["921,42","#0a36e5","47,15","#010101","24,49","#e50012","81,32","#fefefe"],
         
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
     {
@@ -73,6 +74,7 @@ HardStory_Tasks = [
         "shared_detection": True,
         "priority": 20,
         "cooldown": 5.0,
+        "sleep": 3,
         "BackToStory": True,
         "KeepChecking": 5.0,
     },

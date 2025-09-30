@@ -55,7 +55,8 @@ reroll_tutorial_firstmatch_tasks = [
         "click_location_str": "540,489",
         "search_array": ["834,35","#ff0000","839,60","#ffffff","580,28","#ffffff","183,362","#ffad42"],
         "priority": 1,
-        "cooldown": 2.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
             {
         "task_name": "Click [Home] [Reroll Earse GameData Part 2]",
@@ -63,7 +64,8 @@ reroll_tutorial_firstmatch_tasks = [
         "click_location_str": "394,511",
         "search_array": ["357,508","#ffffff","408,509","#ffffff","450,510","#2059f9","236,28","#ffffff"],
         "priority": 1,
-        "cooldown": 2.0,
+        "cooldown": 5.0,
+        "sleep": 3,
         "json_Reroll_Tutorial_FirstMatch": True,  # Mark this reroll task as complete
         "Reroll_Tutorial_CharacterChoose_Tasks": True  # Switch to character choose
     },

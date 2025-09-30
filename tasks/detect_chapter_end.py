@@ -8,7 +8,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
         {
         "task_name": "Part 1 Chapter END [29 HARD]",
@@ -19,7 +20,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 2 Chapter END [66]",
@@ -30,7 +32,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 3 Chapter END [110]",
@@ -41,7 +44,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 4 Chapter END [154]",
@@ -52,7 +56,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 5 Chapter END [180]",
@@ -63,7 +68,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 6 Chapter END [204]",
@@ -74,7 +80,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 7 Chapter END [229]",
@@ -85,7 +92,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 8 Chapter END [247]",
@@ -96,7 +104,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 9 Chapter END [273]",
@@ -107,7 +116,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
         {
         "task_name": "Part 9 Chapter END [273 HARD]",
@@ -118,7 +128,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 10 Chapter END [299]",
@@ -129,7 +140,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 11 Chapter END [320]",
@@ -140,7 +152,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 12 Chapter END [352]",
@@ -151,7 +164,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 13 Chapter END [387]",
@@ -162,7 +176,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 14 Chapter END [398]",
@@ -173,7 +188,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 15 Chapter END [410]",
@@ -184,7 +200,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 16 Chapter END [421]",
@@ -195,7 +212,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
         {
         "task_name": "Part 17 Chapter END [436]",
@@ -206,7 +224,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 18 Chapter END [449]",
@@ -217,7 +236,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 19 Chapter END [464]",
@@ -228,7 +248,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 20 Chapter END [483]",
@@ -239,7 +260,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
 "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Part 21 Chapter END [502] SWITCH TO HARD",
@@ -248,6 +270,7 @@ DETECT_CHAPTER_END = [
         "search_array": ["227,71","#000000","235,74","#000000","239,88","#060606","234,87","#000000","230,87","#000000","794,342","#0199ff","528,200","#51b7dd"],
         "priority": 5,
         "cooldown": 5.0,
+        "sleep": 3,
         "HardStory": True,  # Switches to HardStory_tasks
     },
             {
@@ -258,6 +281,7 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "priority": 5,
         "cooldown": 5.0,
+        "sleep": 3,
         "SideStory": True,  # Switches to SideStory_tasks
     },
 
@@ -273,7 +297,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 2 Chapter END [77]",
@@ -284,7 +309,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 3 Chapter END [114]",
@@ -295,7 +321,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 4 Chapter END [39]",
@@ -306,7 +333,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 5 Chapter END [74]",
@@ -317,7 +345,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 6 Chapter END [36]",
@@ -328,7 +357,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 7 Chapter END [71]",
@@ -339,7 +369,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 8 Chapter END [33]",
@@ -350,7 +381,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 9 Chapter END [33]",
@@ -361,7 +393,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 10 Chapter END [33]",
@@ -372,7 +405,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 11 Chapter END [36]",
@@ -383,7 +417,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 12 Chapter END [15]",
@@ -394,7 +429,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 13 Chapter END [35]",
@@ -405,7 +441,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 14 Chapter END [65]",
@@ -416,7 +453,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 15 Chapter END [95]",
@@ -427,7 +465,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 16 Chapter END [133]",
@@ -438,7 +477,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 17 Chapter END [166]",
@@ -449,7 +489,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
         {
         "task_name": "Side-Story Part 17 HARD Chapter END [166]",
@@ -460,7 +501,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 18 Chapter END [192]",
@@ -471,7 +513,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 19 Chapter END [226]",
@@ -482,7 +525,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 20 Chapter END [29]",
@@ -493,7 +537,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 21 Chapter END [58]",
@@ -504,7 +549,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 22 Chapter END [87]",
@@ -515,7 +561,8 @@ DETECT_CHAPTER_END = [
         "use_match_position": False,
         "confidence": 0.90,
         "priority": 5,
-        "cooldown": 5.0
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Side-Story Part 23 Chapter END [117] Final Part [Switch To Hard]",

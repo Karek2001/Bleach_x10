@@ -185,6 +185,8 @@ Restarting_Tasks = [
         "use_match_position": False,
         "shared_detection": True,
         "NeedGuildTutorial": True,
-        "priority": 1
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 3
     },
 ]

@@ -15,6 +15,7 @@ reroll_tutorial_characterchoosepart2_tasks = [
         "click_location_str": "900,29",
         "search_array": ["909,32","#ffffff","897,37","#e60012","936,30","#485159"],
         "priority": 10,
+        "cooldown": 5.0,
         "sleep": 3,
     },
            {
@@ -64,7 +65,7 @@ reroll_tutorial_characterchoosepart2_tasks = [
         "search_array": ["362,524","#ffffff","387,480","#e1773a","365,463","#323348"],
         "priority": 1,
         "cooldown": 5.0,
-        "sleep": 2,
+        "sleep": 3,
     },
     {
         "task_name": "Let's Swipe Aizen To Party! [Reroll Tutorial CharacterChoose Part 2]",

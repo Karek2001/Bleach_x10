@@ -18,7 +18,7 @@ Login3_Wait_For_2FA_Tasks = [
         "shared_detection": True,
         "min_matches_for_swipe": 1,
         "swipe_command": "shell input swipe 443 400 443 140 900",
-        "sleep": 2.0
+        "sleep": 3
     },
     {
         "task_name": "Enter 2FA Code [Wait for 2FA]",
@@ -28,8 +28,8 @@ Login3_Wait_For_2FA_Tasks = [
         "use_match_position": True,
         "DownPixels": 35,
         "priority": 5,
-        "cooldown": 3.0,
-        "sleep": 2.0,
+        "cooldown": 5.0,
+        "sleep": 3,
         "Confirm_2FA_Code_Tasks": True,
         "Get_2fa": True,
         "Login4_Confirm_Link_Tasks": True,

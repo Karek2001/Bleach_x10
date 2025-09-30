@@ -13,7 +13,8 @@ Shared_Tasks = [
         
         "shared_detection": True,
         "priority": 1,
-        "cooldown": 5.0,  # Long cooldown to prevent connection spam
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Connection Error - Retry-InsideGame",
@@ -26,6 +27,7 @@ Shared_Tasks = [
         "shared_detection": True,
         "priority": 1,
         "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Click [Resume] When Game Stopped Randomly",
@@ -37,7 +39,8 @@ Shared_Tasks = [
         
         "shared_detection": True,
         "priority": 2,
-        "cooldown": 3.0,
+        "cooldown": 5.0,
+        "sleep": 3
     },
            {
         "task_name": "Click [Update] When Game Updated!",
@@ -61,7 +64,8 @@ Shared_Tasks = [
         
         "shared_detection": True,
         "priority": 5,
-        "cooldown": 5.0,  # Prevent skip button spam
+        "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Click [Close] for Hard Mode Unlocked",
@@ -74,6 +78,7 @@ Shared_Tasks = [
         "shared_detection": True,
         "priority": 8,
         "cooldown": 5.0,
+        "sleep": 3,
         "StopSupport": "json_Character_Slots_Purchased",
     },
     
@@ -89,6 +94,7 @@ Shared_Tasks = [
         "shared_detection": True,
         "priority": 40,
         "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Click 25 Tickets",
@@ -101,6 +107,7 @@ Shared_Tasks = [
         "shared_detection": True,
         "priority": 45,
         "cooldown": 5.0,
+        "sleep": 3
     },
     {
         "task_name": "Confirm Ticket Purchase",
@@ -113,6 +120,7 @@ Shared_Tasks = [
         "shared_detection": True,
         "priority": 45,
         "cooldown": 5.0,
+        "sleep": 3
     },
 
         {
@@ -147,6 +155,7 @@ Shared_Tasks = [
         
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
     {
@@ -157,6 +166,7 @@ Shared_Tasks = [
         
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
         {
@@ -167,6 +177,7 @@ Shared_Tasks = [
         
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
         # Social/Cancel Actions - Lower Priority
@@ -178,6 +189,7 @@ Shared_Tasks = [
         
         "shared_detection": True,
         "priority": 50,
+        "cooldown": 5.0,
         "sleep": 3,
     },
 
@@ -190,6 +202,7 @@ Shared_Tasks = [
         
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
         {
@@ -200,6 +213,7 @@ Shared_Tasks = [
         
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
 
@@ -212,6 +226,7 @@ Shared_Tasks = [
         "search_array": ["348,35","#191919","460,39","#191919","479,35","#191919","560,36","#191919","257,51","#e60012","236,83","#ffff00","510,112","#ffff00"],
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
 
@@ -223,6 +238,7 @@ Shared_Tasks = [
         "search_array": ["258,152","#0d12b5","267,166","#e60012","306,151","#494952","436,154","#191925","473,155","#191925","644,154","#191925","474,262","#ffffff","542,260","#ffffff","539,291","#ffffff"],
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
 
@@ -234,6 +250,7 @@ Shared_Tasks = [
         "search_array": ["581,56","#302248","597,79","#d9e781","567,42","#343854"],
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
                    {
@@ -243,6 +260,7 @@ Shared_Tasks = [
         "search_array": ["931,25","#ffffff","932,45","#e60012","945,26","#373737"],
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
 
@@ -254,6 +272,7 @@ Shared_Tasks = [
         "search_array": ["181,81","#0d12b3","183,93","#e40012","246,81","#191925","716,86","#191925","521,78","#191925"],
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
                        {
@@ -263,6 +282,7 @@ Shared_Tasks = [
         "search_array": ["334,81","#191925","553,97","#0d12b4","543,126","#e29b48","404,130","#cd7c48","272,124","#2c384c"],
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
                        {
@@ -272,6 +292,7 @@ Shared_Tasks = [
         "search_array": ["250,34","#0d12b4","266,49","#e50012","404,37","#191925","483,35","#191925","556,39","#191925","559,51","#0d12b4"],
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
 
@@ -283,6 +304,7 @@ Shared_Tasks = [
         "search_array": ["846,468","#d27c00","114,468","#d27c00""177,131","#fdc3b1","173,196","#fef89a"],
         "shared_detection": True,
         "priority": 20,
+        "cooldown": 5.0,
         "sleep": 3,
     },
     

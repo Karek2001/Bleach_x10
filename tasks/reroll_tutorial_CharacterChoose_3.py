@@ -67,7 +67,8 @@ reroll_tutorial_characterchoose_tasks = [
         "click_location_str": "78,489",
         "search_array": ["63,523","#ffffff","54,494","#31323a","35,486","#31323a"],
         "priority": 1,
-        "cooldown": 30.0
+        "cooldown": 30.0,
+        "sleep": 3
     },
             {
         "task_name": "Click [Select Free Summon] [Reroll Character Choose]",
@@ -75,7 +76,8 @@ reroll_tutorial_characterchoose_tasks = [
         "click_location_str": "600,464",
         "search_array": ["613,482","#00ff00","648,482","#00ff00","616,501","#ffffff"],
         "priority": 1,
-        "cooldown": 30.0
+        "cooldown": 30.0,
+        "sleep": 3
     },
                 {
         "task_name": "Select [Aizen FREE 5 STAR] [Reroll Character Choose]",
@@ -83,7 +85,8 @@ reroll_tutorial_characterchoose_tasks = [
         "click_location_str": "374,356",
         "search_array": ["393,338","#513d38","376,366","#ecc5b1","342,326","#ffffff","609,493","#122f7c"],
         "priority": 1,
-        "cooldown": 30.0
+        "cooldown": 30.0,
+        "sleep": 3
     },
                 {
         "task_name": "Click [Select] Confirm Aizen Select [Reroll Character Choose]",
@@ -91,7 +94,8 @@ reroll_tutorial_characterchoose_tasks = [
         "click_location_str": "488,487",
         "search_array": ["333,329","#00ff00","447,491","#ffffff","610,491","#1f58f9"],
         "priority": 1,
-        "cooldown": 30.0
+        "cooldown": 30.0,
+        "sleep": 3
     },
                 {
         "task_name": "Click [OK] To Confirm Using Free Ticket For AIZEN 5 STAR [Reroll Character Choose]",
@@ -99,7 +103,8 @@ reroll_tutorial_characterchoose_tasks = [
         "click_location_str": "621,370",
         "search_array": ["258,147","#0d12b5","267,159","#e60012","282,326","#ff0000","675,327","#ff0000","641,270","#ffeb04"],
         "priority": 1,
-        "cooldown": 30.0
+        "cooldown": 30.0,
+        "sleep": 3
     },
                 {
         "task_name": "Click [Green House] [Reroll Character Choose]",
@@ -108,6 +113,7 @@ reroll_tutorial_characterchoose_tasks = [
         "search_array": ["642,87","#513c37","623,119","#edc7b2","43,279","#65a92e"],
         "priority": 1,
         "cooldown": 30.0,
+        "sleep": 3,
         "json_Reroll_Tutorial_CharacterChoose": True,  # Mark this reroll task as complete
         "Reroll_Tutorial_CharacterChoosePart2_Tasks": True,  # Switch to Character Choose Part 2
     },

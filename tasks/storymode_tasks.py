@@ -39,6 +39,7 @@ StoryMode_Tasks = [
         "search_array": ["885,490","#211d15","899,495","#211d15","906,485","#978e74","892,493","#978e74"],
         "priority": 1,
         "cooldown": 30.0,
+        "sleep": 3
     },
 
             {
@@ -50,6 +51,7 @@ StoryMode_Tasks = [
         "sleep": 3,
         "priority": 1,
         "cooldown": 30.0,
+        "sleep": 3
     },
 
     {
@@ -63,21 +65,22 @@ StoryMode_Tasks = [
         "shared_detection": True,
         "priority": 30,
         "cooldown": 5.0,
+        "sleep": 3
     },
-        {
-        "task_name": "Click feetMap",
+    {
+        "task_name": "Click Story MAP",
         "type": "template",
-        "template_path": "templates/Story_Mode/feetMap.png",
+        "template_path": "templates/Story_Mode/StoryMAP.png",
         "roi": [3, 127, 956, 347],
-        "confidence": 0.60,  # Increased from 0.75 to prevent false positives
+        "confidence": 0.80,  # Increased from 0.75 to prevent false positives
         "use_match_position": True,
-        
+        "isLogical": False,
         "shared_detection": True,
         "priority": 30,
         "cooldown": 5.0,
-        "StopSupport": "json_SideMode",
     },
-    {
+
+        {
         "task_name": "All Posibile Ways of Stars Map #1",
         "type": "template",
         "template_path": "templates/Story_Mode/Stars.png",
@@ -85,14 +88,13 @@ StoryMode_Tasks = [
         "confidence": 0.70,
         "use_match_position": True,
         "FullyAnylaze": True,
-        
+        "isLogical": False,
         "shared_detection": True,
         "multi_click": True,  # Click all stars found
         "priority": 20,
         "cooldown": 5.0,
         "StopSupport": "json_SideMode",
     },
-    
     # Battle Preparation - Medium Priority
 
     

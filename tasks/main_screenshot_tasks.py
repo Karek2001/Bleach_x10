@@ -20,7 +20,8 @@ Main_Screenshot_Tasks = [
         "click_location_str": "0,0",  # No click, just detection
         "search_array": ["899,485","#978e74","388,480","#e1773a","790,16","#593b0d"],  # Simple detection of screen center
         "priority": 5,
-        "cooldown": 1.0,
+        "cooldown": 5.0,
+        "sleep": 3,
         "save_screenshot_with_username": True,
         "json_ScreenShot_MainMenu": True,
         "Extract_Orb_Count_Tasks": True
