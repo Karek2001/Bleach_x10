@@ -61,23 +61,11 @@ StoryMode_Tasks = [
         "roi": [3, 127, 956, 347],
         "confidence": 0.80,  # Increased from 0.75 to prevent false positives
         "use_match_position": True,
-        
         "shared_detection": True,
-        "priority": 30,
+        "multi_click": True,  # Click all detected story map icons
+        "priority": 5,
         "cooldown": 5.0,
         "sleep": 3
-    },
-    {
-        "task_name": "Click Story MAP",
-        "type": "template",
-        "template_path": "templates/Story_Mode/StoryMAP.png",
-        "roi": [3, 127, 956, 347],
-        "confidence": 0.80,  # Increased from 0.75 to prevent false positives
-        "use_match_position": True,
-        "isLogical": False,
-        "shared_detection": True,
-        "priority": 30,
-        "cooldown": 5.0,
     },
 
         {
