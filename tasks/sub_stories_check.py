@@ -1,4 +1,15 @@
 SubStories_check = [
+            {
+        "task_name": "Detected Unclear Sub-Stories Map Let's Retry To sub-Storie!",
+        "type": "template",
+        "roi": [68, 4, 409, 533],
+        "confidence": 0.80,
+        "use_match_position": True,
+        "template_path": "templates/Sub-Stories/Sub-Storie-Map-UnClear.png",
+        "priority": 1,
+        "cooldown": 9.0,
+         "Sub-Stores": True,
+    },
     {
         "task_name": "Detect Game Updated! [Game Update]",
         "type": "pixel",

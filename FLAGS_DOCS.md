@@ -293,7 +293,7 @@ Increments Skip_Kon_Bonaza_100Times counter by 1
 ### `Increment_Character_Slots_Count`
 Increments Character_Slots_Count counter by 1
 - **Type**: Boolean flag
-- **Action**: Increments counter, sets Character_Slots_Purchase to 1 when reaching 200
+- **Action**: Increments counter, sets Character_Slots_Purchase to 1 when reaching 100
 - **Usage**: Tracks character slot purchases until completion threshold
 
 ### `increment_stock`

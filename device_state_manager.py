@@ -332,7 +332,7 @@ class DeviceStateManager:
                     print(f"[{device_name}] Kon Bonaza skip complete! Skip_Kon_Bonaza set to true.")
     
     def increment_character_slots_count(self, device_id: str):
-        """Increment Character_Slots_Count counter and set Character_Slots_Purchased when reaching 200"""
+        """Increment Character_Slots_Count counter and set Character_Slots_Purchased when reaching 100"""
         with self.locks.get(device_id, Lock()):
             if device_id not in self.states:
                 self.states[device_id] = self._get_default_state()
@@ -341,15 +341,15 @@ class DeviceStateManager:
             new_value = current_value + 1
             self.states[device_id]["Character_Slots_Count"] = new_value
             
-            # Set Character_Slots_Purchased to 1 when reaching 200
-            if new_value >= 200:
+            # Set Character_Slots_Purchased to 1 when reaching 100
+            if new_value >= 100:
                 self.states[device_id]["Character_Slots_Purchased"] = 1
             
             self._save_state(device_id)
             device_name = self._get_device_name(device_id)
-            print(f"[{device_name}] Character slots purchased: {new_value}/200")
+            print(f"[{device_name}] Character slots purchased: {new_value}/100")
             
-            if new_value >= 200:
+            if new_value >= 100:
                 print(f"[{device_name}] Character slots purchase complete!")
     
 

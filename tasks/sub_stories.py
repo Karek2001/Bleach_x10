@@ -142,10 +142,13 @@ SubStories = [
         "type": "template",
         "template_path": "templates/Sub-Stories/NewPart.png",
         "roi": [116, 80, 729, 382],
-        "confidence": 0.70,
+        "confidence": 0.85,  # Increased from 0.70 for better detection
         "use_match_position": True,
-        "priority": 20,
-        "cooldown": 10.0,
+        "shared_detection": True,  # Better template matching performance
+        "multi_click": True,  # Click all available parts if multiple found
+        "priority": 0,  # Highest priority to ensure it's checked first
+        "cooldown": 3.0,  # Reduced from 10.0 for faster retries
+        "sleep": 2,  # Add sleep after execution
     },
 
         {
@@ -162,7 +165,7 @@ SubStories = [
         "type": "pixel",
         "search_array": ["96,68","#3fc5ff","150,71","#159fff","158,71","#17a0ff"],
         "click_location_str": "483,500",
-        "priority": 1,
+        "priority": 5,
         "CheckSubStoriesAllCleared": True,
         "cooldown": 5.0,
         "sleep": 3,
