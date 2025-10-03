@@ -55,7 +55,6 @@ Skip_Kon_Bonaza = [
         "type": "pixel",
         "click_location_str": "673,488",
         "search_array": ["646,492","#ffffff","716,490","#ffffff","759,480","#0a37e7"],
-        
         "priority": 10,
         "cooldown": 5.0,
         "sleep": 3,
@@ -64,9 +63,8 @@ Skip_Kon_Bonaza = [
         "task_name": "Start a Match That First Time Played [Kon Bonaza]",
         "type": "pixel",
         "click_location_str": "726,496",
-        "search_array": ["435,513","#fe0706","526,513","#f3605c","799,493","#0a3ae1"],
-        
-        "priority": 10,
+        "search_array": ["561,491","#232629","849,498","#2058f9"],
+        "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
     },

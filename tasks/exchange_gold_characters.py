@@ -66,7 +66,7 @@ Exchange_Gold_Characters = [
         "use_match_position": True,
         "DownPixels": 32,
         "priority": 1,
-        "cooldown": 10.0,
+        "cooldown": 14.0,
         "shared_detection": True,
     },
         {
@@ -84,7 +84,6 @@ Exchange_Gold_Characters = [
         "type": "pixel",
         "click_location_str": "487,408",
         "search_array": ["230,121","#0d12b5","245,135","#e60012","351,123","#191925","610,125","#191925","608,409","#2159f9"],
-        
         "priority": 10,
         "cooldown": 10.0,
         "sleep": 3,
@@ -102,7 +101,7 @@ Exchange_Gold_Characters = [
         "click_location_str": "0,0",
         "priority": 1,
         "cooldown": 8.0,
-        "sleep":4,
+        "sleep":6,
     },
                 {
         "task_name": "Detect Finished List [Leave Exchange]",

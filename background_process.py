@@ -248,7 +248,18 @@ class ProcessMonitor:
         require_support = task.get("RequireSupport")
         if require_support:
             should_require = device_state_manager.check_stop_support(device_id, require_support)
+            task_name = task.get("task_name", "Unknown")
+            print(f"[{device_id}] RequireSupport check: {task_name} needs {require_support} = {should_require}, skip={'YES' if not should_require else 'NO'}")
             if not should_require:  # If requirement is NOT met, skip task
+                return True
+        
+        # SECOND: Check StopSupport flag (should prevent task from running)
+        stop_support = task.get("StopSupport")
+        if stop_support:
+            should_stop = device_state_manager.check_stop_support(device_id, stop_support)
+            task_name = task.get("task_name", "Unknown")
+            print(f"[{device_id}] StopSupport check: {task_name} blocked by {stop_support} = {should_stop}, skip={'YES' if should_stop else 'NO'}")
+            if should_stop:
                 return True
         
         # Check ConditionalRun flag (existing functionality)
@@ -256,9 +267,18 @@ class ProcessMonitor:
         if conditional_run:
             device_state = device_state_manager.get_state(device_id)
             for key in conditional_run:
-                value = device_state.get(key, 0)
-                if value != 1:
-                    return True  # Skip task if any condition is not met
+                # Special handling for Skip_Yukio_Event_Retry_At_3
+                if key == "Skip_Yukio_Event_Retry_At_3":
+                    retry_count = device_state.get("Skip_Yukio_Event_Retry_Count", 0)
+                    if retry_count < 3:
+                        # Special debug for Home button task
+                        if "Home" in task.get("task_name", ""):
+                            print(f"[{device_id}] Home button blocked - retry count {retry_count}/3")
+                        return True  # Skip task, condition not met
+                else:
+                    value = device_state.get(key, 0)
+                    if value != 1:
+                        return True  # Skip task if any condition is not met
         
         # Check RequireFlag_ flags (new sequential execution system)
         device_state = device_state_manager.get_state(device_id)
@@ -354,11 +374,23 @@ class ProcessMonitor:
             
         print(f"[{device_id}] Total tasks loaded: {len(all_tasks)} (Base: {len(base_tasks)}, Shared: {len(Shared_Tasks)}, Switcher: {len(Switcher_Tasks)})")
             
-        # Filter out tasks that should be skipped
+        # Filter out tasks with StopSupport flag if condition is met
         filtered_tasks = []
+        skipped_count = 0
         for task in all_tasks:
-            if not self.should_skip_task(device_id, task):
+            skip_result = self.should_skip_task(device_id, task)
+            if not skip_result:
                 filtered_tasks.append(task)
+            else:
+                skipped_count += 1
+                # Debug log which tasks are being skipped
+                task_name = task.get('task_name', 'Unknown')
+                print(f"[{device_id}] *** FILTERING OUT TASK: {task_name} ***")
+                if task_set == "character_slots_purchase":
+                    print(f"[{device_id}] BLOCKED CHARACTER SLOT TASK: {task_name}")
+        
+        if skipped_count > 0:
+            print(f"[{device_id}] Filtered: {len(all_tasks)} -> {len(filtered_tasks)} tasks ({skipped_count} blocked)")
         
         # Sort by priority (lower number = higher priority)
         return sorted(filtered_tasks, key=lambda x: x.get('priority', 999))
@@ -564,6 +596,8 @@ class BackgroundMonitor:
         require_support = task.get("RequireSupport")
         if require_support:
             should_require = device_state_manager.check_stop_support(device_id, require_support)
+            task_name = task.get("task_name", "Unknown")
+            print(f"[{device_id}] RequireSupport check: {task_name} needs {require_support} = {should_require}, skip={'YES' if not should_require else 'NO'}")
             if not should_require:  # If requirement is NOT met, skip task
                 return True
         
@@ -571,6 +605,8 @@ class BackgroundMonitor:
         stop_support = task.get("StopSupport")
         if stop_support:
             should_stop = device_state_manager.check_stop_support(device_id, stop_support)
+            task_name = task.get("task_name", "Unknown")
+            print(f"[{device_id}] StopSupport check: {task_name} blocked by {stop_support} = {should_stop}, skip={'YES' if should_stop else 'NO'}")
             if should_stop:
                 # Special debug logging for Yukio retry tasks
                 if "Yukio" in task.get("task_name", "") and "Retry" in task.get("task_name", ""):
@@ -658,6 +694,12 @@ class BackgroundMonitor:
             task_names = [task.get("task_name", "Unknown") for task in base_tasks]
             print(f"[{device_id}] SubStories tasks: {task_names}")
         
+        # Debug: If character_slots_purchase is active, log the task names
+        if task_set == "character_slots_purchase":
+            task_names = [task.get("task_name", "Unknown") for task in base_tasks]
+            print(f"[{device_id}] CharacterSlots tasks: {task_names}")
+            print(f"[{device_id}] WARNING: Character_Slots_Purchase tasks should be blocked by StopSupport!")
+        
         # Check if we're in a reroll phase
         device_state = device_state_manager.get_state(device_id)
         is_reroll_phase = (
@@ -685,9 +727,21 @@ class BackgroundMonitor:
         
         # Filter out tasks with StopSupport flag if condition is met
         filtered_tasks = []
+        skipped_count = 0
         for task in all_tasks:
-            if not self.should_skip_task(device_id, task):
+            skip_result = self.should_skip_task(device_id, task)
+            if not skip_result:
                 filtered_tasks.append(task)
+            else:
+                skipped_count += 1
+                # Debug log which tasks are being skipped
+                task_name = task.get('task_name', 'Unknown')
+                print(f"[{device_id}] *** FILTERING OUT TASK: {task_name} ***")
+                if task_set == "character_slots_purchase":
+                    print(f"[{device_id}] BLOCKED CHARACTER SLOT TASK: {task_name}")
+        
+        if skipped_count > 0:
+            print(f"[{device_id}] Filtered: {len(all_tasks)} -> {len(filtered_tasks)} tasks ({skipped_count} blocked)")
         
         # Sort by priority (lower number = higher priority)
         return sorted(filtered_tasks, key=lambda x: x.get('priority', 999))

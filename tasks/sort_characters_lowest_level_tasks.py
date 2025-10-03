@@ -128,7 +128,6 @@ Sort_Characters_Lowest_Level_Tasks = [
         "template_path": "templates/Sort_Filter/CharacterPowerUpStatus.png",
         "confidence": 0.90,
         "roi": [98, 134, 293, 278],
-        
         "use_match_position": True,
         "RightPixels": 563,
         "priority": 1,
@@ -136,11 +135,22 @@ Sort_Characters_Lowest_Level_Tasks = [
         "sleep": 3,
     },
                             {
+        "task_name": "Swipe Down In [Character PowerUP Status] For [No Badge] [Sort by lowest level]",
+        "type": "pixel",
+        "click_location_str": "0,0",
+        "search_array": ["308,45","#191920","653,52","#191920","546,123","#00ff00"],
+        "priority": 1,
+        "cooldown": 5.0,
+        "swipe_count": 2,
+        "swipe_command": "shell input swipe 443 400 443 140 900",
+        "sleep": 3,
+    },
+
+                            {
         "task_name": "Click [No Badge] [Sort by lowest level]",
         "type": "pixel",
-        "click_location_str": "660,395",
-        "search_array": ["720,396","#384c60","640,398","#ffffff","663,395","#ffffff","714,394","#ffffff"],
-        
+        "click_location_str": "292,144",
+        "search_array": ["554,51","#191920","283,159","#e60012","457,146","#3c4c5c"],
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3,
@@ -149,8 +159,8 @@ Sort_Characters_Lowest_Level_Tasks = [
                             {
         "task_name": "Click [SET] [Sort by lowest level]",
         "type": "pixel",
-        "click_location_str": "708,479",
-        "search_array": ["844,398","#eb4c01","830,481","#1f58f9","698,480","#ffffff","725,479","#ffffff"],
+        "click_location_str": "716,478",
+        "search_array": ["456,149","#ee5001","433,149","#ee5001","829,482","#225af9","698,480","#ffffff"],
         
         "priority": 1,
         "cooldown": 5.0,

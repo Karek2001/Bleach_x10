@@ -340,19 +340,20 @@ class DeviceStateManager:
                 self.states[device_id] = self._get_default_state()
             
             current_value = self.states[device_id].get("Character_Slots_Count", 0)
-            new_value = current_value + 1
-            self.states[device_id]["Character_Slots_Count"] = new_value
-            
-            # Set Character_Slots_Purchased to 1 when reaching 100
-            if new_value >= 100:
-                self.states[device_id]["Character_Slots_Purchased"] = 1
-            
-            self._save_state(device_id)
-            device_name = self._get_device_name(device_id)
-            print(f"[{device_name}] Character slots purchased: {new_value}/100")
-            
-            if new_value >= 100:
-                print(f"[{device_name}] Character slots purchase complete!")
+            if current_value < 100:
+                new_value = current_value + 1
+                self.states[device_id]["Character_Slots_Count"] = new_value
+                
+                # Set Character_Slots_Purchased to 1 when reaching 100
+                if new_value >= 100:
+                    self.states[device_id]["Character_Slots_Purchased"] = 1
+                
+                self._save_state(device_id)
+                device_name = self._get_device_name(device_id)
+                print(f"[{device_name}] Character slots purchased: {new_value}/100")
+                
+                if new_value >= 100:
+                    print(f"[{device_name}] Character slots purchase complete!")
     
 
     def _reload_state(self, device_id: str):
@@ -466,7 +467,15 @@ class DeviceStateManager:
                 if stop_flag == "json_Skip_Kon_Bonaza_Complete":
                     return state.get(state_key, 0) >= 100
                 
-                return state.get(state_key, 0) == 1
+                # Debug logging for Character_Slots_Purchased
+                result = state.get(state_key, 0) == 1
+                if stop_flag == "json_Character_Slots_Purchased":
+                    device_name = self._get_device_name(device_id)
+                    actual_value = state.get(state_key, 0)
+                    print(f"[{device_name}] *** CRITICAL CHECK *** StopSupport: {stop_flag} -> {state_key} = {actual_value}, should_block={'YES' if result else 'NO'}")
+                    print(f"[{device_name}] Raw state for {state_key}: {repr(state.get(state_key))}")
+                
+                return result
             
             return False
     

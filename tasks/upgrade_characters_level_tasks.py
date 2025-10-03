@@ -77,8 +77,7 @@ Upgrade_Characters_Level = [
         "task_name": "Choose [AnyCharacter] [Upgrade Characters Level]",
         "type": "pixel",
         "click_location_str": "479,200",
-        "search_array": ["74,24","#ffffff","106,25","#ffffff","24,20","#ffffff","855,513","#56390d"],
-        
+        "search_array": ["74,24","#ffffff","106,25","#ffffff","24,20","#ffffff","593,119","#191925"],
         "priority": 1,
         "cooldown": 6.0,
         "sleep": 3,
@@ -372,6 +371,35 @@ Upgrade_Characters_Level = [
         "cooldown": 6.0,
         "sleep": 3,
         "Upgrade_Characters_Back_To_Edit_Tasks": True,
+    },
+    # Edge Case When [Ascension] Only is Available
+
+          {
+        "task_name": "Click [Ascension] [Edge Case For Only Ascenision Available] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "638,209",
+        "search_array": ["843,222","#90909c","569,236","#545460","324,235","#545460","175,208","#ffffff","433,208","#ffffff"],
+        "priority": 10,
+        "cooldown": 6.0,
+        "sleep": 3,
+    },
+              {
+        "task_name": "Click [Level] [Edge Case For Only Ascenision Available] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "378,209",
+        "search_array": ["636,211","#00ff00","588,234","#90909c","321,236","#545460","175,208","#ffffff"],
+        "priority": 10,
+        "cooldown": 6.0,
+        "sleep": 3,
+    },
+                  {
+        "task_name": "Click [Confirm] [Edge Case For Only Ascenision Available] [Upgrade Characters Level]",
+        "type": "pixel",
+        "click_location_str": "648,488",
+        "search_array": ["636,210","#00ff00","377,210","#00ff00","175,208","#ffffff","315,230","#545460"],
+        "priority": 10,
+        "cooldown": 6.0,
+        "sleep": 3,
     },
 
     # After Clicking [Soul Tree] It turns out unlocked

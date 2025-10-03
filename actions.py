@@ -1145,9 +1145,11 @@ async def batch_check_pixels_enhanced(device_id: str, tasks: List[dict],
         if not monitor.process_monitor.should_skip_task(device_id, task):
             filtered_tasks.append(task)
         else:
-            # Debug logging for skipped Yukio tasks
+            # Debug logging for skipped tasks
             if "Yukio" in task.get("task_name", ""):
                 print(f"[{device_id}] Pre-filtered out: {task.get('task_name')}")
+            elif "Character" in task.get("task_name", "") or "Purchase" in task.get("task_name", ""):
+                print(f"[{device_id}] *** PRE-FILTERED CHARACTER SLOTS TASK: {task.get('task_name')} ***")
     
     # Now process only the filtered tasks
     pixel_tasks = []

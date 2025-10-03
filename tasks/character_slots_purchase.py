@@ -16,9 +16,9 @@ Character_Slots_Purchase = [
         "type": "pixel",
         "click_location_str": "121,220",
         "search_array": ["679,179","#ffffff","736,201","#ffffff","377,201","#fdc46f","175,242","#ffffff","260,109","#ffffff"],
-        
         "priority": 10,
         "cooldown": 5.0,
+        "StopSupport":"json_Character_Slots_Purchased",
         "sleep": 3,
     },
     {
@@ -71,7 +71,6 @@ Character_Slots_Purchase = [
         "type": "pixel",
         "click_location_str": "623,371",
         "search_array": ["718,144","#0d12b5","706,159","#e60012","369,146","#131319","480,148","#131319","682,376","#225cf9"],
-        
         "priority": 10,
         "cooldown": 5.0,
         "StopSupport":"json_Character_Slots_Purchased",
@@ -80,16 +79,27 @@ Character_Slots_Purchase = [
 
     },
 
+
                     {
         "task_name": "Back To Main Menu",
         "type": "pixel",
         "click_location_str": "27,26",
         "search_array": ["24,21","#ffffff","24,47","#e60012","5,28","#ffffff","44,15","#080909"],
-        
-        "priority": 10,
+        "priority": 15,
         "cooldown": 5.0,
         "Recive_Gold_From_Box_For_Characters_Purchase_Tasks": True,
-        "ConditionalRun": ["Character_Slots_Purchased"],
+        "RequireSupport": "json_Character_Slots_Purchased",
         "sleep": 3,
+    },
+                        {
+        "task_name": "Click [Close] After Purchased",
+        "type": "pixel",
+        "click_location_str": "468,368",
+        "search_array": ["360,152","#191925","485,152","#191925","334,262","#ffffff","255,152","#0d12b5","633,258","#ffffff"],
+        "priority": 25,
+        "cooldown": 5.0,
+        "sleep": 3,
+        "RequireSupport": "json_Character_Slots_Purchased",
+
     },
 ]
