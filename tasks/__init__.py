@@ -12,6 +12,7 @@ from .side_story import SideStory
 from .sub_stories import SubStories
 from .sub_stories_check import SubStories_check
 from .character_slots_purchase import Character_Slots_Purchase
+from .recive_gold_from_box_for_characters_purchase import Recive_Gold_From_Box_For_Characters_Purchase
 from .exchange_gold_characters import Exchange_Gold_Characters
 from .recive_giftbox import Recive_GiftBox
 from .recive_giftbox_check import Recive_Giftbox_Check
@@ -56,6 +57,7 @@ __all__ = [
     'SubStories',
     'SubStories_check',
     'Character_Slots_Purchase',
+    'Recive_Gold_From_Box_For_Characters_Purchase',
     'Exchange_Gold_Characters',
     'Recive_GiftBox',
     'Recive_Giftbox_Check',

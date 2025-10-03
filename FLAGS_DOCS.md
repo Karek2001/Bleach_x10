@@ -172,6 +172,12 @@ Sets Character_Slots_Purchased to complete (1)
 - **Type**: Boolean flag
 - **Sets**: `Character_Slots_Purchased = 1` in device state
 
+### `json_Recive_Gold_From_Box_For_Characters_Purchase`
+Sets Recive_Gold_From_Box_For_Characters_Purchase to complete (1)
+- **Type**: Boolean flag
+- **Sets**: `Recive_Gold_From_Box_For_Characters_Purchase = 1` in device state
+- **Usage**: Marks gold collection from box task as complete before character exchange
+
 ### `json_Exchange_Gold_Characters`
 Sets Exchange_Gold_Characters to complete (1)
 - **Type**: Boolean flag

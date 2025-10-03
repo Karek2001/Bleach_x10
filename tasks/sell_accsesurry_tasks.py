@@ -41,11 +41,10 @@ Sell_Accessury = [
         "sleep": 3,
     },
     {
-        "task_name": "Click [Select 50 Characters]",
+        "task_name": "Click [Select 100 Characters]",
         "type": "pixel",
         "click_location_str": "665,489",
-        "search_array": ["426,207","#ec4d01","404,315","#ec4d01","582,495","#2964fa","768,495","#2964fa"],
-        
+        "search_array": ["539,206","#e94b01","437,202","#ffffff","767,491","#1f58f9"],
         "priority": 35,
         "cooldown": 5.0,
         "sleep": 3,

@@ -96,6 +96,7 @@ class DeviceStateManager:
             "SideMode": 0,
             "SubStory": 0,
             "Character_Slots_Purchased": 0,
+            "Recive_Gold_From_Box_For_Characters_Purchase": 0,
             "Exchange_Gold_Characters": 0,
             "Recive_GiftBox": 0,
             "Skip_Kon_Bonaza_100Times": 0,
@@ -277,6 +278,7 @@ class DeviceStateManager:
             "json_SideMode": "SideMode",
             "json_SubStory": "SubStory",
             "json_Character_Slots_Purchased": "Character_Slots_Purchased",
+            "json_Recive_Gold_From_Box_For_Characters_Purchase": "Recive_Gold_From_Box_For_Characters_Purchase",
             "json_Exchange_Gold_Characters": "Exchange_Gold_Characters",
             "json_Recive_GiftBox": "Recive_GiftBox",
             "json_ScreenShot_MainMenu": "ScreenShot_MainMenu",
@@ -445,6 +447,7 @@ class DeviceStateManager:
                 "json_SideMode": "SideMode",
                 "json_SubStory": "SubStory",
                 "json_Character_Slots_Purchased": "Character_Slots_Purchased",
+                "json_Recive_Gold_From_Box_For_Characters_Purchase": "Recive_Gold_From_Box_For_Characters_Purchase",
                 "json_Recive_GiftBox": "Recive_GiftBox",
                 "json_Skip_Kon_Bonaza_Complete": "Skip_Kon_Bonaza_100Times",
                 "json_Kon_Bonaza": "Skip_Kon_Bonaza",
@@ -573,7 +576,11 @@ class DeviceStateManager:
         if state.get("Character_Slots_Purchased", 0) == 0:
             return "character_slots_purchase"
         
-        # Character Slots complete, check Exchange Gold Characters
+        # Character Slots complete, check Receive Gold From Box
+        if state.get("Recive_Gold_From_Box_For_Characters_Purchase", 0) == 0:
+            return "recive_gold_from_box_for_characters_purchase"
+        
+        # Receive Gold From Box complete, check Exchange Gold Characters
         if state.get("Exchange_Gold_Characters", 0) == 0:
             return "exchange_gold_characters"
         
@@ -669,6 +676,10 @@ class DeviceStateManager:
             modes.append("Sub✓")
         if state.get("Character_Slots_Purchased", 0) == 1:
             modes.append("Slots✓")
+        if state.get("Recive_Gold_From_Box_For_Characters_Purchase", 0) == 1:
+            modes.append("Gold✓")
+        if state.get("Exchange_Gold_Characters", 0) == 1:
+            modes.append("Exchange✓")
         if state.get("Recive_GiftBox", 0) == 1:
             modes.append("Gift✓")
         if state.get("Skip_Yukio_Event", 0) == 1:

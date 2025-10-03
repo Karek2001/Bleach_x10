@@ -88,7 +88,7 @@ Character_Slots_Purchase = [
         
         "priority": 10,
         "cooldown": 5.0,
-        "Exchange_Gold_Characters_Tasks": True,
+        "Recive_Gold_From_Box_For_Characters_Purchase_Tasks": True,
         "ConditionalRun": ["Character_Slots_Purchased"],
         "sleep": 3,
     },
