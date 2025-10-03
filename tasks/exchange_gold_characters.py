@@ -61,13 +61,13 @@ Exchange_Gold_Characters = [
         "task_name": "Choose Characcter has 10 Remaining",
         "type": "template",
         "template_path": "templates/Exchange/Remaining10.png",
-        
         "roi": [705, 112, 169, 427],
         "confidence": 0.90,
         "use_match_position": True,
         "DownPixels": 32,
-        "priority": 20,
-        "cooldown": 20.0,
+        "priority": 1,
+        "cooldown": 10.0,
+        "shared_detection": True,
     },
         {
         "task_name": "Click [Confirm Exchange]",
@@ -100,8 +100,8 @@ Exchange_Gold_Characters = [
         "min_matches_for_swipe": 3,
         "swipe_command": "shell input swipe 443 400 443 140 900",
         "click_location_str": "0,0",
-        "priority": 2,
-        "cooldown": 30.0,
+        "priority": 1,
+        "cooldown": 8.0,
         "sleep":4,
     },
                 {
