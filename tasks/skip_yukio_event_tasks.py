@@ -33,7 +33,7 @@ Skip_Yukio_Event_Tasks = [
         "task_name": "Leave [Edit] Window [Navigate To Yukio Event]",
         "type": "pixel",
         "click_location_str": "29,25",
-        "search_array": ["74,24","#ffffff","106,26","#ffffff","25,21","#ffffff","870,92","#444b54"],
+        "search_array": ["74,24","#ffffff","106,26","#ffffff","25,21","#ffffff"],
         
         "priority": 1,
         "cooldown": 5.0,
