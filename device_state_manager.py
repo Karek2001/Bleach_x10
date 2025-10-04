@@ -436,10 +436,7 @@ class DeviceStateManager:
             # Special conditional check for Yukio retry count
             if stop_flag == "Skip_Yukio_Event_Retry_At_3":
                 retry_count = state.get("Skip_Yukio_Event_Retry_Count", 0)
-                should_stop = retry_count >= 3
-                device_name = self._get_device_name(device_id)
-                print(f"[{device_name}] StopSupport check: Yukio retry={retry_count}/3, blocking={'YES' if should_stop else 'NO'}")
-                return should_stop
+                return retry_count >= 3
             
             # Handle other flag mappings
             flag_mapping = {
@@ -467,15 +464,7 @@ class DeviceStateManager:
                 if stop_flag == "json_Skip_Kon_Bonaza_Complete":
                     return state.get(state_key, 0) >= 100
                 
-                # Debug logging for Character_Slots_Purchased
-                result = state.get(state_key, 0) == 1
-                if stop_flag == "json_Character_Slots_Purchased":
-                    device_name = self._get_device_name(device_id)
-                    actual_value = state.get(state_key, 0)
-                    print(f"[{device_name}] *** CRITICAL CHECK *** StopSupport: {stop_flag} -> {state_key} = {actual_value}, should_block={'YES' if result else 'NO'}")
-                    print(f"[{device_name}] Raw state for {state_key}: {repr(state.get(state_key))}")
-                
-                return result
+                return state.get(state_key, 0) == 1
             
             return False
     

@@ -9,7 +9,7 @@ HardStory_Tasks = [
         "roi": [135, 113, 491, 290],
         "confidence": 0.90,
         "use_match_position": True,
-        "isLogical": True,
+        "isLogical": False,
         "shared_detection": True,
         "priority": 1,
         "cooldown": 5.0,
@@ -17,6 +17,38 @@ HardStory_Tasks = [
         "json_EasyMode": True,
         "KeepChecking": 3.0,
     },
+            {
+        "task_name": "Let's Start With Part-1 HARD! Case-1 [Side Story]",
+        "type": "pixel",
+        "click_location_str": "483,295",
+        "search_array": ["531,292","#191925","590,297","#191925","466,360","#ffffff","475,360","#ffffff","402,180","#b1b6bf","477,288","#191925","495,178","#28414c","441,343","#ff0000"],
+        "isLogical": False,
+        "shared_detection": True,
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 3,
+        "BackToStory": True,
+        "KeepChecking": 5.0,
+    },
+            {
+        "task_name": "Let's Start With Part-1 HARD! Case-2 [Side Story]",
+        "type": "pixel",
+        "click_location_str": "180,265",
+        "search_array": ["123,181","#b1b6bf","169,341","#ff0000","188,359","#ffffff","197,359","#ffffff","311,284","#191925","311,295","#191925","217,177","#29434d","197,359","#ffffff"],
+        "isLogical": False,
+        "shared_detection": True,
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 3,
+        "BackToStory": True,
+        "KeepChecking": 5.0,
+    },
+
+
+
+
+
+
     {
         "task_name": "Detect Game Updated! [Game Update]",
         "type": "pixel",
@@ -27,7 +59,7 @@ HardStory_Tasks = [
         "sleep": 3,
     },
     {
-        "task_name": "Part 24 [Side Story] Hard Finished [Switch To Sub Stories]",
+        "task_name": "Part 24 [Side Story] Hard Finished Let's Check Select Part [Switch To Sub Stories]",
         "type": "pixel",
         "click_location_str": "34,29",
         "search_array": ["537,344","#ff0000","918,42","#eb1a1a","506,364","#e9e902","486,148","#f5cd3d"],
@@ -55,29 +87,15 @@ HardStory_Tasks = [
         "type": "pixel",
         "click_location_str": "0,0",  # No click needed, just detection
         "search_array": ["921,40","#fe7272","47,15","#010101","24,49","#e50012","81,32","#fefefe"],
-        "isLogical": True,
+        "isLogical": False,
         "HardModeSwipe": True,  # Flag to identify this as hard mode swipe task
         "shared_detection": True,
         "priority": 20,
-        "cooldown": 5.0,
-        "sleep": 3,
+        "cooldown": 50.0,
+        "sleep": 5,
     },
 
-        {
-        "task_name": "Let's Start With Part-1 HARD! [Side Story]",
-        "type": "template",
-        "template_path": "templates/Story_Mode_Hard/S_Part1_hard.png",
-        "roi": [10, 79, 949, 351],
-        "confidence": 0.90,
-        "use_match_position": True,
-        "isLogical": True,
-        "shared_detection": True,
-        "priority": 20,
-        "cooldown": 5.0,
-        "sleep": 3,
-        "BackToStory": True,
-        "KeepChecking": 5.0,
-    },
+
 
     
 ]

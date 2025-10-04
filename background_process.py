@@ -248,8 +248,6 @@ class ProcessMonitor:
         require_support = task.get("RequireSupport")
         if require_support:
             should_require = device_state_manager.check_stop_support(device_id, require_support)
-            task_name = task.get("task_name", "Unknown")
-            print(f"[{device_id}] RequireSupport check: {task_name} needs {require_support} = {should_require}, skip={'YES' if not should_require else 'NO'}")
             if not should_require:  # If requirement is NOT met, skip task
                 return True
         
@@ -257,8 +255,6 @@ class ProcessMonitor:
         stop_support = task.get("StopSupport")
         if stop_support:
             should_stop = device_state_manager.check_stop_support(device_id, stop_support)
-            task_name = task.get("task_name", "Unknown")
-            print(f"[{device_id}] StopSupport check: {task_name} blocked by {stop_support} = {should_stop}, skip={'YES' if should_stop else 'NO'}")
             if should_stop:
                 return True
         
@@ -271,9 +267,6 @@ class ProcessMonitor:
                 if key == "Skip_Yukio_Event_Retry_At_3":
                     retry_count = device_state.get("Skip_Yukio_Event_Retry_Count", 0)
                     if retry_count < 3:
-                        # Special debug for Home button task
-                        if "Home" in task.get("task_name", ""):
-                            print(f"[{device_id}] Home button blocked - retry count {retry_count}/3")
                         return True  # Skip task, condition not met
                 else:
                     value = device_state.get(key, 0)
@@ -383,14 +376,7 @@ class ProcessMonitor:
                 filtered_tasks.append(task)
             else:
                 skipped_count += 1
-                # Debug log which tasks are being skipped
-                task_name = task.get('task_name', 'Unknown')
-                print(f"[{device_id}] *** FILTERING OUT TASK: {task_name} ***")
-                if task_set == "character_slots_purchase":
-                    print(f"[{device_id}] BLOCKED CHARACTER SLOT TASK: {task_name}")
         
-        if skipped_count > 0:
-            print(f"[{device_id}] Filtered: {len(all_tasks)} -> {len(filtered_tasks)} tasks ({skipped_count} blocked)")
         
         # Sort by priority (lower number = higher priority)
         return sorted(filtered_tasks, key=lambda x: x.get('priority', 999))
@@ -596,8 +582,6 @@ class BackgroundMonitor:
         require_support = task.get("RequireSupport")
         if require_support:
             should_require = device_state_manager.check_stop_support(device_id, require_support)
-            task_name = task.get("task_name", "Unknown")
-            print(f"[{device_id}] RequireSupport check: {task_name} needs {require_support} = {should_require}, skip={'YES' if not should_require else 'NO'}")
             if not should_require:  # If requirement is NOT met, skip task
                 return True
         
@@ -605,14 +589,7 @@ class BackgroundMonitor:
         stop_support = task.get("StopSupport")
         if stop_support:
             should_stop = device_state_manager.check_stop_support(device_id, stop_support)
-            task_name = task.get("task_name", "Unknown")
-            print(f"[{device_id}] StopSupport check: {task_name} blocked by {stop_support} = {should_stop}, skip={'YES' if should_stop else 'NO'}")
             if should_stop:
-                # Special debug logging for Yukio retry tasks
-                if "Yukio" in task.get("task_name", "") and "Retry" in task.get("task_name", ""):
-                    state = device_state_manager.get_state(device_id)
-                    retry_count = state.get("Skip_Yukio_Event_Retry_Count", 0)
-                    print(f"[{device_id}] BLOCKING Retry task - count already at {retry_count}/3")
                 return True
         
         # THIRD: Check ConditionalRun - skip task if conditions are NOT met
@@ -625,9 +602,6 @@ class BackgroundMonitor:
                 if key == "Skip_Yukio_Event_Retry_At_3":
                     retry_count = device_state.get("Skip_Yukio_Event_Retry_Count", 0)
                     if retry_count < 3:
-                        # Special debug for Home button task
-                        if "Home" in task.get("task_name", ""):
-                            print(f"[{device_id}] Home button blocked - retry count {retry_count}/3")
                         return True  # Skip task, condition not met
                 else:
                     value = device_state.get(key, 0)
@@ -734,14 +708,7 @@ class BackgroundMonitor:
                 filtered_tasks.append(task)
             else:
                 skipped_count += 1
-                # Debug log which tasks are being skipped
-                task_name = task.get('task_name', 'Unknown')
-                print(f"[{device_id}] *** FILTERING OUT TASK: {task_name} ***")
-                if task_set == "character_slots_purchase":
-                    print(f"[{device_id}] BLOCKED CHARACTER SLOT TASK: {task_name}")
         
-        if skipped_count > 0:
-            print(f"[{device_id}] Filtered: {len(all_tasks)} -> {len(filtered_tasks)} tasks ({skipped_count} blocked)")
         
         # Sort by priority (lower number = higher priority)
         return sorted(filtered_tasks, key=lambda x: x.get('priority', 999))
