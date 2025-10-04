@@ -348,6 +348,20 @@ DETECT_CHAPTER_END = [
         "cooldown": 5.0,
         "sleep": 3
     },
+        {
+        "task_name": "Side-Story Part 5 Chapter HARD END [74]",
+        "type": "template",
+        "template_path": "templates/Side-Story/S_Part5-Chapter74_Hard.png",
+        "roi": [796, 318, 127, 112],
+        "click_location_str": "76,480",
+        "use_match_position": False,
+        "confidence": 0.90,
+        "priority": 5,
+        "cooldown": 5.0,
+        "sleep": 3
+    },
+
+
     {
         "task_name": "Side-Story Part 6 Chapter END [36]",
         "type": "template",

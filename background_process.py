@@ -1260,18 +1260,6 @@ class OptimizedBackgroundMonitor:
                 self.process_monitor.set_active_tasks(device_id, "main_screenshot")
                 return
         
-        # Legacy handling for backward compatibility
-        if "Part 21 Finished Detected" in task.get("task_name", ""):
-            device_state_manager.mark_easy_mode_complete(device_id)
-            print(f"[{device_id}] ✓ EasyMode complete")
-        
-        if task.get("SideStory", False) and "Part 21 Hard Chapter END" in task.get("task_name", ""):
-            device_state_manager.mark_hard_mode_complete(device_id)
-            print(f"[{device_id}] ✓ HardMode complete")
-        
-        if "Part 24 Chapter END" in task.get("task_name", ""):
-            device_state_manager.mark_side_mode_active(device_id)
-            print(f"[{device_id}] ✓ SideMode complete")
         
         # Handle standard task switching flags (including new ones)
         flag_handlers = {

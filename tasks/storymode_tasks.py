@@ -1,6 +1,7 @@
 from .detect_chapter_end import DETECT_CHAPTER_END
 
 StoryMode_Tasks = [
+
     {
         "task_name": "Currently Story Mode Is Completed! Lets Return To [HOME]",
         "type": "pixel",
@@ -163,6 +164,15 @@ StoryMode_Tasks = [
         "HardStory": True,  # Switches to HardStory_tasks
         "priority": 5,  # <-- ADD THIS LINE,
     },
-
+        {
+        "task_name": "Click [Start Quest] [This Because Last Stuck Brokes Side Story Isn't Completed]",
+        "type": "pixel",
+        "click_location_str": "715,497",
+        "search_array": ["583,490","#ffffff","652,491","#0d3de4","671,498","#ffffff","735,496","#ffffff"],
+        "shared_detection": True,
+        "priority": 20,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
 
 ] +  DETECT_CHAPTER_END
