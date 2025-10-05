@@ -20,9 +20,11 @@ Login1_Prepare_For_Link_Tasks = [
         "click_location_str": "480,497",
         "search_array": ["716,43","#0d12b5","700,55","#e60012","547,158","#ffffff","661,161","#ffffff","704,160","#ffffff","714,158","#dc0d0d"],
         "priority": 1,
+        "cooldown": 30.0,
         "sleep": 2.0,
         "json_isLinked": True,
         "sync_to_airtable": True,
+        "Wait_For_Other_Devices_Tasks": True,
     },
         {
         "task_name": "Click [Settings] [Prepare for Link]",

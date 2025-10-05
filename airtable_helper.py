@@ -9,7 +9,7 @@ class AirtableHelper:
     """Helper class for retrieving 2FA codes from Airtable"""
     
     def __init__(self):
-        self.api_key = "patDzdVwCMEMMBorU.aca9e4f2a36321ce580235b357a4d8a4aa1d24dc5a50f11f855d84058f084a84"
+        self.api_key = "pat2QVZVjoGSSut65.eb423fef85c745815abb18269e6253021c058f4353c88ec59013efb6395de3d4"
         self.base_id = "appuJAf3tqrmODVlO"
         self.table_id = "tblamaki4By1sf1Fb"
         self.base_url = f"https://api.airtable.com/v0/{self.base_id}/{self.table_id}"

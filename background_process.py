@@ -57,6 +57,7 @@ from tasks import (
     Login2_Klab_Login_Tasks,
     Login3_Wait_For_2FA_Tasks,
     Login4_Confirm_Link_Tasks,
+    Wait_For_Other_Devices,
     Endgame_Tasks,
     # Reroll tasks
     reroll_earse_gamedata_tasks,
@@ -333,6 +334,7 @@ class ProcessMonitor:
             "login2_klab_login": Login2_Klab_Login_Tasks,
             "login3_wait_for_2fa": Login3_Wait_For_2FA_Tasks,
             "login4_confirm_link": Login4_Confirm_Link_Tasks,
+            "wait_for_other_devices": Wait_For_Other_Devices,
             "endgame": Endgame_Tasks
         }
         
@@ -656,6 +658,7 @@ class BackgroundMonitor:
             "login2_klab_login": Login2_Klab_Login_Tasks,
             "login3_wait_for_2fa": Login3_Wait_For_2FA_Tasks,
             "login4_confirm_link": Login4_Confirm_Link_Tasks,
+            "wait_for_other_devices": Wait_For_Other_Devices,
             "endgame": Endgame_Tasks
         }
         
@@ -1303,6 +1306,7 @@ class OptimizedBackgroundMonitor:
             "Login2_Klab_Login_Tasks": ("login2_klab_login", "→ KLAB Login"),
             "Login3_Wait_For_2FA_Tasks": ("login3_wait_for_2fa", "→ Wait for 2FA"),
             "Login4_Confirm_Link_Tasks": ("login4_confirm_link", "→ Confirm Link"),
+            "Wait_For_Other_Devices_Tasks": ("wait_for_other_devices", "→ Wait for Other Devices"),
             "BackToMain_Tasks": ("main", "→ Main")
         }
         

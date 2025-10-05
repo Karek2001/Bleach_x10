@@ -34,6 +34,7 @@ from .login2_klab_login_tasks import Login2_Klab_Login_Tasks
 from .login3_wait_for_2fa import Login3_Wait_For_2FA_Tasks
 from .login4_Confirm_Link import Login4_Confirm_Link_Tasks
 from .endgame_tasks import Endgame_Tasks
+from .wait_for_other_devices import Wait_For_Other_Devices
 # Reroll tasks
 from .reroll_earse_gamedata_1 import reroll_earse_gamedata_tasks
 from .reroll_earse_gamedataPart2 import reroll_earse_gamedatapart2_tasks
@@ -80,11 +81,11 @@ __all__ = [
     'Login4_Confirm_Link_Tasks',
     'Endgame_Tasks',
     # Reroll tasks
-    'reroll_earse_gamedata_tasks',
     'reroll_earse_gamedatapart2_tasks',
     'reroll_tutorial_firstmatch_tasks',
     'reroll_tutorial_characterchoose_tasks',
     'reroll_tutorial_characterchoosepart2_tasks',
     'reroll_tutorial_secondmatch_tasks',
-    'reroll_replaceichigowithfivestar_tasks'
+    'reroll_replaceichigowithfivestar_tasks',
+    'Wait_For_Other_Devices',
 ]

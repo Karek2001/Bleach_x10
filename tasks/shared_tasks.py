@@ -122,6 +122,17 @@ Shared_Tasks = [
         "cooldown": 5.0,
         "sleep": 3
     },
+        # Tickets Puchased Completed
+                               {
+        "task_name": "Click [Close] After Purchased Tickets",
+        "type": "pixel",
+        "click_location_str": "484,373",
+        "search_array": ["360,153","#191925","485,151","#191925","600,153","#191925","353,260","#ffffff","606,266","#ffffff","452,372","#ffffff"],
+        "priority": 5,
+        "cooldown": 10.0,
+        "shared_detection": True,
+        "sleep": 3,
+    },
 
         {
         "task_name": "Click [Prepare To Battle]",
@@ -260,7 +271,7 @@ Shared_Tasks = [
         "search_array": ["931,25","#ffffff","932,45","#e60012","945,26","#373737"],
         "shared_detection": True,
         "priority": 20,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
         "sleep": 3,
     },
 
@@ -307,5 +318,7 @@ Shared_Tasks = [
         "cooldown": 5.0,
         "sleep": 3,
     },
+
+
     
 ]

@@ -2,15 +2,6 @@ from .detect_chapter_end import DETECT_CHAPTER_END
 
 StoryMode_Tasks = [
     {
-        "task_name": "Click [Close] Opened Window Setting Wrongly",
-        "type": "pixel",
-        "click_location_str": "481,491",
-        "search_array": ["442,36","#191919""174,149","#29fe21","166,75","#ffffff","640,223","#ff0004","452,486","#ffffff"],
-        "priority": 5,
-        "cooldown": 99.0,
-        "sleep": 3,
-    },
-    {
         "task_name": "Currently Story Mode Is Completed! Lets Return To [HOME]",
         "type": "pixel",
         "click_location_str": "478,368",

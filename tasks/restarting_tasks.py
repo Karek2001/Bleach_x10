@@ -1,6 +1,7 @@
 # tasks/restarting_tasks.py - Complete tasks for game startup and initial navigation
 
 Restarting_Tasks = [
+
     {
         "task_name": "Detect Game Updated! [Game Update]",
         "type": "pixel",
@@ -41,15 +42,6 @@ Restarting_Tasks = [
         "sleep": 3,
     },
 
-    {
-        "task_name": "Click [Close] Opened Window Setting Wrongly",
-        "type": "pixel",
-        "click_location_str": "481,491",
-        "search_array": ["442,36","#191919""174,149","#29fe21","166,75","#ffffff","640,223","#ff0004","452,486","#ffffff"],
-        "priority": 5,
-        "cooldown": 99.0,
-        "sleep": 3,
-    },
 
     # HIGHEST PRIORITY - Error Recovery/Back Navigation (Priority 5-10)
     {
@@ -116,19 +108,6 @@ Restarting_Tasks = [
         "cooldown": 5.0,
         "sleep": 3,
     },
-    {
-        "task_name": "Exit News",
-        "type": "template",
-        "template_path": "templates/Restarting/Exit.png",
-        "roi": [731, 0, 228, 133],
-        "confidence": 0.90,
-        "use_match_position": True,
-        
-        "shared_detection": True,
-        "priority": 25,
-        "cooldown": 5.0,
-    },
-    
 
     
     # LOW PRIORITY - Login Bonuses (Priority 40-50)
@@ -198,5 +177,16 @@ Restarting_Tasks = [
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 3
+    },
+
+    #CLICK CLOSE IF SETTINGS OPENED BY MISTAKE
+    {
+        "task_name": "Click [Close] If Settings Opened By Mistake",
+        "type": "pixel",
+        "click_location_str": "481,485",
+        "search_array": ["813,36","#0d12b5","796,48","#e60012","442,38","#191919","528,39","#191919","144,34","#0d12b5"],
+        "priority": 20,
+        "cooldown": 10.0,
+        "sleep": 3,
     },
 ]

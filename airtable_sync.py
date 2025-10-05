@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError, NoCredentialsError
 from device_state_manager import device_state_manager
 
 # Airtable configuration
-AIRTABLE_API_KEY = "patDzdVwCMEMMBorU.aca9e4f2a36321ce580235b357a4d8a4aa1d24dc5a50f11f855d84058f084a84"
+AIRTABLE_API_KEY = "pat2QVZVjoGSSut65.eb423fef85c745815abb18269e6253021c058f4353c88ec59013efb6395de3d4"
 AIRTABLE_BASE_ID = "appHpjTJPFvsRvorc"
 AIRTABLE_TABLE_ID = "tblly72Bpidn8qE2v"
 AIRTABLE_BASE_URL = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_TABLE_ID}"
