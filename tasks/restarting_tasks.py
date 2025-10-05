@@ -15,7 +15,7 @@ Restarting_Tasks = [
         "task_name": "Game Opened Ready To Use",
         "type": "pixel",
         "click_location_str": "0,0",
-        "search_array": ["894,485","#978e74","497,524","#ffffff","790,16","#593b0d","873,190","#ffffff"],
+        "search_array": ["896,485","#978e74","70,83","#ffffff","744,472","#323348"],
         "NextTaskSet_Tasks": True,  # Progress to next task set based on device state
         "priority": 1,
         "cooldown": 60.0,

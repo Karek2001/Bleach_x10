@@ -1,4 +1,6 @@
 Login3_Wait_For_2FA_Tasks = [
+
+
     {
         "task_name": "Detect Game Updated! [Game Update]",
         "type": "pixel",

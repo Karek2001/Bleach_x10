@@ -1,9 +1,3 @@
-# login1_prepare_for_link_tasks.py - Prepare for Account Linking
-"""
-Main login tasks that prepare the account for linking process.
-This is the first step in the login sequence.
-"""
-
 Login1_Prepare_For_Link_Tasks = [
     {
         "task_name": "Detect Game Updated! [Game Update]",
@@ -25,6 +19,7 @@ Login1_Prepare_For_Link_Tasks = [
         "json_isLinked": True,
         "sync_to_airtable": True,
         "Wait_For_Other_Devices_Tasks": True,
+        "StopSupport": "synced_to_airtable",
     },
         {
         "task_name": "Click [Settings] [Prepare for Link]",
@@ -42,7 +37,8 @@ Login1_Prepare_For_Link_Tasks = [
         "search_array": ["637,155","#fff000","699,154","#ffffff","774,154","#ffffff","656,154","#1c75a5"],
         "priority": 2,
         "cooldown": 5.0,
-        "sleep": 4.0
+        "sleep": 4.0,
+        "close_brave": True,
     },
             {
         "task_name": "Open [Klab ID] For Login [Prepare for Link]",
@@ -70,7 +66,7 @@ Login1_Prepare_For_Link_Tasks = [
         "shared_detection": True,
         "min_matches_for_swipe": 1,
         "swipe_command": "shell input swipe 443 400 443 140 900",
-        "priority": 2,
+        "priority": 5,
         "cooldown": 5.0,
         "sleep": 7.0,
         "Login2_Klab_Login_Tasks": True,

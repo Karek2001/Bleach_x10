@@ -36,7 +36,7 @@ reroll_earse_gamedatapart2_tasks = [
         "roi": [350, 432, 274, 35],
         "confidence": 0.70,
         "use_match_position": True,
-        "priority": 15,
+        "priority": 1,
         "cooldown": 10.0,
         "sleep": 3,
     },

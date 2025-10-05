@@ -1,4 +1,15 @@
 Login2_Klab_Login_Tasks = [
+                        {
+        "task_name": "Click [Link With App] [Confirm Link] [Detect Already Login But Not Linked Login2]",
+        "type": "template",
+        "template_path": "templates/Login/LinkWithApp.png",
+        "roi": [271, 108, 459, 432],
+        "use_match_position": True,
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 3,
+        "Login4_Confirm_Link_Tasks": True,
+    },
     {
         "task_name": "Detect Game Updated! [Game Update]",
         "type": "pixel",
