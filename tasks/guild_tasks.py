@@ -19,7 +19,7 @@ GUILD_TUTORIAL_TASKS = [
         "use_match_position": True,
         
         "priority": 15,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
     },
     {
         "task_name": "Click [Join]",
@@ -28,7 +28,7 @@ GUILD_TUTORIAL_TASKS = [
         "search_array": ["801,173","#fbfcff","807,87","#485563","860,88","#ffffff"],
         
         "priority": 20,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
         "sleep": 3,
     },
     {
@@ -41,7 +41,7 @@ GUILD_TUTORIAL_TASKS = [
         
         "shared_detection": True,
         "priority": 25,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
     },
     {
         "task_name": "Click [Guild TOP]",
@@ -51,7 +51,7 @@ GUILD_TUTORIAL_TASKS = [
         "confidence": 0.90,
         "use_match_position": True,
         "priority": 30,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
         "sleep": 3,
     },
        {
@@ -61,7 +61,7 @@ GUILD_TUTORIAL_TASKS = [
         "search_array": ["890,442","#ffa146","884,471","#ecbca8","842,434","#24252b","778,522","#13178c"],
         "BackToStory": True,
         "priority": 1,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
         "sleep": 5,
     },
 ]
@@ -86,7 +86,7 @@ Guild_Rejoin = [
         
         "shared_detection": True,
         "priority": 15,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
         "sleep": 3,
     },
     {
@@ -95,7 +95,7 @@ Guild_Rejoin = [
         "click_location_str": "856,84",
         "search_array": ["859,88","#ffffff","861,78","#4d555c","876,100","#dedddd"],
         "priority": 10,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
         "sleep": 3,
     },
     {
@@ -107,7 +107,7 @@ Guild_Rejoin = [
         "use_match_position": True,
         "NeedGuildTutorial": True,
         "priority": 25,
-        "cooldown": 5.0,
+        "cooldown": 10.0,
         "sleep": 3,
     },
 ]

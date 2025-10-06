@@ -1,6 +1,20 @@
 from .detect_chapter_end import DETECT_CHAPTER_END
 
 StoryMode_Tasks = [
+            {
+        "task_name": "Guild Tutorial Detected",
+        "type": "template",
+        "template_path": "templates/Guild/ArrowGuildTutorial.png",
+        "roi": [463, 319, 104, 221],
+        "confidence": 0.80,
+        "use_match_position": False,
+        "shared_detection": True,
+        "NeedGuildTutorial": True,
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 3
+    },
+
     {
         "task_name": "Currently Story Mode Is Completed! Lets Return To [HOME]",
         "type": "pixel",

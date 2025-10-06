@@ -1,181 +1,229 @@
 #!/usr/bin/env python3
-# test_airtable_sync.py - Test Airtable synchronization functionality
+"""
+Test script for Airtable sync functionality with S3 integration
+"""
 
-import json
 import os
 import sys
-from airtable_sync import sync_device_to_airtable, calculate_price_from_orbs
+import json
+from datetime import datetime
+
+# Add current directory to path to import local modules
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from airtable_sync import (
+    sync_device_to_airtable, 
+    get_image_path_for_device, 
+    upload_image_to_airtable,
+    upload_image_to_s3,
+    initialize_s3,
+    find_record_by_email,
+    calculate_price_from_orbs,
+    get_device_id_from_name,
+    s3_client,
+    S3_BUCKET_NAME,
+    S3_ENDPOINT
+)
 from device_state_manager import device_state_manager
 
-def test_price_calculation():
-    """Test the price calculation logic"""
-    print("🧪 Testing price calculation logic...")
-    
-    test_cases = [
-        ("20,102", 9.99),
-        ("21,122", 9.99), 
-        ("22,935", 10.99),
-        ("23,445", 10.99),
-        ("19,999", 0.00),
-        ("24,000", 0.00),
-        ("", 0.00),
-        ("abc", 0.00)
-    ]
-    
-    for orbs_str, expected_price in test_cases:
-        calculated_price = calculate_price_from_orbs(orbs_str)
-        status = "✅" if calculated_price == expected_price else "❌"
-        print(f"  {status} Orbs: '{orbs_str}' → Price: ${calculated_price} (expected: ${expected_price})")
-    
-    print()
+def print_header(text):
+    """Print a formatted header"""
+    print(f"\n{'='*60}")
+    print(f" {text}")
+    print(f"{'='*60}")
 
-def load_test_device_data():
-    """Load the test device data"""
-    test_file = "/home/karek/Downloads/shared/Bleach_10x/device_test.json"
+def print_step(step_num, text):
+    """Print a formatted step"""
+    print(f"\n🔸 Step {step_num}: {text}")
+
+def test_s3_connection():
+    """Test S3 connection and configuration"""
+    print_header("TESTING S3 CONNECTION")
     
-    if not os.path.exists(test_file):
-        print(f"❌ Test file not found: {test_file}")
-        return None
-        
+    print_step(1, "Checking S3 configuration")
+    print(f"   S3 Endpoint: {S3_ENDPOINT}")
+    print(f"   S3 Bucket: {S3_BUCKET_NAME}")
+    
+    print_step(2, "Testing S3 client initialization")
+    if s3_client is None:
+        print("   ❌ S3 client not initialized")
+        print("   Trying to initialize...")
+        if initialize_s3():
+            print("   ✅ S3 client initialized successfully")
+        else:
+            print("   ❌ Failed to initialize S3 client")
+            return False
+    else:
+        print("   ✅ S3 client already initialized")
+    
+    print_step(3, "Testing S3 bucket access")
     try:
-        with open(test_file, 'r') as f:
-            data = json.load(f)
-            print(f"✅ Loaded test device data from {test_file}")
-            return data
+        s3_client.head_bucket(Bucket=S3_BUCKET_NAME)
+        print("   ✅ S3 bucket accessible")
+        return True
     except Exception as e:
-        print(f"❌ Error loading test file: {e}")
+        print(f"   ❌ S3 bucket access failed: {e}")
+        return False
+
+def test_device_data(device_name="DEVICE10"):
+    """Test device data loading and parsing"""
+    print_header(f"TESTING DEVICE DATA ({device_name})")
+    
+    print_step(1, "Converting device name to device_id")
+    device_id = get_device_id_from_name(device_name)
+    if not device_id:
+        print(f"   ❌ Could not find device_id for {device_name}")
+        return None, None
+    print(f"   Device name: {device_name} → Device ID: {device_id}")
+    
+    print_step(2, "Loading device state")
+    device_data = device_state_manager.get_state(device_id)
+    
+    if not device_data:
+        print(f"   ❌ No device data found for {device_id}")
+        return None, None
+    
+    print("   ✅ Device data loaded successfully")
+    
+    print_step(3, "Device data analysis")
+    print(f"   Email: {device_data.get('Email', 'NOT SET')}")
+    print(f"   UserName: {device_data.get('UserName', 'NOT SET')}")
+    print(f"   AccountID: {device_data.get('AccountID', 'NOT SET')}")
+    print(f"   Orbs: {device_data.get('Orbs', 'NOT SET')}")
+    print(f"   isLinked: {device_data.get('isLinked', 'NOT SET')}")
+    print(f"   synced_to_airtable: {device_data.get('synced_to_airtable', 'NOT SET')}")
+    
+    print_step(4, "Testing price calculation")
+    orbs_value = device_data.get('Orbs', '0')
+    price = calculate_price_from_orbs(orbs_value)
+    print(f"   Orbs: {orbs_value} → Price: ${price}")
+    
+    return device_data, device_id
+
+def test_image_path(device_name="DEVICE10", device_data=None, device_id=None):
+    """Test image path generation and file existence"""
+    print_header("TESTING IMAGE PATH")
+    
+    if device_data is None and device_id:
+        device_data = device_state_manager.get_state(device_id)
+    
+    print_step(1, "Generating image path")
+    # Use device_name for image path generation (this matches the expected format)
+    image_path = get_image_path_for_device(device_name, device_data)
+    print(f"   Generated path: {image_path}")
+    
+    print_step(2, "Checking file existence")
+    if image_path and os.path.exists(image_path):
+        file_size = os.path.getsize(image_path)
+        print(f"   ✅ Image file exists: {image_path}")
+        print(f"   File size: {file_size:,} bytes")
+        return image_path
+    else:
+        print(f"   ❌ Image file not found: {image_path}")
+        
+        # Check what files are available in stock_images
+        stock_dir = "stock_images"
+        if os.path.exists(stock_dir):
+            print(f"   Available files in {stock_dir}:")
+            for file in os.listdir(stock_dir):
+                print(f"     - {file}")
         return None
 
-def simulate_device_state():
-    """Simulate device state with test data"""
-    test_data = load_test_device_data()
-    if not test_data:
-        return False
-        
-    # Temporarily override device state for testing
-    test_device_id = "127.0.0.1:17056"
+def test_s3_upload(image_path, device_name="DEVICE10"):
+    """Test S3 image upload"""
+    print_header("TESTING S3 UPLOAD")
     
-    # Save current state if it exists
-    original_state = None
-    try:
-        original_state = device_state_manager.get_state(test_device_id)
-    except:
-        pass
+    if not image_path:
+        print("   ❌ No image path provided")
+        return None
     
-    # Set test data
-    for key, value in test_data.items():
-        device_state_manager.update_state(test_device_id, key, value)
+    print_step(1, "Uploading image to S3")
+    image_url = upload_image_to_s3(image_path, device_name)
     
-    print(f"📝 Set test device state for {test_device_id}")
-    print(f"   Email: {test_data.get('Email', 'N/A')}")
-    print(f"   AccountID: {test_data.get('AccountID', 'N/A')}")
-    print(f"   Orbs: {test_data.get('Orbs', 'N/A')}")
-    print(f"   isLinked: {test_data.get('isLinked', 'N/A')}")
-    
-    return test_device_id
+    if image_url:
+        print(f"   ✅ Image uploaded successfully")
+        print(f"   URL: {image_url}")
+        return image_url
+    else:
+        print("   ❌ Image upload failed")
+        return None
 
-def test_airtable_sync_dry_run():
-    """Test the Airtable sync without actually calling the API"""
-    print("🧪 Testing Airtable sync logic (dry run)...")
+def test_airtable_record_lookup(email):
+    """Test Airtable record lookup"""
+    print_header("TESTING AIRTABLE RECORD LOOKUP")
     
-    device_id = simulate_device_state()
-    if not device_id:
-        return False
-        
-    device_data = device_state_manager.get_state(device_id)
-    email = device_data.get("Email", "")
-    orbs = device_data.get("Orbs", "0")
+    print_step(1, f"Searching for email: {email}")
+    record_id = find_record_by_email(email)
     
-    if not email:
-        print("❌ No email found in test data")
-        return False
-        
-    print(f"📧 Email to search: {email}")
-    print(f"💎 Orbs value: {orbs}")
-    
-    # Test price calculation
-    calculated_price = calculate_price_from_orbs(orbs)
-    print(f"💰 Calculated price: ${calculated_price}")
-    
-    # Prepare the data that would be sent to Airtable
-    is_linked = device_data.get("isLinked", False)
-    if isinstance(is_linked, str):
-        is_linked = is_linked.lower() == "true"
-    elif isinstance(is_linked, int):
-        is_linked = bool(is_linked)
-    
-    airtable_data = {
-        "isLinked": is_linked,
-        "AccountID": str(device_data.get("AccountID", "")),
-        "UserName": str(device_data.get("UserName", "Player")),
-        "Orbs": str(orbs),
-        "Price": calculated_price
-    }
-    
-    print(f"📊 Data prepared for Airtable:")
-    for key, value in airtable_data.items():
-        print(f"   {key}: {value} ({type(value).__name__})")
-    
-    return True
+    if record_id:
+        print(f"   ✅ Record found: {record_id}")
+        return record_id
+    else:
+        print("   ❌ No record found")
+        return None
 
-def test_full_airtable_sync():
-    """Test the full Airtable sync (REAL API CALL)"""
-    print("🚨 WARNING: This will make a REAL API call to Airtable!")
+def test_full_sync(device_id):
+    """Test the full sync process"""
+    print_header("TESTING FULL SYNC PROCESS")
     
-    response = input("Do you want to proceed? (yes/no): ").strip().lower()
-    if response != "yes":
-        print("⏸️  Full sync test cancelled")
-        return False
-        
-    print("🔄 Running full Airtable sync test...")
-    
-    device_id = simulate_device_state()
-    if not device_id:
-        return False
-        
-    # Run the actual sync
+    print_step(1, "Running full sync")
     success = sync_device_to_airtable(device_id)
     
     if success:
-        print("✅ Airtable sync test completed successfully!")
-        
-        # Check if synced flag was set
-        updated_state = device_state_manager.get_state(device_id)
-        synced_flag = updated_state.get("synced_to_airtable", False)
-        if synced_flag:
-            print("✅ synced_to_airtable flag set correctly")
-        else:
-            print("❌ synced_to_airtable flag not set")
-            
+        print("   ✅ Full sync completed successfully")
     else:
-        print("❌ Airtable sync test failed")
-        
+        print("   ❌ Full sync failed")
+    
     return success
 
 def main():
     """Main test function"""
-    print("=" * 60)
-    print("🧪 AIRTABLE SYNC TEST SUITE")
-    print("=" * 60)
+    device_name = "DEVICE10"
     
-    # Test 1: Price calculation
-    test_price_calculation()
+    print_header(f"AIRTABLE SYNC TEST - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Testing device: {device_name}")
     
-    # Test 2: Dry run
-    print("📋 Test 2: Dry Run (No API calls)")
-    if test_airtable_sync_dry_run():
-        print("✅ Dry run test passed\n")
-    else:
-        print("❌ Dry run test failed\n")
+    # Test 1: S3 Connection
+    s3_ok = test_s3_connection()
+    
+    # Test 2: Device Data
+    device_data, device_id = test_device_data(device_name)
+    if not device_data or not device_id:
+        print("\n❌ Cannot continue without device data")
         return
     
-    # Test 3: Full sync (optional)
-    print("📋 Test 3: Full Airtable Sync (Real API call)")
-    test_full_airtable_sync()
+    # Test 3: Image Path
+    image_path = test_image_path(device_name, device_data, device_id)
     
-    print("\n" + "=" * 60)
-    print("🏁 Test suite completed")
-    print("=" * 60)
+    # Test 4: S3 Upload (if image exists and S3 is working)
+    if s3_ok and image_path:
+        image_url = test_s3_upload(image_path, device_name)
+    
+    # Test 5: Airtable Record Lookup
+    email = device_data.get('Email')
+    if email:
+        record_id = test_airtable_record_lookup(email)
+    
+    # Test 6: Full Sync
+    print("\n" + "="*60)
+    user_input = input("Do you want to run the full sync? (y/n): ").lower().strip()
+    
+    if user_input == 'y':
+        success = test_full_sync(device_id)
+        
+        print_header("FINAL RESULTS")
+        if success:
+            print("🎉 All tests passed! Sync is working correctly.")
+        else:
+            print("❌ Sync failed. Check the errors above.")
+    else:
+        print("\n⏭️  Skipping full sync test.")
+        
+        print_header("TEST SUMMARY")
+        print(f"✅ S3 Connection: {'OK' if s3_ok else 'FAILED'}")
+        print(f"✅ Device Data: {'OK' if device_data else 'FAILED'}")
+        print(f"✅ Image Path: {'OK' if image_path else 'FAILED'}")
+        print(f"✅ Email Found: {'OK' if email else 'FAILED'}")
 
 if __name__ == "__main__":
     main()

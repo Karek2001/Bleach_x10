@@ -110,9 +110,17 @@ class ProcessMonitor:
             print(f"[{device_id}] Error launching game")
     
     async def kill_and_restart_game(self, device_id: str):
-        """Kill and restart the game with force stop"""
+        """Kill and restart the game with force stop, also closes Brave browser"""
         try:
             print(f"[{device_id}] Restarting game...")
+            
+            # Close Brave browser first
+            print(f"[{device_id}] 🔴 Closing Brave browser...")
+            await run_adb_command("shell am force-stop com.brave.browser", device_id)
+            await asyncio.sleep(1.0)  # Small delay after closing Brave
+            print(f"[{device_id}] ✅ Brave browser closed")
+            
+            # Then close and restart the game
             await run_adb_command(f"shell am force-stop {BLEACH_PACKAGE_NAME}", device_id)
             await asyncio.sleep(2)
             await self.launch_bleach(device_id)
@@ -496,9 +504,17 @@ class BackgroundMonitor:
             print(f"[{device_id}] Error launching game")
     
     async def kill_and_restart_game(self, device_id: str):
-        """Kill and restart the game with force stop"""
+        """Kill and restart the game with force stop, also closes Brave browser"""
         try:
             print(f"[{device_id}] Restarting game...")
+            
+            # Close Brave browser first
+            print(f"[{device_id}] 🔴 Closing Brave browser...")
+            await run_adb_command("shell am force-stop com.brave.browser", device_id)
+            await asyncio.sleep(1.0)  # Small delay after closing Brave
+            print(f"[{device_id}] ✅ Brave browser closed")
+            
+            # Then close and restart the game
             await run_adb_command(f"shell am force-stop {BLEACH_PACKAGE_NAME}", device_id)
             await asyncio.sleep(2)
             await self.launch_bleach(device_id)
