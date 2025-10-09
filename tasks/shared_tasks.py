@@ -97,13 +97,10 @@ Shared_Tasks = [
         "sleep": 3
     },
     {
-        "task_name": "Click 25 Tickets",
-        "type": "template",
-        "template_path": "templates/Purchase_Tickets/25Tickets.png",
-        "roi": [194, 319, 564, 129],
-        "confidence": 0.90,
-        "use_match_position": True,
-        
+        "task_name": "Click 50 Tickets",
+        "type": "pixel",
+        "click_location_str": "500,365",
+        "search_array": ["327,352","#ffffff","344,349","#ffffff","401,350","#ffffff","493,354","#ffffff","595,379","#2aff21","255,382","#0e40b9"],
         "shared_detection": True,
         "priority": 45,
         "cooldown": 5.0,
@@ -111,12 +108,9 @@ Shared_Tasks = [
     },
     {
         "task_name": "Confirm Ticket Purchase",
-        "type": "template",
-        "template_path": "templates/Purchase_Tickets/Purchase.png",
-        "roi": [534, 343, 174, 56],
-        "confidence": 0.90,
-        "use_match_position": True,
-        
+        "type": "pixel",
+        "click_location_str": "615,372",
+        "search_array": ["249,145","#0d12b5","260,158","#e60012","267,221","#ffff00","286,220","#ffff00","579,222","#ffff00","595,221","#ffff00","708,157","#e60012"],
         "shared_detection": True,
         "priority": 45,
         "cooldown": 5.0,
@@ -127,7 +121,7 @@ Shared_Tasks = [
         "task_name": "Click [Close] After Purchased Tickets",
         "type": "pixel",
         "click_location_str": "484,373",
-        "search_array": ["360,153","#191925","485,151","#191925","600,153","#191925","353,260","#ffffff","606,266","#ffffff","452,372","#ffffff"],
+        "search_array": ["247,154","#0d12b5","264,165","#e60012","360,152","#191925","591,154","#191925","354,259","#ffffff","606,266","#ffffff","561,252","#ffffff"],
         "priority": 5,
         "cooldown": 10.0,
         "shared_detection": True,

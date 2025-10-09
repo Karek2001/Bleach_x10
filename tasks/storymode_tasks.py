@@ -1,6 +1,20 @@
 from .detect_chapter_end import DETECT_CHAPTER_END
 
 StoryMode_Tasks = [
+
+# EDGE CASE SOMETIMES SUB STORIES UNLOCKED AND CANNOT LEAVE IT WE SHOULD CLICK YES 
+            {
+        "task_name": "Click OK [For New Function Unlocked!]",
+        "type": "pixel",
+          "click_location_str": "474,371",
+        "search_array": ["252,154","#0d12b5","262,164","#e60012","363,152","#191925","468,156","#191925","490,161","#191925","596,144","#191925","537,154","#191925","586,152","#191925"],
+        "shared_detection": True,
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 3
+    },
+
+
             {
         "task_name": "Guild Tutorial Detected",
         "type": "template",

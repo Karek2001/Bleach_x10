@@ -80,12 +80,13 @@ __all__ = [
     'Login3_Wait_For_2FA_Tasks',
     'Login4_Confirm_Link_Tasks',
     'Endgame_Tasks',
+    'Wait_For_Other_Devices',
     # Reroll tasks
+    'reroll_earse_gamedata_tasks',
     'reroll_earse_gamedatapart2_tasks',
     'reroll_tutorial_firstmatch_tasks',
     'reroll_tutorial_characterchoose_tasks',
     'reroll_tutorial_characterchoosepart2_tasks',
     'reroll_tutorial_secondmatch_tasks',
     'reroll_replaceichigowithfivestar_tasks',
-    'Wait_For_Other_Devices',
 ]
