@@ -96,6 +96,16 @@ Shared_Tasks = [
         "cooldown": 5.0,
         "sleep": 3
     },
+        {
+        "task_name": "Click 25 Tickets",
+        "type": "pixel",
+        "click_location_str": "432,385",
+        "search_array": ["325,361","#ffffff","341,359","#ffffff","492,371","#ffffff""262,399","#0d3fb7","418,384","#1616f1"],
+        "shared_detection": True,
+        "priority": 45,
+        "cooldown": 5.0,
+        "sleep": 3
+    },
     {
         "task_name": "Click 50 Tickets",
         "type": "pixel",
@@ -106,6 +116,7 @@ Shared_Tasks = [
         "cooldown": 5.0,
         "sleep": 3
     },
+
     {
         "task_name": "Confirm Ticket Purchase",
         "type": "pixel",

@@ -2,16 +2,21 @@
 import aiohttp
 import asyncio
 import re
+import os
 from typing import Optional
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 class AirtableHelper:
     """Helper class for retrieving 2FA codes from Airtable"""
     
     def __init__(self):
-        self.api_key = "pat2QVZVjoGSSut65.eb423fef85c745815abb18269e6253021c058f4353c88ec59013efb6395de3d4"
-        self.base_id = "appuJAf3tqrmODVlO"
-        self.table_id = "tblamaki4By1sf1Fb"
+        self.api_key = os.getenv('AIRTABLE_API_KEY')
+        self.base_id = os.getenv('AIRTABLE_2FA_BASE_ID')
+        self.table_id = os.getenv('AIRTABLE_2FA_TABLE_ID')
         self.base_url = f"https://api.airtable.com/v0/{self.base_id}/{self.table_id}"
         self.expected_from_prefix = "noreply_at_id_klabgames_net"
     

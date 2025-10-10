@@ -5,11 +5,15 @@ import os
 import asyncio
 from typing import Optional, Dict
 from device_state_manager import device_state_manager
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Airtable configuration (same as airtable_sync.py)
-AIRTABLE_API_KEY = "pat2QVZVjoGSSut65.eb423fef85c745815abb18269e6253021c058f4353c88ec59013efb6395de3d4"
-AIRTABLE_BASE_ID = "appHpjTJPFvsRvorc"
-AIRTABLE_TABLE_ID = "tblly72Bpidn8qE2v"
+AIRTABLE_API_KEY = os.getenv('AIRTABLE_API_KEY')
+AIRTABLE_BASE_ID = os.getenv('AIRTABLE_BASE_ID')
+AIRTABLE_TABLE_ID = os.getenv('AIRTABLE_TABLE_ID')
 AIRTABLE_BASE_URL = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_TABLE_ID}"
 
 async def get_stock_account_details(device_id: str, order_number: int, stock_number: int) -> Optional[Dict]:

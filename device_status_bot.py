@@ -3,10 +3,15 @@ import os
 import asyncio
 import logging
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
+from collections import defaultdict
 import pytz
 from telegram import Bot
 from telegram.constants import ParseMode
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -32,6 +37,26 @@ class DeviceStatusBot:
         # Timezone setup
         self.germany_tz = pytz.timezone('Europe/Berlin')
         self.istanbul_tz = pytz.timezone('Europe/Istanbul')
+        
+        # Detect RDP server
+        self.rdp_server = self.detect_rdp_server()
+    
+    def detect_rdp_server(self) -> str:
+        """Detect which RDP server we're running on by checking .env file."""
+        try:
+            table_id = os.getenv('AIRTABLE_TABLE_ID', '')
+            
+            if table_id == 'tblly72Bpidn8qE2v':
+                return "🖥️ RDP #1"
+            elif table_id == 'tbldc2IMldy0qig4X':
+                return "🖥️ RDP #2"
+            elif table_id == 'tblDymnELsmNKYz1g':
+                return "🖥️ RDP #3"
+            else:
+                return "🖥️ Unknown Server"
+        except Exception as e:
+            logger.error(f"Error detecting RDP server: {e}")
+            return "🖥️ Unknown Server"
     
     def load_device_data(self, device_number: int) -> Optional[Dict]:
         """Load device data from JSON file."""
@@ -63,11 +88,50 @@ class DeviceStatusBot:
             
             # Format as requested: 2025/8/2 12:43 PM
             formatted = istanbul_dt.strftime("%Y/%m/%d %I:%M %p")
-            return f"<b>{formatted}</b>"
+            return formatted
             
         except Exception as e:
             logger.error(f"Error converting timestamp {timestamp_str}: {e}")
-            return f"<b>{timestamp_str}</b>"
+            return timestamp_str
+    
+    def calculate_progress(self, device_data: Dict) -> int:
+        """Calculate farming progress percentage based on completed tasks."""
+        completed_count = 0
+        
+        # Core story modes (4 fields) - 50%
+        core_fields = ['EasyMode', 'HardMode', 'SideMode', 'SubStory']
+        for field in core_fields:
+            if device_data.get(field, 0) == 1:
+                completed_count += 1
+        
+        if completed_count == 4:
+            # Character slots (5 fields total) - 60%
+            if device_data.get('Character_Slots_Purchased', 0) == 1:
+                completed_count += 1
+                
+                # Exchange and giftbox (7 fields total) - 75%
+                if (device_data.get('Exchange_Gold_Characters', 0) == 1 and 
+                    device_data.get('Recive_GiftBox', 0) == 1):
+                    completed_count += 2
+                    
+                    # Sorting and upgrade (11 fields total) - 90%
+                    if (device_data.get('Sort_Characters_Lowest_Level', 0) == 1 and
+                        device_data.get('Sort_Filter_Ascension', 0) == 1 and
+                        device_data.get('Sort_Multi_Select_Garbage_First', 0) == 1 and
+                        device_data.get('Upgrade_Characters_Level', 0) == 1):
+                        completed_count += 4
+        
+        # Map completed count to percentage
+        if completed_count >= 11:
+            return 90
+        elif completed_count >= 7:
+            return 75
+        elif completed_count >= 5:
+            return 60
+        elif completed_count >= 4:
+            return 50
+        else:
+            return int((completed_count / 4) * 50)  # Proportional progress up to 50%
     
     def extract_device_info(self, device_data: Dict) -> Dict:
         """Extract only the required fields from device data."""
@@ -118,138 +182,93 @@ class DeviceStatusBot:
             "upgrade_characters_level": upgrade_characters_level
         }
     
-    def format_device_message(self, device_num: int, device_info: Dict) -> str:
-        """Format a single device's information for display."""
-        if not device_info:
-            return f"🔴 <b>D{device_num}</b>: <i>No data</i>\n"
+    def get_device_status(self, device_data: Dict) -> str:
+        """Determine device status for grouping."""
+        if not device_data:
+            return "No Data"
         
-        # Header with device number
-        message = f"🟢 <b>DEVICE {device_num}</b>\n"
+        # Check if synced to airtable (completed farming)
+        if device_data.get("synced_to_airtable", False):
+            return "Completed"
         
-        # Check if account is linked
-        is_linked = device_info.get("is_linked", False)
-        if is_linked:
-            # Show only account info for linked accounts (stock completed)
-            account_info = device_info.get("account_info", {})
-            message += "🔗 <b>Account Linked - Account Completed</b>\n"
-            message += f"👤 <b>Username:</b> {account_info.get('UserName', 'N/A')}\n"
-            message += f"📧 <b>Email:</b> {account_info.get('Email', 'N/A')}\n"
-            message += f"🔑 <b>Password:</b> {account_info.get('Password', 'N/A')}\n"
-            message += f"🆔 <b>Account ID:</b> {account_info.get('AccountID', 'N/A')}\n"
-            message += f"💎 <b>Orbs:</b> {account_info.get('Orbs', 0)}\n"
-            
-            # Last updated
-            last_updated = device_info.get("last_updated", "N/A")
-            message += f"🕒 {last_updated}\n\n"
-            return message
-        
-        # Get status fields and task info
-        status_fields = device_info.get("status_fields", {})
-        current_task_set = device_info.get("current_task_set", "").lower()
-        upgrade_characters_level = device_info.get("upgrade_characters_level", 1)
-        
-        # Check if currently upgrading characters
-        is_upgrading_characters = (
-            "upgrade_characters" in current_task_set or 
-            upgrade_characters_level == 0 or
-            "upgrade" in current_task_set
-        )
+        # Check current task set for better status description
+        current_task_set = device_data.get("CurrentTaskSet", "").lower()
         
         # Check story progression
         story_modes = ["EasyMode", "HardMode", "SideMode", "SubStory"]
         story_names = ["Easy Mode", "Hard Mode", "Side Mode", "Sub-Story"]
         
-        current_story = None
-        all_stories_complete = True
+        for field, name in zip(story_modes, story_names):
+            if device_data.get(field, 0) == 0:
+                return f"Currently Completing {name} ~ Story"
         
-        for i, (field, name) in enumerate(zip(story_modes, story_names)):
-            if status_fields.get(field, 0) == 0:
-                current_story = name
-                all_stories_complete = False
-                break
+        # Check other tasks
+        if device_data.get("Character_Slots_Purchased", 0) == 0:
+            return "Currently Completing Character Slots Purchase"
         
-        # Check sorting progression
+        if device_data.get("Exchange_Gold_Characters", 0) == 0:
+            return "Currently Completing Gold Characters Exchange"
+        
+        if device_data.get("Recive_GiftBox", 0) == 0:
+            return "Currently Completing Gift Box Reception"
+        
         sort_fields = ["Sort_Characters_Lowest_Level", "Sort_Filter_Ascension", "Sort_Multi_Select_Garbage_First"]
-        sorting_in_progress = any(status_fields.get(field, 0) == 0 for field in sort_fields)
+        if any(device_data.get(field, 0) == 0 for field in sort_fields):
+            return "Currently Completing Sorting Tasks"
         
-        # Determine what to show based on current state
-        if current_story:
-            # Currently working on stories
-            message += f"♻️ <b>Currently Completing {current_story} ~ Story</b>\n"
-            
-            # Show restarts and last updated only
-            restarts_count = device_info.get("restarts_count", 0)
-            message += f"🔄 <b>Restarts Times:</b> {restarts_count}\n"
-            last_updated = device_info.get("last_updated", "N/A")
-            message += f"🕒 {last_updated}\n\n"
-            
-        elif all_stories_complete and sorting_in_progress:
-            # Stories done, working on sorting
-            message += f"♻️ <b>Currently Completing Sorting Tasks</b>\n"
-            
-            # Show restarts and last updated only
-            restarts_count = device_info.get("restarts_count", 0)
-            message += f"🔄 <b>Restarts Times:</b> {restarts_count}\n"
-            last_updated = device_info.get("last_updated", "N/A")
-            message += f"🕒 {last_updated}\n\n"
-            
-        elif is_upgrading_characters:
-            # Currently upgrading characters - don't show completed tasks
-            message += f"♻️ <b>Currently Upgrading Characters</b>\n"
-            
-            # Show restarts and last updated only
-            restarts_count = device_info.get("restarts_count", 0)
-            message += f"🔄 <b>Restarts Times:</b> {restarts_count}\n"
-            last_updated = device_info.get("last_updated", "N/A")
-            message += f"🕒 {last_updated}\n\n"
-            
-        else:
-            # Show completed tasks and other activities
-            active_list = []
-            
-            # Add stories completed if all done
-            if all_stories_complete:
-                active_list.append("📚 Stories Completed")
-            
-            # Add sorting completed if all done
-            if not sorting_in_progress:
-                active_list.append("🔍 Characters Filter Completed")
-            
-            # Add other completed tasks
-            other_tasks = {
-                "Character_Slots_Purchased": "Char+",
-                "Exchange_Gold_Characters": "Gold",
-                "Recive_GiftBox": "Gift",
-                "Skip_Kon_Bonaza": "Kon"
-            }
-            
-            for field, abbrev in other_tasks.items():
-                if status_fields.get(field, 0) == 1:
-                    active_list.append(abbrev)
-            
-            if active_list:
-                message += f"✅ {' | '.join(active_list)}\n"
-            else:
-                message += "❌ <i>No active features</i>\n"
-            
-            # Show restarts and last updated
-            restarts_count = device_info.get("restarts_count", 0)
-            message += f"🔄 <b>Restarts Times:</b> {restarts_count}\n"
-            last_updated = device_info.get("last_updated", "N/A")
-            message += f"🕒 {last_updated}\n\n"
+        if device_data.get("Upgrade_Characters_Level", 0) == 0:
+            return "Currently Completing Character Upgrades"
         
-        return message
+        return "Unknown Status"
     
     def create_full_message(self) -> str:
-        """Create the complete message with all device information."""
-        message = ""
+        """Create the complete message with grouped device information."""
+        # Get current time
+        now = datetime.now(self.istanbul_tz)
+        current_time = now.strftime("%Y/%m/%d %I:%M %p")
         
-        # Process all 10 devices
+        # Start message with server and time
+        message = f"<b>{self.rdp_server}</b>\n"
+        message += f"🕒 <b>{current_time}</b>\n\n"
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        
+        # Group devices by status
+        devices_by_status = defaultdict(list)
+        completed_devices = []
+        
         for device_num in range(1, 11):
             device_data = self.load_device_data(device_num)
-            device_info = self.extract_device_info(device_data)
-            message += self.format_device_message(device_num, device_info)
+            if not device_data:
+                continue
+            
+            status = self.get_device_status(device_data)
+            
+            if status == "Completed":
+                completed_devices.append((device_num, device_data))
+            else:
+                devices_by_status[status].append(device_num)
         
+        # Show farming devices grouped by status
+        if devices_by_status:
+            for status, device_nums in sorted(devices_by_status.items()):
+                count = len(device_nums)
+                message += f"🟢 <b>x{count} DEVICE{'S' if count > 1 else ''}</b>\n"
+                message += f"♻️ <i>{status}</i>\n\n"
+        
+        # Show completed devices individually
+        if completed_devices:
+            message += "━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            message += "✅ <b>COMPLETED FARMING</b>\n"
+            message += "⏳ <i>Waiting For Others To Start New Stock</i>\n\n"
+            
+            for device_num, device_data in completed_devices:
+                progress = self.calculate_progress(device_data)
+                message += f"🖥️ <b>DEVICE {device_num}</b> • <b>{progress}% Complete</b>\n"
+                message += f"🆔 <code>{device_data.get('AccountID', 'N/A')}</code>\n"
+                message += f"👤 {device_data.get('UserName', 'N/A')}\n"
+                message += f"💎 <b>{device_data.get('Orbs', 'N/A')}</b> Orbs\n\n"
+        
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n"
         message += "🔄 <i>Updates every 5min</i>"
         
         return message

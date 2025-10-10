@@ -5,19 +5,23 @@ import os
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 from device_state_manager import device_state_manager
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Airtable configuration
-AIRTABLE_API_KEY = "pat2QVZVjoGSSut65.eb423fef85c745815abb18269e6253021c058f4353c88ec59013efb6395de3d4"
-AIRTABLE_BASE_ID = "appHpjTJPFvsRvorc"
-AIRTABLE_TABLE_ID = "tblly72Bpidn8qE2v"
+AIRTABLE_API_KEY = os.getenv('AIRTABLE_API_KEY')
+AIRTABLE_BASE_ID = os.getenv('AIRTABLE_BASE_ID')
+AIRTABLE_TABLE_ID = os.getenv('AIRTABLE_TABLE_ID')
 AIRTABLE_BASE_URL = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{AIRTABLE_TABLE_ID}"
 
 # S3 Configuration
-S3_ACCESS_KEY_ID = "G9S4JBYD8PC70PE6JY1E"
-S3_SECRET_ACCESS_KEY = "NFlUYCfP2zVNruP4Mu2TyqMIg2ef52i1LCESRqLJ"
-S3_ENDPOINT = "fsn1.your-objectstorage.com"
-S3_BUCKET_NAME = "bbs-aggstore"
-S3_REGION = "eu-central-1"
+S3_ACCESS_KEY_ID = os.getenv('S3_ACCESS_KEY_ID')
+S3_SECRET_ACCESS_KEY = os.getenv('S3_SECRET_ACCESS_KEY')
+S3_ENDPOINT = os.getenv('S3_ENDPOINT')
+S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
+S3_REGION = os.getenv('S3_REGION')
 
 # Global S3 client
 s3_client = None
