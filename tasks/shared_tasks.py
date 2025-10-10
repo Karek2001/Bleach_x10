@@ -90,17 +90,16 @@ Shared_Tasks = [
         "roi": [390, 341, 169, 55],
         "confidence": 0.90,
         "use_match_position": True,
-        
         "shared_detection": True,
         "priority": 40,
         "cooldown": 5.0,
         "sleep": 3
     },
-        {
+    {
         "task_name": "Click 25 Tickets",
         "type": "pixel",
         "click_location_str": "432,385",
-        "search_array": ["325,361","#ffffff","341,359","#ffffff","492,371","#ffffff""262,399","#0d3fb7","418,384","#1616f1"],
+        "search_array": ["325,361","#ffffff","341,359","#ffffff","492,371","#ffffff","262,399","#0d3fb7","418,384","#1616f1"],
         "shared_detection": True,
         "priority": 45,
         "cooldown": 5.0,
@@ -121,7 +120,7 @@ Shared_Tasks = [
         "task_name": "Confirm Ticket Purchase",
         "type": "pixel",
         "click_location_str": "615,372",
-        "search_array": ["249,145","#0d12b5","260,158","#e60012","267,221","#ffff00","286,220","#ffff00","579,222","#ffff00","595,221","#ffff00","708,157","#e60012"],
+        "search_array": ["246,146","#0d12b5","258,157","#e60012","369,145","#131319","464,149","#131319","582,149","#131319","572,373","#ffffff","668,372","#ffffff"],
         "shared_detection": True,
         "priority": 45,
         "cooldown": 5.0,
