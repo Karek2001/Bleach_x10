@@ -149,12 +149,13 @@ SubStories = [
         "priority": 0,  # Highest priority to ensure it's checked first
         "cooldown": 3.0,  # Reduced from 10.0 for faster retries
         "sleep": 2,  # Add sleep after execution
+        "KeepChecking": 3.0,
     },
 
         {
         "task_name": "Back To Missions of currently Sub Story",
         "type": "pixel",
-        "search_array": ["146,504","#0b3be2","172,510","#ffffff","220,508","#ffffff"],
+        "search_array": ["172,507","#ffffff","262,510","#2059f9","356,507","#ffffff","408,509","#ffffff"],
         "click_location_str": "751,507",
         "priority": 1,
         "cooldown": 5.0,
@@ -201,7 +202,7 @@ SubStories = [
    {
         "task_name": "Check is Sub Stories Are Finished?",
         "type": "pixel",
-        "search_array": ["112,114","#fdfbfb","373,114","#fdfbfb","645,112","#fdfbfb","245,329","#fdfbfb","512,329","#fdfbfb","441,407","#fec46c","546,373","#fee6d6","284,158","#fad2c2"],
+        "search_array": ["114,114","#fdfbfb","376,113","#fdfbfb","641,112","#fdfbfb","243,329","#fdfbfb","507,329","#fdfbfb","82,26","#ffffff","152,129","#e2c682",],
         "click_location_str": "23,22",
         "priority": 30,
         "cooldown": 5.0,

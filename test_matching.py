@@ -372,12 +372,12 @@ def draw_roi(image: np.ndarray, roi: Tuple[int, int, int, int],
 def run_template_matching_browser():
     """Run template matching with integrated image browser"""
     root = tk.Tk()
-    root.title("Template Matching Tool - /mnt/storagebox")
+    root.title("Template Matching Tool - /mnt/hetzner-storage-sub1")
     root.geometry("1600x900")
     root.configure(bg="#2E2E2E")
     
     # Directory for images
-    image_dir = "/mnt/storagebox"
+    image_dir = "/mnt/hetzner-storage-sub1"
     
     # Variables
     selected_buttons = set()

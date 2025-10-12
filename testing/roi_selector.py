@@ -285,7 +285,7 @@ class ImageSelectorApp:
 
 if __name__ == "__main__":
     # Define the default directory for screenshots
-    default_directory = "/mnt/storagebox/Match2"
+    default_directory = "/mnt/hetzner-storage-sub1"
 
     # Create and run the main GUI application
     main_root = tk.Tk()
