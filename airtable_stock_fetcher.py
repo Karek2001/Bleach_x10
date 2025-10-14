@@ -142,53 +142,30 @@ async def check_and_fetch_all_accounts():
             account_details = await get_stock_account_details(device_id, order_number, stock_number)
             
             if account_details:
-                # Create new device state with account details and reroll fields
-                # Using the exact field order requested by user
-                new_state = {
-                    "AccountID": "",
-                    "UserName": account_details.get('UserName', 'Player'),
-                    "Email": account_details.get('Email', ''),
-                    "Password": account_details.get('Password', ''),
-                    "isLinked": 0,  # Reset to 0 for new cycle
-                    "Orbs": "0",
-                    "RestartingCount": 0,
-                    "Reroll_Earse_GameData": 0,
-                    "Reroll_Tutorial_FirstMatch": 0,
-                    "Reroll_Tutorial_CharacterChoose": 0,
-                    "Reroll_Tutorial_SecondMatch": 0,
-                    "Reroll_ReplaceIchigoWithFiveStar": 0,
-                    "EasyMode": 0,
-                    "HardMode": 0,
-                    "SideMode": 0,
-                    "SubStory": 0,
-                    "Character_Slots_Purchased": 0,
-                    "Exchange_Gold_Characters": 0,
-                    "Recive_GiftBox": 0,
-                    "Skip_Kon_Bonaza_100Times": 0,
-                    "Skip_Kon_Bonaza": 0,
-                    "Character_Slots_Count": 0,
-                    "ScreenShot_MainMenu": 0,
-                    "Skip_Yukio_Event": 0,
-                    "Skip_Yukio_Event_Retry_Count": 0,
-                    "Sort_Characters_Lowest_Level": 0,
-                    "Sort_Filter_Ascension": 0,
-                    "Sort_Multi_Select_Garbage_First": 0,
-                    "Upgrade_Characters_Level": 0,
-                    "Recive_Giftbox_Orbs": 0,
-                    "Login1_Prepare_Link": 0,
-                    "Account_Linked": 0,
-                    "Login2_Email_Done": 0,
-                    "Login2_Password_Done": 0,
-                    "Login2_Cloudflare_Done": 0,
-                    "synced_to_airtable": False,
-                    "LastUpdated": datetime.now().isoformat(),
-                    "CurrentTaskSet": "reroll_earse_gamedata",
-                    "SessionStats": {
-                        "SessionStartTime": datetime.now().isoformat(),
-                        "TasksExecuted": 0,
-                        "LastTaskExecuted": None
-                    }
-                }
+                # CRITICAL FIX: Use _get_default_state() to ensure ALL keys are present
+                # This guarantees 100% consistency with device_state_manager's default structure
+                new_state = device_state_manager._get_default_state()
+                
+                # Override with account details from Airtable
+                new_state["UserName"] = account_details.get('UserName', 'Player')
+                new_state["Email"] = account_details.get('Email', '')
+                new_state["Password"] = account_details.get('Password', '')
+                
+                # Reset critical fields for new reroll cycle
+                new_state["isLinked"] = 0
+                new_state["AccountID"] = ""
+                new_state["Orbs"] = "0"
+                new_state["RestartingCount"] = 0
+                new_state["CurrentTaskSet"] = "reroll_earse_gamedata"
+                
+                # Ensure all reroll flags are 0 (already in default state, but being explicit)
+                new_state["Reroll_Earse_GameData"] = 0
+                new_state["Reroll_Earse_GameDataPart2"] = 0
+                new_state["Reroll_Tutorial_FirstMatch"] = 0
+                new_state["Reroll_Tutorial_CharacterChoose"] = 0
+                new_state["Reroll_Tutorial_CharacterChoosePart2"] = 0
+                new_state["Reroll_Tutorial_SecondMatch"] = 0
+                new_state["Reroll_ReplaceIchigoWithFiveStar"] = 0
                 
                 # Save the new state directly using device_state_manager
                 # IMPORTANT: Convert DEVICE name to IP address for consistency

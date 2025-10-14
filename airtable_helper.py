@@ -3,6 +3,7 @@ import aiohttp
 import asyncio
 import re
 import os
+import ssl
 from typing import Optional
 from datetime import datetime
 from dotenv import load_dotenv
@@ -37,8 +38,13 @@ class AirtableHelper:
         
         data = None
         
+        # Create SSL context that doesn't verify certificates (for Windows SSL issues)
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        
         # Try each sort field until one works
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=ssl_context)) as session:
             for field_name in sort_field_names:
                 params = {
                     "filterByFormula": filter_formula,

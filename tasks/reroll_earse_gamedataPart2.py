@@ -47,6 +47,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["256,33","#0d12b5","269,47","#e60012","404,33","#191925","473,40","#191925","520,34","#191925","562,35","#191925","598,487","#ffffff"],
         "priority": 1,
         "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
     },
             {
@@ -56,6 +57,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["237,35","#0d12b5","229,49","#e60012","393,34","#020204","443,36","#020204","576,38","#020204","676,491","#1f58f9"],
         "priority": 1,
         "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
     },
             {
@@ -64,7 +66,8 @@ reroll_earse_gamedatapart2_tasks = [
         "click_location_str": "678,336",
         "search_array": ["231,39","#0d12b5","243,51","#e60012","295,39","#191925","441,42","#191925","739,337","#2058f9","611,490","#102c7c","478,486","#7f7f7f"],
         "priority": 1,
-        "cooldown": 99.0,
+        "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
     },
             {
@@ -74,6 +77,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["585,368","#1967d2","596,365","#ffffff","665,366","#ffffff","698,369","#1967d2"],
         "priority": 1,
         "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
     },
                 {
@@ -83,7 +87,8 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["229,40","#0d12b5","295,40","#191925","663,43","#191925","634,333","#ffffff","715,335","#ffffff","611,490","#2159f9"],
         "priority": 1,
         "cooldown": 10.0,
-        "sleep": 3,
+        "shared_detection": True,
+            "sleep": 3,
     },
                 {
         "task_name": "Select [Global] Server [Reroll Earse GameData Part 2]",
@@ -92,6 +97,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["431,113","#ffffff","526,114","#ffffff","376,39","#ffff00","449,36","#ffff00","585,39","#ffff00","599,43","#ffff00"],
         "priority": 1,
         "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
     },
                 {
@@ -101,6 +107,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["257,152","#0d12b5","267,166","#e60012","359,246","#ffff00","682,376","#225cf9"],
         "priority": 1,
         "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
     },
                 {
@@ -112,6 +119,7 @@ reroll_earse_gamedatapart2_tasks = [
         "use_match_position": True,
         "priority": 1,
         "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
     },
                 {
@@ -120,7 +128,8 @@ reroll_earse_gamedatapart2_tasks = [
         "click_location_str": "479,372",
         "search_array": ["246,153","#0d12b5","265,166","#e60012","432,151","#191925","527,156","#191925","387,259","#ffffff","569,260","#ffffff","612,376","#225cf9"],
         "priority": 1,
-        "cooldown": 10.0,
+        "cooldown": 5.0,
+        "shared_detection": True,
         "sleep": 3,
     },
                 {
@@ -131,6 +140,7 @@ reroll_earse_gamedatapart2_tasks = [
         "priority": 1,
         "Enter_UserName":True,
         "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
     },
                 {
@@ -140,6 +150,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["886,492","#000000","864,489","#ffffff","763,400","#0a3ae1"],
         "priority": 20,
         "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
     },
                     {
@@ -149,6 +160,7 @@ reroll_earse_gamedatapart2_tasks = [
         "search_array": ["51,22","#ffaa4e","59,51","#eec2b0"],
         "priority": 1,
         "cooldown": 10.0,
+        "shared_detection": True,
         "sleep": 3,
         "json_Reroll_Earse_GameDataPart2": True,
         "Reroll_Tutorial_FirstMatch_Tasks": True  

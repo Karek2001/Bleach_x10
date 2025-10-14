@@ -1,9 +1,3 @@
-# Environment variables and credentials
-.env
-.env1
-.env2
-.env3
-
 # Python
 __pycache__/
 *.py[cod]
@@ -18,9 +12,6 @@ device_states/
 
 # Stock images
 stock_images/
-
-# Testing
-testing/
 
 # Sync metadata
 .sync_hashes.json

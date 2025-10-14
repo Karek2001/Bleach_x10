@@ -137,11 +137,20 @@ StoryMode_Tasks = [
         "roi": [856, 206, 102, 107],
         "confidence": 0.55,
         "use_match_position": True,
-        
         "priority": 1,
         "cooldown": 5.0,
         "sleep": 8.5,
-        "StopSupport": "json_SideMode",
+    },
+        {
+        "task_name": "Click Arrow If All Chapters Clear",
+        "type": "template",
+        "template_path": "templates/Story_Mode/NextStories2.png",
+        "roi": [910, 244, 48, 49],
+        "confidence": 0.55,
+        "use_match_position": True,
+        "priority": 1,
+        "cooldown": 5.0,
+        "sleep": 8.5,
     },
     
     # Uncleared Content Selection

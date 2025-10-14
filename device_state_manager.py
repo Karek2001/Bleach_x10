@@ -206,6 +206,20 @@ class DeviceStateManager:
         try:
             self.states[device_id]["LastUpdated"] = self._get_istanbul_time()
             
+            # CRITICAL FIX: Validate all required keys exist before saving
+            # This ensures 100% key consistency and prevents missing keys
+            default_state = self._get_default_state()
+            required_keys = set(default_state.keys())
+            current_keys = set(self.states[device_id].keys())
+            missing_keys = required_keys - current_keys
+            
+            if missing_keys:
+                print(f"[STATE] ⚠️ MISSING KEYS DETECTED in {device_name}: {missing_keys}")
+                print(f"[STATE] 🔧 Auto-adding missing keys with default values...")
+                for key in missing_keys:
+                    self.states[device_id][key] = default_state[key]
+                    print(f"[STATE]    Added: {key} = {default_state[key]}")
+            
             # Create backup of existing file before overwriting
             backup_file = state_file + ".backup"
             if os.path.exists(state_file):

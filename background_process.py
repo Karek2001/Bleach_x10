@@ -1540,6 +1540,20 @@ class OptimizedBackgroundMonitor:
                         await self.process_monitor.kill_and_restart_game(device_id)
                         return logical_triggered
                     
+                    # CRITICAL FIX: Detect json flags in task and log them BEFORE execution
+                    json_flags_to_set = []
+                    for flag in ["json_Reroll_Earse_GameData", "json_Reroll_Earse_GameDataPart2",
+                                "json_Reroll_Tutorial_FirstMatch", "json_Reroll_Tutorial_CharacterChoose",
+                                "json_Reroll_Tutorial_CharacterChoosePart2", "json_Reroll_Tutorial_SecondMatch",
+                                "json_Reroll_ReplaceIchigoWithFiveStar", "json_EasyMode", "json_HardMode",
+                                "json_SideMode", "json_SubStory"]:
+                        if task.get(flag, False):
+                            json_flags_to_set.append(flag)
+                    
+                    if json_flags_to_set:
+                        device_name = device_state_manager._get_device_name(device_id)
+                        print(f"[{device_name}] 🏁 Task will set flags: {', '.join(json_flags_to_set)}")
+                    
                     # Execute the click if not a detection-only task
                     if task.get("click_location_str") != "0,0" and "[Executed" not in task_name:
                         await self.execute_tap_with_offset(device_id, task["click_location_str"], task)
@@ -1552,6 +1566,26 @@ class OptimizedBackgroundMonitor:
                     else:
                         # For detection-only tasks (0,0 click), handle flags immediately
                         await self.handle_task_flags(device_id, task)
+                    
+                    # CRITICAL FIX: Verify flags were actually set
+                    if json_flags_to_set:
+                        await asyncio.sleep(0.1)  # Small delay to ensure save completes
+                        state = device_state_manager.get_state(device_id)
+                        for flag in json_flags_to_set:
+                            # Remove json_ prefix to get state key
+                            state_key = flag.replace("json_", "")
+                            if state_key in ["Reroll_Earse_GameData", "Reroll_Earse_GameDataPart2",
+                                            "Reroll_Tutorial_FirstMatch", "Reroll_Tutorial_CharacterChoose",
+                                            "Reroll_Tutorial_CharacterChoosePart2", "Reroll_Tutorial_SecondMatch",
+                                            "Reroll_ReplaceIchigoWithFiveStar"]:
+                                # Direct mapping for reroll flags
+                                actual_value = state.get(state_key, -1)
+                                if actual_value == 1:
+                                    print(f"[{device_name}] ✅ Verified: {state_key} = 1")
+                                else:
+                                    print(f"[{device_name}] ❌ FAILED TO SET: {state_key} = {actual_value} (expected 1)")
+                                    print(f"[{device_name}] 🔧 Attempting to force-set flag...")
+                                    device_state_manager.set_json_flag(device_id, flag, 1)
                     
                     # Handle KeepChecking flag
                     if "KeepChecking" in task:
@@ -1751,16 +1785,52 @@ class OptimizedBackgroundMonitor:
                 
                 all_tasks = self.get_prioritized_tasks(device_id)
                 
+                # CRITICAL FIX: Add detection logging for reroll tasks to diagnose issue #3
+                current_task_set = self.process_monitor.active_task_set.get(device_id, "unknown")
+                if current_task_set.startswith("reroll_"):
+                    # Count reroll tasks being searched
+                    reroll_task_count = sum(1 for task in all_tasks if "Reroll" in task.get("task_name", ""))
+                    if not hasattr(self, '_last_reroll_log_time'):
+                        self._last_reroll_log_time = {}
+                    
+                    current_time = time.time()
+                    if device_id not in self._last_reroll_log_time or current_time - self._last_reroll_log_time.get(device_id, 0) > 5:
+                        self._last_reroll_log_time[device_id] = current_time
+                        device_name = device_state_manager._get_device_name(device_id)
+                        print(f"[{device_name}] 🔍 Searching {len(all_tasks)} tasks ({reroll_task_count} reroll tasks) in '{current_task_set}'")
+                
                 with suppress_stdout_stderr():
                     matched_tasks = await batch_check_pixels_enhanced(device_id, all_tasks)
                 
                 if matched_tasks:
+                    # Log matched reroll tasks
+                    if current_task_set.startswith("reroll_"):
+                        matched_reroll = [t for t in matched_tasks if "Reroll" in t.get("task_name", "")]
+                        if matched_reroll:
+                            device_name = device_state_manager._get_device_name(device_id)
+                            print(f"[{device_name}] ✅ Matched {len(matched_reroll)} reroll task(s)")
+                    
                     logical_triggered = await self.process_matched_tasks(device_id, matched_tasks)
                     if logical_triggered:
                         return device_id
                     
                     self.device_states[device_id]['stable_count'] = 0
                 else:
+                    # Log when NO tasks are detected in reroll mode (this is suspicious)
+                    if current_task_set.startswith("reroll_"):
+                        if not hasattr(self, '_no_detection_count'):
+                            self._no_detection_count = {}
+                        self._no_detection_count[device_id] = self._no_detection_count.get(device_id, 0) + 1
+                        
+                        # Log every 30 cycles (roughly every 30 seconds if check interval is 1s)
+                        if self._no_detection_count[device_id] % 30 == 0:
+                            device_name = device_state_manager._get_device_name(device_id)
+                            print(f"[{device_name}] ⚠️ No tasks detected for {self._no_detection_count[device_id]} cycles in '{current_task_set}'")
+                            print(f"[{device_name}]    This may indicate:")
+                            print(f"[{device_name}]    1. Screen not showing expected UI")
+                            print(f"[{device_name}]    2. All tasks are blocked by flags")
+                            print(f"[{device_name}]    3. Game crashed or stuck")
+                    
                     self.device_states[device_id]['stable_count'] += 1
                 
                 interval = self.get_adaptive_interval(device_id)
