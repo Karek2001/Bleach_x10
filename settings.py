@@ -20,7 +20,7 @@ DEVICE_IDS = [
 SCREENSHOT_CACHE_DURATION = 0.8  # Increased for better caching
 
 # Batch processing size - how many tasks to check per screenshot
-TASK_BATCH_SIZE = 8  # Increased batch size for efficiency
+TASK_BATCH_SIZE = 30  # Increased batch size for efficiency
 
 # Background check interval (seconds) - how often to cycle through tasks
 BACKGROUND_CHECK_INTERVAL = 0.2  # Faster checking
@@ -29,7 +29,7 @@ BACKGROUND_CHECK_INTERVAL = 0.2  # Faster checking
 PARALLEL_SCREENSHOT_CAPTURE = True
 
 # Maximum concurrent screenshot operations
-MAX_CONCURRENT_SCREENSHOTS = 16  # Half of device count for optimal performance
+MAX_CONCURRENT_SCREENSHOTS = 10  # Half of device count for optimal performance
 
 # Smart task prioritization - check high-priority tasks first
 USE_TASK_PRIORITIZATION = True

@@ -324,5 +324,27 @@ Shared_Tasks = [
     },
 
 
+# NEW ANNEVERSARY INVITE FRIENDS + ITEMS IN SHOP
+
+                           {
+        "task_name": "Invite Friends Event For 500 ORB",
+        "type": "pixel",
+        "click_location_str": "345,487",
+        "search_array": ["228,40","#0d12b5","237,51","#e60012","326,41","#191925","633,43","#191925","243,99","#ffe600","243,254","#ffe600","740,315","#ffff00"],
+        "shared_detection": True,
+        "priority": 20,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
+                               {
+        "task_name": "Skip Item Shop For Anneversary Gifts",
+        "type": "pixel",
+        "click_location_str": "344,390",
+        "search_array": ["240,121","#0d12b5","559,124","#191919","487,126","#191919","525,260","#ffffff","553,261","#ffffff","562,261","#ffffff","249,229","#ffffff"],
+        "shared_detection": True,
+        "priority": 20,
+        "cooldown": 5.0,
+        "sleep": 3,
+    },
     
 ]
